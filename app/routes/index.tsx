@@ -1,9 +1,9 @@
-import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import type { Route } from "./+types/index";
+import { Welcome } from "~/pages/home/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Home | Vortex Motors" },
+    { title: "Home | Presitige Motors" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }

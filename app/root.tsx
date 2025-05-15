@@ -62,16 +62,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="twitter:image" content="/og-image.jpg" />
         <link
           rel="icon"
-          href="https://i.pinimg.com/736x/72/1e/97/721e970241558ea35554de9841f362e8.jpg"
+          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
         />
         <link
           rel="icon"
-          href="https://i.pinimg.com/736x/72/1e/97/721e970241558ea35554de9841f362e8.jpg"
+          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
           type="image/x-icon"
         />
         <link
           rel="apple-touch-icon"
-          href="https://i.pinimg.com/736x/72/1e/97/721e970241558ea35554de9841f362e8.jpg"
+          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
         />
         <Meta />
         <Links />
