@@ -95,13 +95,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <>
-    <ReduxProviders>
-      <Banner/>
-        <Navigation/>
-          <Outlet />;
-        <Baseboard/>  
-      <Footer/>  
-    </ReduxProviders>
+    <Banner/>
+    <Navigation/>
+    <Outlet />;
+    <Baseboard/>  
+    <Footer/>  
     </>
   );
 }
