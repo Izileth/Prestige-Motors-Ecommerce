@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Menu, ChevronRight, MessageSquare } from "lucide-react";
 
 // Import auth hook
-import { useAuth } from "~/src/hooks/useAuth";
+import { useAuth } from "~/hooks/useAuth";
 
 // Menu item interface
 interface MenuItem {
