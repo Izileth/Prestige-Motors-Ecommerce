@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
-import { createStore, store } from "./store/global";
+import { createStore } from "./store/global";
 import Navigation from "./components/layout/navigation/navgation";
 import { Baseboard } from "./components/layout/baseboard/baseboard";
 import { Banner } from "./components/layout/banner/banner";
@@ -92,26 +92,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-
-
 export default function App() {
-  // Detecta ambiente
-  const isServer = typeof window === 'undefined';
+  // Cria uma nova instância do store para cada renderização no servidor
+  const store = createStore();
   
-  // No servidor, renderiza sem Redux
-  if (isServer) {
-    return (
-      <>
-      <Banner/>
-      <Navigation />
-      <Outlet />
-      <Baseboard/>
-      <Footer />
-      </>
-    );
-  }
-  
-  // No cliente, renderiza com Redux
   return (
     <Provider store={store}>
       <Banner/>
@@ -122,6 +106,7 @@ export default function App() {
     </Provider>
   );
 }
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
