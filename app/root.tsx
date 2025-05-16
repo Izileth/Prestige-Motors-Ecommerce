@@ -9,7 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-
+import { Provider } from "react-redux";
+import { store } from "./store/global";
 import { ReduxProviders } from "./store/providers";
 
 import Navigation from "./components/layout/navigation/navgation";
@@ -83,13 +84,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <ReduxProviders>
+        <Provider store={store}>
           <Banner/>
           <Navigation/>
           {children}
           <Baseboard/>
           <Footer/>
-        </ReduxProviders>
+        </Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
