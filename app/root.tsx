@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
-import { createStore,store } from "./store/global";
+import { createStore, store } from "./store/global";
 import Navigation from "./components/layout/navigation/navgation";
 import { Baseboard } from "./components/layout/baseboard/baseboard";
 import { Banner } from "./components/layout/banner/banner";
@@ -97,9 +97,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   // Detecta ambiente
   const isServer = typeof window === 'undefined';
-  const store = createStore();
-  // No servidor, renderiza sem Redux
   
+  // No servidor, renderiza sem Redux
   if (isServer) {
     return (
       <>

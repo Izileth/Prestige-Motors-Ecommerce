@@ -2,7 +2,7 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const API_URL = 'http://localhost:4242/api';
+const API_URL = 'https://prestige-motors-api.onrender.com/api';
 
 // Flag para controlar tentativas de refresh token
 let isRefreshing = false;
