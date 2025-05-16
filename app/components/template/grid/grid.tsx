@@ -7,7 +7,7 @@ import {
   useAnimation,
   useMotionValue,
 } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import {
   ArrowRight,
   SunIcon,

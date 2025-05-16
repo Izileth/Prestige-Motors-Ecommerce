@@ -11,7 +11,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import type { Vehicle } from "~/types/vehicle";
 import useVehicle from "~/hooks/useVehicle";
 

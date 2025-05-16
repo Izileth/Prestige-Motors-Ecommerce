@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"

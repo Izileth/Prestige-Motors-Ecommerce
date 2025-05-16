@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation } from "react-router"
 import { AnimatePresence, motion } from "framer-motion"
 import { CategoryGrid } from "~/components/template/grid/grid"
 import { VehicleFilters } from "~/components/template/filter/filter"
