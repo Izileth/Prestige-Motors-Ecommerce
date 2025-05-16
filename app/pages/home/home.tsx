@@ -11,16 +11,14 @@ import { ReduxProviders } from "~/store/providers";
 export function Welcome() {
     return(
         <main className="flex flex-col max-w-full w-full">
-            <ReduxProviders> 
-                <Banner/>
-                <Navigation/>
-                <Carousel items={DestactsCars}/>
-                <Testimonials/>
-                <PartnerBrands/>
-                <SignupCTA/>
-                <Baseboard/>
-                <Footer/>
-            </ReduxProviders>
+            <Banner/>
+            <Navigation/>
+            <Carousel items={DestactsCars}/>
+            <Testimonials/>
+            <PartnerBrands/>
+            <SignupCTA/>
+            <Baseboard/>
+            <Footer/>
         </main>
     )
 }
