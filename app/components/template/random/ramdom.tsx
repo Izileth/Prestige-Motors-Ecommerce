@@ -5,7 +5,7 @@ import { Button } from "~/components/ui/button"
 import { VehicleCard } from "../card/card"
 import { Skeleton } from "~/components/ui/skeleton"
 import { ArrowRight, RefreshCw } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 
 export function RandomVehicles() {
     const { vehicles, loading, refresh } = useRandomVehicles(4)
