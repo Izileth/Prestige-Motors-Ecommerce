@@ -10,8 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { createStore, persistor, store } from "./store/global";
+import { createStore } from "./store/global";
 import Navigation from "./components/layout/navigation/navgation";
 import { Baseboard } from "./components/layout/baseboard/baseboard";
 import { Banner } from "./components/layout/banner/banner";
@@ -94,44 +93,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const LoadingView = () => <div>Carregando...</div>;
+  // Cria uma nova instância do store para cada renderização no servidor
+  const store = createStore();
   
-  // Verifica se está no ambiente de servidor
-  const isServer = typeof window === 'undefined';
-
-  // Renderização condicional baseada no ambiente
   return (
     <Provider store={store}>
-      {isServer ? (
-        // No servidor, não use PersistGate
-        <>
-          <Banner />
-          <Navigation />
-          <Outlet />
-          <Baseboard />
-          <Footer />
-        </>
-      ) : (
-        // No cliente, use PersistGate apenas se o persistor existir
-        persistor ? (
-          <PersistGate loading={<LoadingView />} persistor={persistor}>
-            <Banner />
-            <Navigation />
-            <Outlet />
-            <Baseboard />
-            <Footer />
-          </PersistGate>
-        ) : (
-          // Fallback caso o persistor não exista por algum motivo
-          <>
-            <Banner />
-            <Navigation />
-            <Outlet />
-            <Baseboard />
-            <Footer />
-          </>
-        )
-      )}
+      <Banner/>
+      <Navigation />
+      <Outlet />
+      <Baseboard/>
+      <Footer />
     </Provider>
   );
 }
