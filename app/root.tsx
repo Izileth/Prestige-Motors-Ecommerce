@@ -10,6 +10,12 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import { ReduxProviders } from "./store/providers";
+
+import Navigation from "./components/layout/navigation/navgation";
+import Footer from "./components/layout/footer/footer";
+import { Banner } from "./components/layout/banner/banner";
+import { Baseboard } from "./components/layout/baseboard/baseboard";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -77,7 +83,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <ReduxProviders>
+          <Banner/>
+          <Navigation/>
+          {children}
+          <Baseboard/>
+          <Footer/>
+        </ReduxProviders>
         <ScrollRestoration />
         <Scripts />
       </body>
