@@ -12,7 +12,6 @@ export function Welcome() {
     return(
         <main className="flex flex-col max-w-full w-full">
             <Banner/>
-            <Navigation/>
             <Carousel items={DestactsCars}/>
             <Testimonials/>
             <PartnerBrands/>
