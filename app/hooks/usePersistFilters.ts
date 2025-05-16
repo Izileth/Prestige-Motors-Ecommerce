@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 export const usePersistentFilters = <T extends Record<string, any>>(defaultFilters: T) => {
     const [searchParams, setSearchParams] = useSearchParams();
