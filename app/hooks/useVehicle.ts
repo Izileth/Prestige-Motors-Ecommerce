@@ -38,7 +38,7 @@ import type { VehicleUpdateInput, ReviewCreateInput } from '../types/inputs';
  */
 const useVehicle = () => {
   const dispatch = useAppDispatch();
-  const vehicleState = useAppSelector((state) => state.vehicles);
+  const vehicleState = useAppSelector((state) => state.vehicle);
 
   return {
     ...vehicleState,

@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '~/store/hooks';
 import { createNegotiation, fetchUserNegotiations, clearNegotiations } from '~/store/slices/negociation';
 const useNegotiation = () => {
     const dispatch = useAppDispatch();
-    const negociationState = useAppSelector((state) => state.vehicles);
+    const negociationState = useAppSelector((state) => state.vehicle);
 
     return {
         ...negociationState,

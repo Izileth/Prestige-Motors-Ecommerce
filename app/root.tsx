@@ -9,6 +9,12 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Provider } from "react-redux";
+import { createStore } from "./store/global";
+import Navigation from "./components/layout/navigation/navgation";
+import { Baseboard } from "./components/layout/baseboard/baseboard";
+import { Banner } from "./components/layout/banner/banner";
+import Footer from "./components/layout/footer/footer";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -29,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <meta
+        <meta
           name="description"
           content="Descubra a essência da exclusividade automotiva com a Vortex Motors. Veículos de luxo, performance e design sofisticado que redefinem sua experiência ao volante."
         />
@@ -86,11 +92,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // Cria uma nova instância do store para cada renderização no servidor
+  const store = createStore();
+  
   return (
-    <div>
+    <Provider store={store}>
+      <Banner/>
+      <Navigation />
       <Outlet />
-    </div>
-  )
+      <Baseboard/>
+      <Footer />
+    </Provider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
