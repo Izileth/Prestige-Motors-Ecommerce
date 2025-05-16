@@ -94,19 +94,44 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  // Cria uma nova instância do store para cada renderização no servidor
+  const LoadingView = () => <div>Carregando...</div>;
+  
+  // Verifica se está no ambiente de servidor
+  const isServer = typeof window === 'undefined';
 
-  const LoadingView = () => <div>Carregando...</div>
-
+  // Renderização condicional baseada no ambiente
   return (
     <Provider store={store}>
-      <PersistGate loading={<LoadingView />} persistor={persistor}>
-        <Banner/>
-        <Navigation />
-        <Outlet />
-        <Baseboard/>
-        <Footer />
-      </PersistGate>
+      {isServer ? (
+        // No servidor, não use PersistGate
+        <>
+          <Banner />
+          <Navigation />
+          <Outlet />
+          <Baseboard />
+          <Footer />
+        </>
+      ) : (
+        // No cliente, use PersistGate apenas se o persistor existir
+        persistor ? (
+          <PersistGate loading={<LoadingView />} persistor={persistor}>
+            <Banner />
+            <Navigation />
+            <Outlet />
+            <Baseboard />
+            <Footer />
+          </PersistGate>
+        ) : (
+          // Fallback caso o persistor não exista por algum motivo
+          <>
+            <Banner />
+            <Navigation />
+            <Outlet />
+            <Baseboard />
+            <Footer />
+          </>
+        )
+      )}
     </Provider>
   );
 }

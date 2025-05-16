@@ -217,7 +217,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-xs font-extralight uppercase tracking-wider">
-                      Account
+                      Conta
                     </span>
                   </div>
                 </NavigationMenuTrigger>
@@ -237,7 +237,7 @@ const Navigation: React.FC<NavigationProps> = ({
                           to="/dashboard"
                           className="flex flex-row items-center justify-between py-2 px-0 text-xs font-extralight tracking-wider "
                         >
-                          <span>My account</span>
+                          <span>Deashboard</span>
                           <ChevronRight className="h-3 w-3" />
                         </Link>
                       </NavigationMenuLink>
@@ -248,7 +248,7 @@ const Navigation: React.FC<NavigationProps> = ({
                           to="/vehicles/user"
                           className="flex flex-row  items-center justify-between py-2 px-0 text-xs font-extralight tracking-wider"
                         >
-                          <span>My vehicles</span>
+                          <span>Veículos</span>
                           <ChevronRight className="h-3 w-3" />
                         </Link>
                       </NavigationMenuLink>
@@ -259,7 +259,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         className="w-full justify-start text-xs font-extralight tracking-wider p-0 h-auto py-2 hover:bg-transparent hover:text-foreground/80"
                         onClick={handleLogout}
                       >
-                        <span>Sign out</span>
+                        <span>Sair</span>
                       </Button>
                     </li>
                   </ul>
