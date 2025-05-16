@@ -1,6 +1,7 @@
 import type React from "react"
 
 import { useEffect, useState, useRef } from "react"
+import useVehicle from "~/hooks/useVehicle"
 import { useNavigate } from "react-router"
 
 import { Card, CardContent, CardFooter } from "~/components/ui/card"
@@ -10,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Slider } from "~/components/ui/slider"
 import { Badge } from "~/components/ui/badge"
 import { Heart, ChevronRight, Filter, Zap, ShieldCheck, Calendar, Gauge, MapPin, X, Search} from "lucide-react"
-import useVehicle from "~/hooks/useVehicle"
 import type { Vehicle } from "~/types/vehicle"
 import type { VehicleSearchParams } from "~/types/vehicle"
 import { motion, AnimatePresence } from "framer-motion"

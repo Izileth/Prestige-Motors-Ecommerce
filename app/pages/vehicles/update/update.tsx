@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useNavigate, useParams } from "react-router"
+import type { UseFormReturn } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "~/components/ui/button"
@@ -8,7 +10,6 @@ import { Textarea } from "~/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import useVehicle from "~/hooks/useVehicle"
 import { FileUpload } from "~/components/template/file/file"
@@ -30,10 +31,8 @@ import {
   X,
 } from "lucide-react"
 import { Switch } from "~/components/ui/switch"
-import type { Accept } from "react-dropzone"
 import type { VehicleFormValues } from "../create/create"
 import { vehicleFormSchema } from "../create/create"
-import type { UseFormReturn } from "react-hook-form"
 import type { Resolver } from "react-hook-form"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
@@ -50,17 +49,7 @@ import {
 } from "~/components/ui/dialog"
 
 import type { VehicleImage } from "~/types/vehicle"
-
-
-import { FuelType, TransmissionType, BodyType, VehicleCategory, VehicleClass } from "../create/create"
-
-const acceptedFileTypes: Accept = {
-  "image/jpeg": [".jpeg", ".jpg"],
-  "image/png": [".png"],
-  "image/webp": [".webp"],
-}
-
-type FormImage = VehicleImage | File // Tipo união para imagens existentes ou novas
+import { FuelType, TransmissionType, BodyType, VehicleCategory, VehicleClass, acceptedFileTypes } from '~/types/enuns';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

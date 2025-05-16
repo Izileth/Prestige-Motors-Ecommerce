@@ -11,30 +11,18 @@ import {
     selectAuthStatus,
     selectResetPasswordStatus,
     selectAuthError,
-    setUser // Importar a ação setUser para uso manual se necessário
+    setUser
 } from '~/store/slices/auth';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
+import type { LoginData, RegisterData } from '~/types/auth';
+import type { ResetPasswordData } from '~/types/password';
+import type { User } from '~/types/user';
 
-// Interfaces de Teste
-interface LoginData {
-    email: string;
-    senha: string;
+
+interface NestedUserData {
+    user: User;
+    [key: string]: any; // Para outros campos que possam existir neste objeto
 }
-
-interface RegisterData {
-    nome: string;
-    email: string;
-    senha: string;
-    telefone?: string;
-    cpf?: string;
-    dataNascimento?:  string;
-}
-
-interface ResetPasswordData {
-    token: string;
-    senha: string;
-}
-
 
 export function useAuth() {
     const dispatch = useAppDispatch();
@@ -42,23 +30,34 @@ export function useAuth() {
     const status = useAppSelector(selectAuthStatus);
     const resetPasswordState = useAppSelector(selectResetPasswordStatus);
     const error = useAppSelector(selectAuthError);
-    const [internalUser, setInternalUser] = useState(user);
-
-    useEffect(() => {
-        console.log("User changed in Redux:", user);
-        setInternalUser(user);
+    
+    // Remova o estado interno do usuário para evitar desincronização
+    // const [internalUser, setInternalUser] = useState(user);
+    
+    const [sessionChecked, setSessionChecked] = useState(false);
+    
+    // Use useMemo para calcular isAuthenticated a partir do user
+    // Isso garante que quando o user mudar, isAuthenticated também mudará
+    const isAuthenticated = useMemo(() => !!user, [user]);
+    
+    // Normalize os dados do usuário para componentes
+    // Isso garante que estamos fornecendo uma estrutura consistente
+    const normalizedUser = useMemo<User | null>(() => {
+        if (!user) return null;
+        
+        // Se o user estiver aninhado em um objeto com propriedade 'user'
+        if (user && typeof user === 'object' && 'user' in user) {
+            return (user as NestedUserData).user;
+        }
+        
+        // Caso contrário, assumimos que o próprio user já é do tipo UserData
+        return user as User;
     }, [user]);
 
     // Efeito para debug - remove em produção
     useEffect(() => {
-        console.log("User updated in useAuth:", user);
-    }, [user]);
-
-
-    // Determinar o estado de autenticação baseado no usuário
-
-    const [sessionChecked, setSessionChecked] = useState(false);
-    const isAuthenticated = !!user; // Use diretamente o user do Redux
+        console.log("User updated in useAuth:", normalizedUser);
+    }, [normalizedUser]);
 
     // Efeito para verificar a sessão na montagem e quando o status muda
     useEffect(() => {
@@ -69,20 +68,22 @@ export function useAuth() {
         }
     }, [dispatch, status, sessionChecked]);
 
-
     // Função de login com logs detalhados
     const login = useCallback(async (credentials: LoginData) => {
         try {
+            console.log("Iniciando login para:", credentials.email);
             const result = await dispatch(loginUser(credentials)).unwrap();
+            console.log("Login bem-sucedido, resultado:", result);
             return result;
         } catch (error) {
+            console.error("Erro durante login:", error);
             throw error;
         }
     }, [dispatch]);
 
     // Função para definir manualmente o usuário (útil para debugging)
     const manuallySetUser = useCallback(
-        (userData: string) => {
+        (userData: User | NestedUserData) => {
             console.log("Definindo usuário manualmente:", userData);
             dispatch(setUser(userData));
         },
@@ -135,25 +136,31 @@ export function useAuth() {
 
     const hasRole = useCallback(
         (role: string) => {
-            return user?.role === role;
+            if (!normalizedUser) return false;
+            return normalizedUser.role === role;
         },
-        [user]
+        [normalizedUser]
     );
 
     // Adicionar dados extras para debugging
     useEffect(() => {
         console.log("Auth Status:", status);
         console.log("Is Authenticated:", isAuthenticated);
-        console.log("User Data:", user);
-    }, [status, isAuthenticated, user]);
+        console.log("User Data:", normalizedUser);
+        // Log explícito do ID para debugging
+        if (normalizedUser) {
+            console.log("User ID:", normalizedUser.id);
+        }
+    }, [status, isAuthenticated, normalizedUser]);
 
     return {
-        user,
+        user: normalizedUser, // Retorna o usuário normalizado
+        userId: normalizedUser?.id || null, // Disponibiliza o ID diretamente
         isAuthenticated,
         status,
         resetPasswordState,
         error,
-        sessionChecked, // Novo: indica se a verificação inicial foi concluída
+        sessionChecked,
         hasRole,
         login,
         logout,
@@ -161,6 +168,6 @@ export function useAuth() {
         requestPasswordReset,
         confirmPasswordReset,
         clearPasswordResetStatus,
-        manuallySetUser, // Novo: permite definir o usuário manualmente para debugging
+        manuallySetUser,
     };
 }

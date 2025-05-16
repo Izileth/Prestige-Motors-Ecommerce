@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import useVehicle from './useVehicle';
 import type { Vehicle } from '../types/vehicle';
-
-const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutos
+import { CACHE_EXPIRY_MS } from '~/lib/cache';
 
 export const useFeaturedVehicles = (count: number = 4) => {
     const { vehicles, loading, fetchVehicles } = useVehicle();

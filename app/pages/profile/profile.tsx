@@ -67,12 +67,9 @@ import {
 } from "~/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table"
-
+import { COLORS } from "~/lib/colors"
 
 import type { UserUpdateData } from "~/types/user"
-
-// Define o esquema de cores para os gráficos
-const COLORS = ["#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#E5E5E5", "#F5F5F5"]
 
 const fadeIn = {
     hidden: { opacity: 0, y: 20 },

@@ -1,16 +1,18 @@
 import { useEffect, useState, useRef } from "react"
+import { useNavigate } from "react-router-dom"
+import useNegotiation from "~/hooks/useNegociation"
+
 import { Link } from "react-router"
 import { motion, AnimatePresence } from "framer-motion"
 import useVehicle from "~/hooks/useVehicle"
 import { useAuth } from "~/hooks/useAuth"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
-import useNegotiation from "~/hooks/useNegociation"
 import { Heart, MessageSquare, Phone, Mail, ChevronRight, Search, ArrowRight, X } from "lucide-react"
 import { Textarea } from "~/components/ui/textarea"
 import { Skeleton } from "~/components/ui/skeleton"
 
-import { useNavigate } from "react-router-dom"
+
 const NegotiationsPage = () => {
     const { user } = useAuth()
     const { fetchUserFavorites, favorites, loading, removeFavorite } = useVehicle()
