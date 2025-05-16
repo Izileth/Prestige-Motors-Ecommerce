@@ -15,14 +15,26 @@ import {
 import storage from './persist';
 
 import authReducer from './slices/auth';
-
+import vehicleReducer from './slices/vehicle';
+import negociationReducer from './slices/negociation'
+//import reviewReducer from './slices/reviews'
+//import favoriteReducer from './slices/favorites'
+//import viewReducer from './slices/view'
+import userReducer from './slices/user';
+import saleReducer from './slices/sales';
 
 // Verificar se estamos no servidor
 const isServer = typeof window === 'undefined';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-
+  vehicles: vehicleReducer,
+  //review: reviewReducer,
+  //favorite: favoriteReducer,
+  //view: viewReducer,
+  negociation: negociationReducer,
+  user: userReducer,
+  sales: saleReducer,
 });
 
 // Tipo do estado raiz antes da configuração do persist
