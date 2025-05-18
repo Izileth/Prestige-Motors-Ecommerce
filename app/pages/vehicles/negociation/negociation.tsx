@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 import useNegotiation from "~/hooks/useNegociation"
 
 import { Link } from "react-router"
