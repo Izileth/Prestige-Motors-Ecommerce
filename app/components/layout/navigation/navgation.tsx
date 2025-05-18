@@ -15,7 +15,7 @@ import {
 } from "~/components/ui/navigation-menu";
 import { Badge } from "~/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Menu, ChevronRight, MessageSquare } from "lucide-react";
+import { Menu, ChevronRight, MessageSquare, ChevronDown, ChevronsRight } from "lucide-react";
 
 // Import auth hook
 import { useAuth } from "~/hooks/useAuth";
@@ -338,7 +338,7 @@ const Navigation: React.FC<NavigationProps> = ({
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="p-1">
+            <Button variant="ghost" size="icon" className="p-2 ">
               <Menu className="h-5 w-5 stroke-1" />
               <span className="sr-only">Menu</span>
             </Button>
@@ -368,20 +368,20 @@ const Navigation: React.FC<NavigationProps> = ({
               )}
 
               <div className="flex-1 overflow-auto">
-                <div className="px-6 py-8 space-y-7">
+                <div className="px-6 py-10 space-y-6">
                   {menuItems.map((item, index) =>
                     item.submenu ? (
-                      <div key={index} className="space-y-4">
-                        <p className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
-                          {item.name}
+                      <div key={index} className="space-y-8 ">
+                        <p className="flex flex-row items-center text-xs font-normal uppercase tracking-wider text-muted-foreground">
+                          {item.name}  <ChevronDown size={14} className="pl-1" />
                         </p>
-                        <div className="space-y-4 pl-1">
+                        <div className="space-y-4 mt-0 pl-1  border-l-zinc-500 border-l-2 ">
                           {item.submenu.map((subItem, subIndex) => (
                             <Link
                               key={subIndex}
                               to={subItem.href}
                               className={cn(
-                                "block text-xs font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
+                                "block text-xs font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors ml-2",
                                 isActive(subItem.href) && "font-normal"
                               )}
                             >
@@ -395,11 +395,11 @@ const Navigation: React.FC<NavigationProps> = ({
                         key={index}
                         to={item.href}
                         className={cn(
-                          "block text-xs font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
+                          "block text-xs  font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
                           isActive(item.href) && "font-normal"
                         )}
                       >
-                        {item.name}
+                        <p className="flex flex-row items-center">  {item.name}  <ChevronRight className="text-zinc-400 pl-1" size={14}/></p>
                       </Link>
                     )
                   )}
