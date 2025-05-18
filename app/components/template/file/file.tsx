@@ -5,8 +5,7 @@ import { X, Upload, ImageIcon, AlertCircle, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "~/components/ui/progress";
 import { Badge } from "~/components/ui/badge";
-import { CrossIcon } from "lucide-react";
-import { type VariantProps } from "class-variance-authority";
+
 import {
   Tooltip,
   TooltipContent,

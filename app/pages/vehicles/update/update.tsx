@@ -211,8 +211,7 @@ export function EditVehiclePage() {
 
       // 1. Atualizar dados básicos (sem imagens)
       const { imagens, ...vehicleData } = data
-      await updateVehicle({ id, data: vehicleData })
-
+      await updateVehicle(id, vehicleData); // ✅ Dois argumentos separados
       // 2. Upload de novas imagens (apenas Files)
       const newImages = files.filter((file) => file instanceof File)
       if (newImages.length > 0) {

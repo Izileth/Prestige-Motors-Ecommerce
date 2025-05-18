@@ -6,6 +6,8 @@ import {
     Calendar,
     Gauge,
     MapPin,
+    Crown,
+    Flame,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
@@ -91,7 +93,6 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         className="w-full h-full"
         >
         <Card className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
-            {/* Imagem e badges */}
             <div className="relative overflow-hidden group">
             {vehicle.imagens && vehicle.imagens.length > 0 ? (
                 <div className="overflow-hidden">
@@ -113,7 +114,6 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                 </div>
             )}
 
-            {/* Badges */}
             <div className="absolute bottom-3 left-3 flex gap-2">
                 {vehicle.destaque && (
                 <Badge
@@ -131,9 +131,26 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                     <ShieldCheck size={14} /> Original
                 </Badge>
                 )}
+                {vehicle.classe && (
+                <Badge
+                    variant="secondary"
+                    className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                >
+                    <Flame size={14} />
+                    Classe {vehicle?.classe}
+                </Badge>
+                )}
             </div>
 
-            {/* Botão de favorito */}
+            {vehicle.categoria && (
+                <Badge
+                variant="secondary"
+                className="bg-zinc-950 absolute top-4 left-2 text-zinc-50 dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                >
+                <Crown size={14} />
+                {vehicle?.categoria}
+                </Badge>
+            )}
 
             <Button
                 variant="ghost"
@@ -160,7 +177,6 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             </Button>
             </div>
 
-            {/* Conteúdo */}
             <CardContent className="p-5 space-y-4">
             <div className="flex justify-between items-start">
                 <div>
@@ -244,7 +260,6 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             </div>
             </CardContent>
 
-            {/* Rodapé */}
             <CardFooter className="p-5 pt-0">
             <Button
                 variant="default"

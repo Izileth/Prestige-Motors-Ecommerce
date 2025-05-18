@@ -10,7 +10,7 @@ import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Slider } from "~/components/ui/slider"
 import { Badge } from "~/components/ui/badge"
-import { Heart, ChevronRight, Filter, Zap, ShieldCheck, Calendar, Gauge, MapPin, X, Search} from "lucide-react"
+import { Heart, ChevronRight, Crown, Flame, Filter, Zap, ShieldCheck, Calendar, Gauge, MapPin, X, Search} from "lucide-react"
 import type { Vehicle } from "~/types/vehicle"
 import type { VehicleSearchParams } from "~/types/vehicle"
 import { motion, AnimatePresence } from "framer-motion"
@@ -164,14 +164,14 @@ const VehicleListingPage = () => {
                   placeholder="Buscar por modelo..."
                   value={searchParams.modelo || ""}
                   onChange={handleSearchChange}
-                  className="w-full pl-10 border-gray-200 dark:border-gray-800 focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-400 transition-all"
+                  className="w-full pl-10 border-b-zinc-950 rounded-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-zinc-900 transition-all"
                 />
               </div>
             </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 transition-all ${
+              className={`flex items-center gap-2 shadow-none border-none hover:bg-gray-100 dark:hover:bg-gray-900 transition-all ${
                 showFilters ? "bg-gray-100 dark:bg-gray-900" : ""
               }`}
             >
@@ -191,9 +191,9 @@ const VehicleListingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="container mx-auto px-4 relative z-10"
+            className="container mx-auto px-2 lg:px-4 relative z-10"
           >
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg mb-8 border border-gray-100 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900 p-4 lg:p-6 rounded-none shadow-none mb-8 border border-gray-100 dark:border-gray-800">
               <h3 className="text-lg font-medium mb-6 text-gray-900 dark:text-gray-100">Filtrar veículos</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
@@ -433,7 +433,27 @@ const VehicleListingPage = () => {
                               <ShieldCheck size={14} /> Original
                             </Badge>
                           )}
+                          {vehicle.classe && (
+                            <Badge
+                              variant="secondary"
+                              className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                            >
+                                <Flame size={14} />
+                              Classe {vehicle?.classe}
+                            </Badge>
+                          )}
+                        
                         </div>
+                        
+                        {vehicle.categoria && (
+                            <Badge
+                              variant="secondary"
+                              className="bg-zinc-950 absolute top-4 left-2 text-zinc-50 dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                            >
+                              <Crown size={14} /> 
+                              {vehicle?.categoria}
+                            </Badge>
+                          )}
 
                         <Button
                           variant="ghost"
@@ -454,6 +474,8 @@ const VehicleListingPage = () => {
                             }
                           />
                         </Button>
+                    
+
                       </div>
 
                       <CardContent className="p-5 space-y-4">

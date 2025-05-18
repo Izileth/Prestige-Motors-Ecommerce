@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import useVehicle from './useVehicle'
 import type { Vehicle } from '../types/vehicle'
 
-export const useRandomVehicles = (count: number = 4) => {
+export const useRandomVehicles = (count: number = 6) => {
   const {  fetchVehicles, vehicles, loading } = useVehicle()
   const [randomVehicles, setRandomVehicles] = useState<Vehicle[]>([])
   const isMounted = useRef(true)

@@ -56,7 +56,7 @@ export function Testimonials() {
                 }}
                 whileHover={{ y: -8 }}
                 transition={{ duration: 0.4 }}
-                className="group border border-gray-100 dark:border-gray-800 p-8 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300"
+                className="group border border-transparent dark:border-gray-800 p-8 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300"
                 >
                 <div className="flex items-center mb-6">
                     {[...Array(5)].map((_, i) => (

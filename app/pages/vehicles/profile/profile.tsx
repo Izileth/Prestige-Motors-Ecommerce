@@ -124,7 +124,7 @@ export function UserVehicleList() {
 
     const handleStatusChange = async (vehicleId: string, newStatus: string) => {
         try {
-        await updateStatus({ id: vehicleId, status: newStatus })
+            await updateStatus(vehicleId, newStatus); // ✅ Dois argumentos separados
         // O estado é atualizado automaticamente pelo Redux
         } catch (error) {
         console.error("Erro ao atualizar status:", error)
@@ -457,7 +457,7 @@ export function UserVehicleList() {
                                     </span>
                                     <span className="flex items-center gap-1">
                                     <Gauge className="h-3 w-3" />
-                                    {vehicle.quilometragem.toLocaleString("pt-BR")} km
+                                    {vehicle.quilometragem?.toLocaleString("pt-BR")} km
                                     </span>
                                 </div>
                                 </div>
@@ -662,7 +662,7 @@ export function UserVehicleList() {
                             </span>
                             <span className="flex items-center gap-1">
                                 <Gauge className="h-3 w-3" />
-                                {vehicle.quilometragem.toLocaleString("pt-BR")} km
+                                {vehicle.quilometragem?.toLocaleString("pt-BR")} km
                             </span>
                             </div>
                         </div>

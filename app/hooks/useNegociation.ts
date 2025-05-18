@@ -1,21 +1,21 @@
-import { useAppDispatch, useAppSelector } from '~/store/hooks';
-import { createNegotiation, fetchUserNegotiations, clearNegotiations } from '~/store/slices/negociation';
+// useNegotiation.ts
+import { useNegotiationStore } from "~/store/slices/negociation";
+
 const useNegotiation = () => {
-    const dispatch = useAppDispatch();
-    const negociationState = useAppSelector((state) => state.vehicle);
+    // Obtém todo o estado e ações do store de negociações
+    const negotiationStore = useNegotiationStore();
 
     return {
-        ...negociationState,
-    
+        // Estado
+        negotiations: negotiationStore.negotiations,
+        loading: negotiationStore.loading,
+        error: negotiationStore.error,
+        success: negotiationStore.success,
         
-        // Negociações
+        // Ações
         createNegotiation: async (vehicleId: string, message: string) => {
         try {
-            const result = await dispatch(createNegotiation({ vehicleId, message }));
-            if (createNegotiation.fulfilled.match(result)) {
-            return result.payload;
-            }
-            throw new Error(result.error?.message || 'Failed to create negotiation');
+            return await negotiationStore.createNegotiation(vehicleId, message);
         } catch (error) {
             console.error('Negotiation error:', error);
             throw error;
@@ -24,19 +24,15 @@ const useNegotiation = () => {
         
         fetchUserNegotiations: async () => {
         try {
-            const result = await dispatch(fetchUserNegotiations());
-            if (fetchUserNegotiations.fulfilled.match(result)) {
-            return result.payload;
-            }
-            throw new Error(result.error?.message || 'Failed to fetch negotiations');
+            await negotiationStore.fetchUserNegotiations();
         } catch (error) {
             console.error('Fetch negotiations error:', error);
             throw error;
         }
         },
         
-        clearNegotiations: () => dispatch(clearNegotiations())
+        clearNegotiations: negotiationStore.clearNegotiations
     };
-};
+    };
 
-export default useNegotiation
+export default useNegotiation;

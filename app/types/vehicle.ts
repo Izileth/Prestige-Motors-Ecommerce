@@ -101,6 +101,7 @@ export interface VehicleSearchParams {
     cambio?: string;
     categoria?: string;
     destaque?: boolean;
+    classe?: string;
 }
 
 

@@ -69,9 +69,11 @@ export const vehicleService = {
 
 
 
-    async addFavorite(vehicleId: string): Promise<{id: string}> {
-        const response = await api.post(`/vehicles/${vehicleId}/favorites`);
-        return { id: vehicleId };
+    async addFavorite(vehicleId: string): Promise<Vehicle> {
+        await api.post(`/vehicles/${vehicleId}/favorites`);
+        // Busca o veículo completo após adicionar aos favoritos
+        const response = await api.get(`/vehicles/${vehicleId}`);
+        return response.data;
     },
 
     async removeFavorite(vehicleId: string): Promise<{id: string}> {

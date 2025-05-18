@@ -15,6 +15,7 @@ import { Badge } from "~/components/ui/badge"
 import { ExpecionalCars } from "~/data/carousel"
 import { Carousel } from "~/components/template/carousel/carousel"
 
+
 export const VehiclesByCategoryPage = () => {
   const location = useLocation()
   const [filters, setFilters] = usePersistentFilters<VehicleSearchParams>({})
@@ -70,7 +71,7 @@ export const VehiclesByCategoryPage = () => {
   }
 
   const resetFilters = () => {
-    setFilters({})
+    fetchVehicles()
     setShowFilters(false)
   }
 
@@ -101,7 +102,7 @@ export const VehiclesByCategoryPage = () => {
           scrolled ? "py-4 shadow-sm" : "py-8"
         }`}
       >
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 mt-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -111,7 +112,7 @@ export const VehiclesByCategoryPage = () => {
             >
               <h1 className="text-2xl font-extralight tracking-tight text-gray-900 dark:text-gray-100">
                 {filters.categoria
-                  ? `VEÍCULOS ${getCategoryName(filters.categoria).toUpperCase()}`
+                  ? `VEÍCULOS DA CATEGORIA ${getCategoryName(filters.categoria).toUpperCase()}`
                   : "TODOS OS VEÍCULOS"}
               </h1>
               {vehicles.length > 0 && !loading && (
@@ -158,7 +159,7 @@ export const VehiclesByCategoryPage = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto ">
         {/* Expandable filters */}
         <AnimatePresence>
           {showFilters && (
@@ -167,18 +168,18 @@ export const VehiclesByCategoryPage = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-              className="overflow-hidden mb-8"
+              className="overflow-hidden mb-8 shadow-none border-none"
             >
               <motion.div
                 initial={{ y: -20 }}
                 animate={{ y: 0 }}
                 exit={{ y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="border border-gray-100 dark:border-gray-800 rounded-none bg-white dark:bg-gray-900 p-6 mt-4"
+                className="border-none shadow-none border-gray-100 dark:border-gray-800 rounded-none bg-white dark:bg-gray-900  mt-4"
               >
                 <VehicleFilters searchParams={filters} onFilterChange={handleFilterChange} onReset={resetFilters} />
 
-                <div className="flex justify-end mt-6">
+                <div className="flex justify-end mt-6 shadow-none border-none">
                   <Button
                     onClick={() => setShowFilters(false)}
                     variant="outline"
@@ -195,7 +196,7 @@ export const VehiclesByCategoryPage = () => {
         </AnimatePresence>
 
         {/* Vehicle listing */}
-        <div className="py-8">
+        <div className="py-8 px-4">
           {error ? (
               <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -279,7 +280,7 @@ export const VehiclesByCategoryPage = () => {
                   },
                 },
               }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             >
               {vehicles.map((vehicle) => (
                 <motion.div

@@ -1,88 +1,77 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+// negotiation-store.ts
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import negociationsService from '~/services/negociation';
 import type { Negotiation } from '~/types/negociation';
 
-
-// Adicione ao estado inicial
-interface negociationState {
-    negotiations: Negotiation[];
-    negotiationsLoading: boolean;
-    negotiationsError: string | null;
-    loading: boolean;
-    error: string | null;
-    success: boolean;
+interface NegotiationState {
+  negotiations: Negotiation[];
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+  
+  // Ações
+  createNegotiation: (vehicleId: string, message: string) => Promise<Negotiation>;
+  fetchUserNegotiations: () => Promise<void>;
+  clearNegotiations: () => void;
+  
+  // Para integração com Redux
+  setNegotiationsFromRedux: (negotiations: Negotiation[]) => void;
 }
 
-const initialState: negociationState = {
-    negotiations: [],
-    negotiationsLoading: false,
-    negotiationsError: null,
-    loading: false,
-    error: null,
-    success: false,
-};
+export const useNegotiationStore = create<NegotiationState>()(
+    persist(
+        (set, get) => ({
+        negotiations: [],
+        loading: false,
+        error: null,
+        success: false,
 
-export const createNegotiation = createAsyncThunk(
-    'vehicles/createNegotiation',
-    async ({ vehicleId, message }: { vehicleId: string; message: string }, { rejectWithValue }) => {
-        try {
-        return await negociationsService.createNegotiation(vehicleId, message);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to Create Negociation');
+        createNegotiation: async (vehicleId, message) => {
+            set({ loading: true, error: null, success: false });
+            try {
+            const negotiation = await negociationsService.createNegotiation(vehicleId, message);
+            set(state => ({
+                negotiations: [negotiation, ...state.negotiations],
+                loading: false,
+                success: true
+            }));
+            return negotiation;
+            } catch (error) {
+            set({ 
+                loading: false, 
+                error: error instanceof Error ? error.message : 'Failed to create negotiation' 
+            });
+            throw error;
+            }
+        },
+
+        fetchUserNegotiations: async () => {
+            set({ loading: true, error: null });
+            try {
+            const negotiations = await negociationsService.getUserNegotiations();
+            set({ negotiations, loading: false });
+            } catch (error) {
+            set({ 
+                loading: false, 
+                error: error instanceof Error ? error.message : 'Failed to fetch negotiations' 
+            });
+            }
+        },
+
+        clearNegotiations: () => {
+            set({ negotiations: [], error: null });
+        },
+
+        setNegotiationsFromRedux: (negotiations) => {
+            set({ negotiations });
         }
-    }
+        }),
+        {
+        name: 'negotiation-storage',
+        partialize: (state) => ({
+            negotiations: state.negotiations
+        }),
+        }
+    )
 );
-
-export const fetchUserNegotiations = createAsyncThunk(
-    'vehicles/fetchUserNegotiations',
-    async (_, { rejectWithValue }) => {
-        try {
-        return await negociationsService.getUserNegotiations();
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to Fetch Negociation');
-        }
-    }
-);
-
-// Adicione os reducers
-const negociationSlice = createSlice({
-    name: 'vehicle/negociation',
-    initialState,
-    reducers: {
-        // ... outros reducers ...
-        clearNegotiations(state) {
-        state.negotiations = [];
-        state.negotiationsError = null;
-        }
-    },
-    extraReducers: (builder) => {
-        // ... outros builders ...
-        
-        builder.addCase(createNegotiation.pending, (state) => {
-        state.negotiationsLoading = true;
-        });
-        builder.addCase(createNegotiation.fulfilled, (state, action) => {
-        state.negotiationsLoading = false;
-        state.negotiations.unshift(action.payload);
-        });
-        builder.addCase(createNegotiation.rejected, (state, action) => {
-        state.negotiationsLoading = false;
-        state.negotiationsError = action.payload as string;
-        });
-        
-        builder.addCase(fetchUserNegotiations.pending, (state) => {
-        state.negotiationsLoading = true;
-        });
-        builder.addCase(fetchUserNegotiations.fulfilled, (state, action) => {
-        state.negotiationsLoading = false;
-        state.negotiations = action.payload;
-        });
-        builder.addCase(fetchUserNegotiations.rejected, (state, action) => {
-        state.negotiationsLoading = false;
-        state.negotiationsError = action.payload as string;
-        });
-    }
-});
-
-export const { clearNegotiations } = negociationSlice.actions;
-export default negociationSlice.reducer;

@@ -1,5 +1,5 @@
 import type { Route } from "./+types/negociation";
-import RegisterPage from "~/pages/auth/register";
+import NegotiationsPage from "~/pages/vehicles/negociation/negociation";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Negociação | Prestige Motors" },
@@ -9,6 +9,6 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Negociation() {
     return (
-        <RegisterPage/>
+        <NegotiationsPage/>
     );
 }

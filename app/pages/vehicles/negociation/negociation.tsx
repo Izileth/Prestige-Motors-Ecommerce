@@ -16,7 +16,7 @@ import { Skeleton } from "~/components/ui/skeleton"
 const NegotiationsPage = () => {
     const { user } = useAuth()
     const { fetchUserFavorites, favorites, loading, removeFavorite } = useVehicle()
-    const { clearNegotiations, createNegotiation, currentVehicle } = useNegotiation()
+    const { clearNegotiations, createNegotiation } = useNegotiation()
     const [activeTab, setActiveTab] = useState<"favorites" | "negotiations">("favorites")
     const [message, setMessage] = useState("")
     const [expandedVehicle, setExpandedVehicle] = useState<string | null>(null)
