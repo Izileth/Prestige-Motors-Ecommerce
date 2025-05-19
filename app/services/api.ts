@@ -11,7 +11,10 @@ const api = axios.create({
   baseURL: 'https://prestige-motors-api.onrender.com/api',
   timeout: 100000,
   withCredentials: true,
-  
+  headers: {
+    'Accept': 'application/json',
+    'Cache-Control': 'no-cache'
+  },
   
   // Adicione esta configuração para prevenir transformação automática
   transformRequest: [
@@ -34,62 +37,83 @@ const api = axios.create({
   
 // Interceptor para adicionar o token de autorização, se disponível
 // Interceptor para adicionar Headers comuns
+
 api.interceptors.request.use(config => {
-  // Não mexa nos headers para FormData
-  if (!(config.data instanceof FormData)) {
-    config.headers['Content-Type'] = 'application/json';
+  if (config.data instanceof FormData) {
+    config.headers['Content-Type'] = 'multipart/form-data';
+    return config;
   }
   
-  // Não precisamos adicionar o token manualmente porque o cookie HTTP-only
-  // será enviado automaticamente em todas as requisições devido ao withCredentials: true
+  if (typeof config.data === 'object' && !config.headers['Content-Type']) {
+    config.headers['Content-Type'] = 'application/json';
+    config.data = JSON.stringify(config.data);
+  }
   
   return config;
 });
 
 // Interceptor de resposta para tratamento de erros
 // Interceptor de resposta para tratamento de erros
+
 api.interceptors.response.use(
   response => response,
   error => {
-    // Logs para depuração
-    if (error.code === 'ECONNABORTED') {
-      console.error('Timeout - servidor demorou muito para responder');
-    }
+    const currentTime = Date.now();
     
-    if (error.response) {
-      console.error('Erro detalhado:', {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
+    // Tratamento específico para timeout
+    if (error.code === 'ECONNABORTED') {
+      console.error('Timeout: Servidor não respondeu a tempo');
+      return Promise.reject({ 
+        customError: 'SERVER_TIMEOUT',
+        message: 'O servidor demorou muito para responder' 
       });
     }
-    
-    // Tratamento de erros de autenticação (401)
+
+    // Tratamento para erro 401 (Não Autorizado)
     if (error.response?.status === 401) {
-      // Verifica se já estamos na página de login para evitar loops
-      const isLoginPage = window.location.pathname === '/login';
-      const currentTime = Date.now();
-      
-      // Evita redirecionamentos em cascata ou muito frequentes
-      if (!isLoginPage && !isRedirecting && (currentTime - lastRedirectTime > REDIRECT_COOLDOWN)) {
-        isRedirecting = true;
-        lastRedirectTime = currentTime;
-        
-        console.log('Sessão expirada. Redirecionando para login...');
-        
-        // Usa setTimeout para garantir que o redirecionamento aconteça após a conclusão
-        // de outras operações pendentes
-        setTimeout(() => {
-          window.location.href = '/login';
-          // Reseta a flag após o redirecionamento
-          setTimeout(() => {
-            isRedirecting = false;
-          }, 1000);
-        }, 100);
+      if (shouldRedirectToLogin()) { // Função auxiliar
+        handleUnauthorizedRedirect();
       }
+      return Promise.reject({
+        customError: 'UNAUTHORIZED',
+        message: 'Sessão expirada ou não autorizada'
+      });
     }
-    
-    return Promise.reject(error);
+
+    // Tratamento para erro 403 (Proibido)
+    if (error.response?.status === 403) {
+      return Promise.reject({
+        customError: 'FORBIDDEN',
+        message: 'Você não tem permissão para esta ação'
+      });
+    }
+
+    // Padrão para outros erros
+    return Promise.reject({
+      customError: 'SERVER_ERROR',
+      message: error.response?.data?.message || 'Erro desconhecido no servidor'
+    });
   }
 );
+
+// Funções auxiliares
+function shouldRedirectToLogin() {
+  return (
+    !window.location.pathname.includes('/login') &&
+    !isRedirecting &&
+    (Date.now() - lastRedirectTime > REDIRECT_COOLDOWN)
+  );
+}
+
+function handleUnauthorizedRedirect() {
+  isRedirecting = true;
+  lastRedirectTime = Date.now();
+  
+  setTimeout(() => {
+    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    setTimeout(() => isRedirecting = false, 1000);
+  }, 100);
+}
+
+
 export default api;
