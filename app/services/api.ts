@@ -8,7 +8,7 @@ const REDIRECT_COOLDOWN = 5000;
 let lastRedirectTime = 0;
 
 const api = axios.create({
-  baseURL: 'http://localhost:4242/api',
+  baseURL: 'https://prestige-motors-api.onrender.com/api',
   timeout: 100000,
   withCredentials: true,
   
