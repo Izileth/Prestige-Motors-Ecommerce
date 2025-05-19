@@ -1,124 +1,95 @@
 import axios from 'axios';
-import { AxiosError } from 'axios';
-import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-// Extendendo a interface do Axios
-declare module 'axios' {
-  interface InternalAxiosRequestConfig {
-    _retry?: boolean;
-  }
-}
+// Cache para evitar múltiplos redirecionamentos
+let isRedirecting = false;
 
-const API_URL = 'http://localhost:4242/api';
+// Tempo mínimo entre redirecionamentos (em milissegundos)
+const REDIRECT_COOLDOWN = 5000;
+let lastRedirectTime = 0;
 
-let isRefreshing = false;
-let failedQueue: Array<{
-    resolve: (value?: unknown) => void;
-    reject: (reason?: any) => void;
-    config: InternalAxiosRequestConfig;
-}> = [];
-
-const processQueue = (error: Error | null, token: string | null = null) => {
-  failedQueue.forEach(request => {
-    if (error) {
-      request.reject(error);
-    } else {
-      if (token) {
-        request.config.headers.Authorization = `Bearer ${token}`;
-      }
-      request.resolve();
-    }
-  });
-  
-  failedQueue = [];
-};
-
-const api: AxiosInstance = axios.create({
-  baseURL: API_URL,
+const api = axios.create({
+  baseURL: 'http://localhost:4242/api',
+  timeout: 100000,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-  },
+  
+  
+  // Adicione esta configuração para prevenir transformação automática
+  transformRequest: [
+    function (data, headers) {
+      // Se for FormData, não transforme e deixe o axios lidar com os headers
+      if (data instanceof FormData) {
+        return data;
+      }
+      
+      // Para outros tipos de dados, transforme em JSON
+      if (typeof data === 'object') {
+        headers['Content-Type'] = 'application/json';
+        return JSON.stringify(data);
+      }
+      
+      return data;
+    }
+  ]
+});
+  
+// Interceptor para adicionar o token de autorização, se disponível
+// Interceptor para adicionar Headers comuns
+api.interceptors.request.use(config => {
+  // Não mexa nos headers para FormData
+  if (!(config.data instanceof FormData)) {
+    config.headers['Content-Type'] = 'application/json';
+  }
+  
+  // Não precisamos adicionar o token manualmente porque o cookie HTTP-only
+  // será enviado automaticamente em todas as requisições devido ao withCredentials: true
+  
+  return config;
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
+// Interceptor de resposta para tratamento de erros
+// Interceptor de resposta para tratamento de erros
 api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  async (error: AxiosError) => {
-    if (error.response?.status !== 401) {
-      return Promise.reject(error);
+  response => response,
+  error => {
+    // Logs para depuração
+    if (error.code === 'ECONNABORTED') {
+      console.error('Timeout - servidor demorou muito para responder');
     }
     
-    const isPublicPage = window.location.pathname === '/login' || 
-                       window.location.pathname === '/register';
-    if (isPublicPage) {
-      return Promise.reject(error);
-    }
-
-    const originalRequest = error.config as InternalAxiosRequestConfig;
-    
-    if (originalRequest && originalRequest._retry) {
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
-      return Promise.reject(error);
-    }
-    
-    if (originalRequest) {
-      originalRequest._retry = true;
-    }
-    
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject, config: originalRequest });
+    if (error.response) {
+      console.error('Erro detalhado:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
       });
     }
     
-    isRefreshing = true;
-    
-    try {
-      const response = await axios.post(
-        `${API_URL}/auth/refresh-token`,
-        {},
-        { withCredentials: true }
-      );
+    // Tratamento de erros de autenticação (401)
+    if (error.response?.status === 401) {
+      // Verifica se já estamos na página de login para evitar loops
+      const isLoginPage = window.location.pathname === '/login';
+      const currentTime = Date.now();
       
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+      // Evita redirecionamentos em cascata ou muito frequentes
+      if (!isLoginPage && !isRedirecting && (currentTime - lastRedirectTime > REDIRECT_COOLDOWN)) {
+        isRedirecting = true;
+        lastRedirectTime = currentTime;
         
-        if (originalRequest) {
-          originalRequest.headers.Authorization = `Bearer ${response.data.token}`;
-        }
+        console.log('Sessão expirada. Redirecionando para login...');
         
-        processQueue(null, response.data.token);
-        return api(originalRequest);
-      }
-    } catch (refreshError) {
-      processQueue(new Error('Falha ao renovar token'));
-      localStorage.removeItem('token');
-      
-      if (typeof window !== 'undefined') {
-        if (window.location.pathname !== '/login') {
+        // Usa setTimeout para garantir que o redirecionamento aconteça após a conclusão
+        // de outras operações pendentes
+        setTimeout(() => {
           window.location.href = '/login';
-        }
+          // Reseta a flag após o redirecionamento
+          setTimeout(() => {
+            isRedirecting = false;
+          }, 1000);
+        }, 100);
       }
-    } finally {
-      isRefreshing = false;
     }
     
     return Promise.reject(error);
   }
 );
-
 export default api;
