@@ -7,13 +7,17 @@ let isRedirecting = false;
 const REDIRECT_COOLDOWN = 5000;
 let lastRedirectTime = 0;
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const api = axios.create({
-  baseURL: 'https://prestige-motors-api.onrender.com/api',
-  timeout: 100000,
+  baseURL: isDev 
+    ? 'http://localhost:4242/api' 
+    : 'https://prestige-motors-api.onrender.com/api',
   withCredentials: true,
+  timeout: 100000,
   headers: {
     'Accept': 'application/json',
-    'Cache-Control': 'no-cache'
+    'Content-Type': 'application/json'
   },
   
   // Adicione esta configuração para prevenir transformação automática
