@@ -22,8 +22,6 @@ const api = axios.create({
     headers: {
     'Accept': 'application/json',
     'Cache-Control': 'no-cache',
-    'Cross-Origin-Opener-Policy': 'same-origin', // Novo
-    'Cross-Origin-Embedder-Policy': 'require-corp' // Novo
   },
   
   // Adicione esta configuração para prevenir transformação automática
