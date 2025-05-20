@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Textarea } from "~/components/ui/textarea"
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { X } from "lucide-react";
 import {
     Heart,
     Star,
@@ -32,6 +34,8 @@ import useVehicle from "~/hooks/useVehicle"
 import type { ReviewCreateInput } from "~/types/inputs"
 import { motion, AnimatePresence } from "framer-motion"
 
+import type { VehicleError } from "~/types/vehicle"
+
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -54,6 +58,8 @@ const VehicleDetailsPage = () => {
   })
   const [isPostingReview, setIsPostingReview] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+
+  const [vehicleError, setVehicleError] = useState<VehicleError | null>(null);
 
   useEffect(() => {
     if (!id) return
@@ -89,44 +95,60 @@ const VehicleDetailsPage = () => {
     return Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId)
   }
 
+
+
   const toggleFavorite = async () => {
-    if (!currentVehicle) return
+    if (!currentVehicle) return;
 
     try {
       if (isFavorite(currentVehicle.id)) {
-        await removeFavorite(currentVehicle.id)
+        await removeFavorite(currentVehicle.id);
       } else {
-        await addFavorite(currentVehicle.id)
+        await addFavorite(currentVehicle.id);
       }
-      await fetchUserFavorites()
-    } catch (error) {
-      console.error("Erro ao atualizar favoritos:", error)
+      await fetchUserFavorites();
+      setVehicleError(null); // Limpa o erro se a operação for bem-sucedida
+    } catch (err) {
+      const error = err as Error;
+      
+      if (error.message === 'User not authenticated') {
+        setVehicleError({
+          message: 'Você precisa fazer login para adicionar aos favoritos',
+          type: 'auth'
+        });
+      } else {
+        setVehicleError({
+          message: 'Ocorreu um erro ao atualizar seus favoritos',
+          type: 'api'
+        });
+        console.error("Erro ao atualizar favoritos:", error);
+      }
     }
-  }
+  };
+
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!id) return
+    e.preventDefault();
+    if (!id) return;
 
     try {
-      setIsPostingReview(true)
-
-      await createReview(id, newReview)
-      setNewReview({ rating: 5, comentario: "" })
-
-      navigate(`/vehicles/${id}`, {
-        state: { activeTab: "reviews" },
-        replace: true,
-      })
-
-      window.location.reload()
+      setIsPostingReview(true);
+      await createReview(id, newReview);
+      setNewReview({ rating: 5, comentario: "" });
+      setVehicleError(null);
+      
+      // Recarrega apenas a seção de avaliações
+      await fetchVehicleById(id);
     } catch (error) {
-      console.error("Erro ao enviar avaliação:", error)
-      alert("Não foi possível enviar sua avaliação")
+      const err = error as Error;
+      setVehicleError({
+        message: err.message || 'Não foi possível enviar sua avaliação',
+        type: 'api'
+      });
     } finally {
-      setIsPostingReview(false)
+      setIsPostingReview(false);
     }
-  }
+  };
 
   const handleShare = async () => {
     if (!currentVehicle) return
@@ -204,20 +226,63 @@ const VehicleDetailsPage = () => {
           <p className="text-gray-600 dark:text-gray-400">Carregando informações do veículo...</p>
         </div>
       </div>
-    )
+  )
 
-  if (error)
+  if (error) {
+    {vehicleError && (
+      <div className="fixed bottom-4 right-4 z-50 max-w-md">
+        <Alert variant={vehicleError.type === 'auth' ? 'default' : 'destructive'}>
+          <div className="flex justify-between items-start">
+            <div>
+              <AlertTitle>
+                {vehicleError.type === 'auth' ? 'Ação requerida' : 'Erro'}
+              </AlertTitle>
+              <AlertDescription>
+                {vehicleError.message}
+                {vehicleError.type === 'auth' && (
+                  <Button
+                    variant="link"
+                    className="h-auto p-0 ml-2 text-inherit underline"
+                    onClick={() => navigate('/login', { state: { from: location.pathname } })}
+                  >
+                    Fazer login
+                  </Button>
+                )}
+              </AlertDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => setVehicleError(null)}
+            >
+              <X size={16} />
+            </Button>
+          </div>
+        </Alert>
+      </div>
+    )}
+  }
+
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
         <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 text-center">
           <div className="text-red-500 mb-4 text-lg">Erro ao carregar o veículo</div>
           <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-          <Button onClick={() => navigate(-1)}>
-            <ChevronLeft size={16} className="mr-2" /> Voltar
-          </Button>
+          <div className="flex justify-center gap-4">
+            <Button onClick={() => navigate(-1)}>
+              <ChevronLeft size={16} className="mr-2" /> Voltar
+            </Button>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Tentar novamente
+            </Button>
+          </div>
         </div>
       </div>
-    )
+    );
+  }
+    
 
   if (!currentVehicle)
     return (

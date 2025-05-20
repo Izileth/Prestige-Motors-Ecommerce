@@ -131,3 +131,8 @@ export interface VehicleCreateInput {
     precoPromocional?: number;
     status?: 'DISPONIVEL' | 'VENDIDO' | 'RESERVADO'; 
 }
+
+export type VehicleError = {
+    message: string;
+    type?: 'auth' | 'api' | 'validation';
+};

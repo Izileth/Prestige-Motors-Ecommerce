@@ -3,9 +3,10 @@ import { useCallback } from 'react';
 import { useVehicleStore } from '~/store/slices/vehicle';
 import type { Vehicle, VehicleCreateInput, VehicleSearchParams } from '~/types/vehicle';
 import type { VehicleUpdateInput } from '~/types/inputs';
-
+import { useAuth } from './useAuth';
 
 const useVehicle = () => {
+  const { isAuthenticated } = useAuth(); // Obtenha o estado de autenticação
   const {
     // Estado
     vehicles,
@@ -57,6 +58,40 @@ const useVehicle = () => {
       : {};
     return fetchVehicles(normalizedParams);
   }, [fetchVehicles]);
+
+  // Modificado para lidar com usuários não autenticados
+  const fetchUserFavoritesSafe = useCallback(async () => {
+    if (!isAuthenticated) {
+      return []; // Retorna array vazio se não autenticado
+    }
+    try {
+      return await fetchUserFavorites();
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      return []; // Retorna array vazio em caso de erro
+    }
+  }, [fetchUserFavorites, isAuthenticated]);
+
+  // Modificado para lidar com usuários não autenticados
+  const addFavoriteSafe = useCallback(async (vehicleId: string) => {
+    if (!isAuthenticated) {
+      throw new Error('User not authenticated');
+    }
+    return addFavorite(vehicleId);
+  }, [addFavorite, isAuthenticated]);
+
+  // Modificado para lidar com usuários não autenticados
+  const removeFavoriteSafe = useCallback(async (vehicleId: string) => {
+    if (!isAuthenticated) {
+      throw new Error('User not authenticated');
+    }
+    return removeFavorite(vehicleId);
+  }, [removeFavorite, isAuthenticated]);
+
+  // Método utilitário seguro para verificar favoritos
+  const isFavoriteSafe = useCallback((vehicleId: string) => {
+    return isAuthenticated && favorites.some(v => v.id === vehicleId);
+  }, [favorites, isAuthenticated]);
 
   const createVehicleWithHandling = useCallback(async (data: VehicleCreateInput) => {
     try {
@@ -114,9 +149,9 @@ const useVehicle = () => {
     updateVehicle: updateVehicleWithHandling,
     deleteVehicle,
     fetchFeaturedVehicles,
-    fetchUserFavorites,
-    addFavorite,
-    removeFavorite,
+    fetchUserFavorites: fetchUserFavoritesSafe, // Usando a versão segura
+    addFavorite: addFavoriteSafe, // Usando a versão segura
+    removeFavorite: removeFavoriteSafe, // Usando a versão segura
     fetchVehicleReviews,
     createReview,
     uploadVehicleImages,
@@ -133,7 +168,7 @@ const useVehicle = () => {
     setCurrentVehicle,
 
     // Métodos utilitários
-    isFavorite: (vehicleId: string) => favorites.some(v => v.id === vehicleId),
+    isFavorite: isFavoriteSafe, // Usando a versão segura
     getUserVehicleCount: () => userVehicles.length,
     getVehicleById: (id: string) => vehicles.find(v => v.id === id) || null
   };

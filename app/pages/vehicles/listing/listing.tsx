@@ -10,18 +10,19 @@ import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Slider } from "~/components/ui/slider"
 import { Badge } from "~/components/ui/badge"
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
+
 import { Heart, ChevronRight, Crown, Flame, Filter, Zap, ShieldCheck, Calendar, Gauge, MapPin, X, Search} from "lucide-react"
 import type { Vehicle } from "~/types/vehicle"
 import type { VehicleSearchParams } from "~/types/vehicle"
 import { motion, AnimatePresence } from "framer-motion"
 import { Carousel } from "~/components/template/carousel/carousel"
 import { PrincipalCars } from "~/data/carousel"
-
+import type { VehicleError } from "~/types/vehicle"
 const VehicleListingPage = () => {
   const {
     vehicles,
     loading,
-    error,
     fetchVehicles,
     addFavorite,
     removeFavorite,
@@ -33,6 +34,7 @@ const VehicleListingPage = () => {
   const [showFilters, setShowFilters] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const filtersRef = useRef<HTMLDivElement>(null)
+  const [error, setError] = useState<VehicleError | null>(null);
   const navigate = useNavigate()
 
   // Effect for fetching favorites only once when component mounts
@@ -90,15 +92,29 @@ const VehicleListingPage = () => {
   const toggleFavorite = async (vehicle: Vehicle) => {
     try {
       if (isFavorite(vehicle.id)) {
-        await removeFavorite(vehicle.id)
+        await removeFavorite(vehicle.id);
       } else {
-        await addFavorite(vehicle.id)
+        await addFavorite(vehicle.id);
       }
-      await fetchUserFavorites()
-    } catch (error) {
-      console.error("Erro ao atualizar favoritos:", error)
+      await fetchUserFavorites();
+      setError(null); // Limpa o erro se a operação for bem-sucedida
+    } catch (err) {
+      const error = err as Error;
+      
+      if (error.message === 'User not authenticated') {
+        setError({
+          message: 'Você precisa fazer login para adicionar aos favoritos',
+          type: 'auth'
+        });
+      } else {
+        setError({
+          message: 'Ocorreu um erro ao atualizar seus favoritos',
+          type: 'api'
+        });
+        console.error("Erro ao atualizar favoritos:", error);
+      }
     }
-  }
+  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -145,8 +161,56 @@ const VehicleListingPage = () => {
     fetchVehicles(searchParams)
   }
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+  
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+      <AnimatePresence>
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="fixed bottom-4 right-4 z-50 max-w-md"
+        >
+          <Alert variant={error.type === 'auth' ? 'default' : 'destructive'}>
+          <div className="flex justify-between items-start">
+                <div>
+                  <AlertTitle>
+                    {error.type === 'auth' ? 'Ação requerida' : 'Erro'}
+                  </AlertTitle>
+                  <AlertDescription>
+                    {error.message}
+                    {error.type === 'auth' && (
+                      <Button
+                        variant="link"
+                        className="h-auto p-0 ml-2 text-inherit underline"
+                        onClick={() => navigate('/login', { state: { from: location.pathname } })}
+                      >
+                        Fazer login
+                      </Button>
+                    )}
+                  </AlertDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => setError(null)}
+                >
+                  <X size={16} />
+                </Button>
+              </div>
+          </Alert>
+        </motion.div>
+      )}
+    </AnimatePresence>
       <div
         className={`sticky top-0 z-10 bg-white dark:bg-gray-950 transition-all duration-300 ${
           scrolled ? "shadow-md py-3" : "py-6"
