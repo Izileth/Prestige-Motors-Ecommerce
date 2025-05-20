@@ -12,14 +12,20 @@ export const authService = {
     },
 
     async login(data: LoginData): Promise<AuthResponse> {
-        const response = await api.post('/users/login', data);
+        const response = await api.post('/users/login', data,  {
+            withCredentials: true, 
+        });
+
+        if (!response?.data) {
+            throw new Error("Dados do usuário não retornados pela API");
+        }
+
         return response.data;
-      
         
     },
 
     async logout(): Promise<void> {
-        await api.post('/users/logout');
+        await api.post('/users/logout',{}, { withCredentials: true });
     },
 
     async checkSession(): Promise<User | null> {

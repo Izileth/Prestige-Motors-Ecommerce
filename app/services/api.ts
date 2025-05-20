@@ -19,9 +19,11 @@ const api = axios.create({
     : 'https://prestige-motors-api.onrender.com/api',
   withCredentials: true,
   timeout: 100000,
-    headers: {
-    'Accept': 'application/json',
-    'Cache-Control': 'no-cache',
+    headers: { 
+      withCredntials: true,
+      credentials: 'include',
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache',
   },
   
   // Adicione esta configuração para prevenir transformação automática
