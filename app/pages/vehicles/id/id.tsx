@@ -228,7 +228,7 @@ const VehicleDetailsPage = () => {
       </div>
   )
 
-  if (error) {
+  if (vehicleError) {
     {vehicleError && (
       <div className="fixed bottom-4 right-4 z-50 max-w-md">
         <Alert variant={vehicleError.type === 'auth' ? 'default' : 'destructive'}>
@@ -300,9 +300,9 @@ const VehicleDetailsPage = () => {
     )
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-16">
+    <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 pb-16">
       <div
-        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 ${
+        className={`sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 ${
           scrolled ? "shadow-sm py-3" : "py-6"
         }`}
       >
@@ -385,7 +385,7 @@ const VehicleDetailsPage = () => {
             >
               {currentVehicle.imagens && currentVehicle.imagens.length > 0 ? (
                 <div className="space-y-4">
-                  <div className="relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900 aspect-[16/9]">
+                  <div className="relative rounded-lg overflow-hidden bg-zinc-50 dark:bg-gray-900 aspect-[16/9]">
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={activeImage}

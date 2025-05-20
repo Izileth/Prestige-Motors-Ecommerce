@@ -98,6 +98,7 @@ export interface VehicleSearchParams {
     anoMin?: number;
     anoMax?: number;
     combustivel?: string;
+    carroceria?: string;
     cambio?: string;
     categoria?: string;
     destaque?: boolean;

@@ -16,12 +16,13 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import type { Vehicle } from "~/types/vehicle";
 import useVehicle from "~/hooks/useVehicle";
-
+import type { VehicleError } from "~/types/vehicle";
 interface VehicleCardProps {
     vehicle: Vehicle;
     isFavorite?: boolean;
     onToggleFavorite?: (vehicle: Vehicle) => void;
     index?: number; // Para animação sequencial
+    onError?: (error: VehicleError) => void; // Adicione esta prop
 }
 
 export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
@@ -35,6 +36,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         removeFavorite,
         fetchUserFavorites,
         favorites,
+        isFavorite: isFavoriteSafe // Use a versão segura do hook
     } = useVehicle();
 
     const formatPrice = (price: number) => {
@@ -151,30 +153,29 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                 {vehicle?.categoria}
                 </Badge>
             )}
-
             <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-3 right-3 rounded-full bg-white/90 dark:bg-black/90 hover:bg-white dark:hover:bg-black shadow-sm transition-transform duration-300 transform group-hover:scale-110"
-                onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(vehicle);
-                }}
-                aria-label={
-                isFavorite(vehicle.id)
-                    ? "Remover dos favoritos"
-                    : "Adicionar aos favoritos"
-                }
-            >
-                <Heart
-                size={18}
-                className={
-                    isFavorite(vehicle.id)
-                    ? "fill-black text-black dark:fill-white dark:text-white"
-                    : "text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors"
-                }
-                />
-            </Button>
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-3 right-3 rounded-full bg-white/90 dark:bg-black/90 hover:bg-white dark:hover:bg-black shadow-sm transition-transform duration-300 transform group-hover:scale-110"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(vehicle);
+                    }}
+                    aria-label={
+                        isFavoriteSafe(vehicle.id)
+                            ? "Remover dos favoritos"
+                            : "Adicionar aos favoritos"
+                    }
+                >
+                    <Heart
+                        size={18}
+                        className={
+                            isFavoriteSafe(vehicle.id)
+                                ? "fill-black text-black dark:fill-white dark:text-white"
+                                : "text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors"
+                        }
+                    />
+            </Button>        
             </div>
 
             <CardContent className="p-5 space-y-4">

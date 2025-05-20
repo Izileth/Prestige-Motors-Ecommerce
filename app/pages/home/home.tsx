@@ -10,9 +10,9 @@ export function Welcome() {
         <main className="flex flex-col max-w-full w-full">
             <Carousel items={DestactsCars}/>
             <CategoryGrid/>
-            <Testimonials/>
             <RandomVehicles/>
             <PartnerBrands/>
+            <Testimonials/>
             <SignupCTA/>
         </main>
     )

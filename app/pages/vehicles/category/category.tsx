@@ -56,7 +56,7 @@ export const VehiclesByCategoryPage = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleFilterChange = (field: keyof VehicleSearchParams, value: string | number) => {
+  const handleFilterChange = (field: keyof VehicleSearchParams, value: string | number | boolean | undefined) => {
     setFilters((prev) => ({
       ...prev,
       [field]: value === "All" ? undefined : value,
@@ -69,6 +69,7 @@ export const VehiclesByCategoryPage = () => {
       }
     }, 100)
   }
+
 
   const resetFilters = () => {
     fetchVehicles()
