@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+document.cookie = "testCookie=1; SameSite=None; Secure; domain=.vortex-motors-services.vercel.app";
+console.log('Cookies disponíveis:', document.cookie);
+
 // Cache para evitar múltiplos redirecionamentos
 let isRedirecting = false;
 
@@ -15,9 +18,11 @@ const api = axios.create({
     : 'https://prestige-motors-api.onrender.com/api',
   withCredentials: true,
   timeout: 100000,
-  headers: {
+    headers: {
     'Accept': 'application/json',
-    'Content-Type': 'application/json'
+    'Cache-Control': 'no-cache',
+    'Cross-Origin-Opener-Policy': 'same-origin', // Novo
+    'Cross-Origin-Embedder-Policy': 'require-corp' // Novo
   },
   
   // Adicione esta configuração para prevenir transformação automática
