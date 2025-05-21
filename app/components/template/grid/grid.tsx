@@ -1,127 +1,67 @@
-import type React from "react";
 
-import { useState, useRef, useEffect } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useAnimation,
-  useMotionValue,
-} from "framer-motion";
-import { useNavigate } from "react-router";
-import {ArrowRight} from "lucide-react";
-import { useIsMobile } from "~/hooks/use-mobile";
-import { categories } from "./category.d";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from "react-router"
+import { ArrowRight, ChevronDown, ChevronUp, Search } from "lucide-react"
+import { useIsMobile } from "~/hooks/use-mobile"
+import { categories } from "./category.d"
 
 export const CategoryGrid = () => {
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const controls = useAnimation();
+  const navigate = useNavigate()
+  const isMobile = useIsMobile()
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showAllMobile, setShowAllMobile] = useState(false)
 
-  // For touch interactions
-  const x = useMotionValue(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [dragDistance, setDragDistance] = useState(0);
+  // Filter categories based on search query
+  const filteredCategories = categories.filter(
+    (category) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.description.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
+
+  // For mobile, limit initial display to 4 categories unless "Show All" is clicked
+  const displayedCategories = isMobile && !showAllMobile ? filteredCategories.slice(0, 4) : filteredCategories
 
   const handleCategoryClick = (categoryId: string) => {
-    if (isDragging) return;
-
-    navigate(
-      {
-        pathname: "/vehicles/category",
-        search: `?categoria=${categoryId}`,
-      },
-      {
-        replace: true,
-        state: { fromCategoryGrid: true },
-      }
-    );
-  };
-
-  const nextCategory = () => {
-    if (activeIndex < categories.length - 1) {
-      setActiveIndex(activeIndex + 1);
+    if (isMobile && expandedCategory === categoryId) {
+      // If already expanded, navigate to the category
+      navigate(
+        {
+          pathname: "/vehicles/category",
+          search: `?categoria=${categoryId}`,
+        },
+        {
+          replace: true,
+          state: { fromCategoryGrid: true },
+        },
+      )
+    } else if (isMobile) {
+      // On mobile, toggle expansion instead of immediate navigation
+      setExpandedCategory(expandedCategory === categoryId ? null : categoryId)
     } else {
-      setActiveIndex(0);
+      // On desktop, navigate immediately
+      navigate(
+        {
+          pathname: "/vehicles/category",
+          search: `?categoria=${categoryId}`,
+        },
+        {
+          replace: true,
+          state: { fromCategoryGrid: true },
+        },
+      )
     }
-  };
-
-  const prevCategory = () => {
-    if (activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
-    } else {
-      setActiveIndex(categories.length - 1);
-    }
-  };
-
-  // Update carousel position when activeIndex changes
-  useEffect(() => {
-    if (carouselRef.current && isMobile) {
-      const scrollAmount =
-        activeIndex * (carouselRef.current.scrollWidth / categories.length);
-      controls.start({
-        x: -scrollAmount,
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
-    }
-  }, [activeIndex, controls, isMobile]);
-
-  // Handle touch interactions
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    setStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-
-    const currentX = e.touches[0].clientX;
-    const distance = currentX - startX;
-    setDragDistance(distance);
-
-    // Update the carousel position during drag
-    if (carouselRef.current) {
-      const basePosition =
-        activeIndex * (carouselRef.current.scrollWidth / categories.length);
-      x.set(-basePosition + distance);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-
-    // Determine if we should navigate to the next/previous category
-    if (Math.abs(dragDistance) > 50) {
-      if (dragDistance > 0) {
-        prevCategory();
-      } else {
-        nextCategory();
-      }
-    } else {
-      // Reset to current position if the drag wasn't far enough
-      if (carouselRef.current) {
-        const scrollAmount =
-          activeIndex * (carouselRef.current.scrollWidth / categories.length);
-        controls.start({
-          x: -scrollAmount,
-          transition: { type: "spring", stiffness: 300, damping: 30 },
-        });
-      }
-    }
-
-    setDragDistance(0);
-  };
+  }
 
   return (
-    <section className="container mx-auto px-4 py-16 overflow-hidden">
+    <section className="container mx-auto px-4 py-12 overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="mb-12 text-center"
+        className="mb-8 text-center"
       >
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -139,144 +79,113 @@ export const CategoryGrid = () => {
         />
       </motion.div>
 
-      {isMobile ? (
+      {/* Search input for both mobile and desktop */}
+      <div className="relative max-w-full mx-auto mb-8">
         <div className="relative">
-          <div className="overflow-hidden">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input
+            type="text"
+            placeholder="Buscar categorias..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+          />
+        </div>
+      </div>
+
+      {isMobile ? (
+        <div className="space-y-4">
+          {displayedCategories.map((category) => (
             <motion.div
-              ref={carouselRef}
-              className="flex"
-              animate={controls}
-              style={{ x }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.1}
-              onDragStart={() => setIsDragging(true)}
-              onDragEnd={() => setIsDragging(false)}
+              key={category.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
             >
-              {categories.map((category, index) => (
-                <motion.div
-                  key={category.id}
-                  className="min-w-[80%] sm:min-w-[40%] px-2"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{
-                    opacity: 1,
-                    scale: activeIndex === index ? 1 : 0.9,
-                    y: activeIndex === index ? 0 : 10,
-                  }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <motion.div
-                    whileTap={{ scale: 0.98 }}
-                    className={`group relative overflow-hidden border border-gray-200 dark:border-gray-800 p-8 cursor-pointer transition-all duration-300 h-full bg-white dark:bg-gray-900 ${
-                      activeIndex === index
-                        ? "shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.04)]"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      !isDragging && handleCategoryClick(category.id)
-                    }
-                  >
-                    <div className="flex flex-col items-center gap-5 relative z-10">
-                      <motion.div
-                        animate={{
-                          scale: activeIndex === index ? 1.1 : 1,
-                          rotateY: activeIndex === index ? [0, 10, 0] : 0,
-                        }}
-                        transition={{
-                          duration: 0.5,
-                          repeat:
-                            activeIndex === index
-                              ? Number.POSITIVE_INFINITY
-                              : 0,
-                          repeatType: "reverse",
-                          repeatDelay: 2,
-                        }}
-                        className={`p-4 rounded-full border border-gray-200 dark:border-gray-800 transition-colors duration-300 ${
-                          activeIndex === index
-                            ? "bg-black text-white dark:bg-white dark:text-black"
-                            : "bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                        }`}
-                      >
-                        {category.icon}
-                      </motion.div>
-                      <div className="text-center">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1 transition-colors">
-                          {category.name}
-                        </h3>
-                        <AnimatePresence>
-                          {activeIndex === index && (
-                            <motion.p
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2"
-                            >
-                              {category.description}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-
-                    <motion.div
-                      className="absolute bottom-0 left-0 h-1 bg-black dark:bg-white"
-                      initial={{ width: 0 }}
-                      animate={{ width: activeIndex === index ? "100%" : "0%" }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Carousel navigation
-                <div className="flex justify-center mt-6 gap-2">
-                    <button
-                    onClick={prevCategory}
-                    className="p-2 rounded-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-                    aria-label="Categoria anterior"
-                    >
-                    <ChevronLeft size={16} />
-                    </button>
-                    <div className="flex items-center gap-1.5">
-                    {categories.map((_, index) => (
-                        <button
-                        key={index}
-                        onClick={() => setActiveIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            activeIndex === index ? "bg-black dark:bg-white w-4" : "bg-gray-300 dark:bg-gray-700"
-                        }`}
-                        aria-label={`Ir para categoria ${index + 1}`}
-                        />
-                    ))}
-                    </div>
-                    <button
-                    onClick={nextCategory}
-                    className="p-2 rounded-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-                    aria-label="Próxima categoria"
-                    >
-                    <ChevronRight size={16} />
-                    </button>
+              <div
+                className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    {category.icon}
+                  </div>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{category.name}</h3>
                 </div>
-            */}
+                {expandedCategory === category.id ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                )}
+              </div>
 
+              <AnimatePresence>
+                {expandedCategory === category.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden border-t border-gray-200 dark:border-gray-800"
+                  >
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{category.description}</p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigate({
+                            pathname: "/vehicles/category",
+                            search: `?categoria=${category.id}`,
+                          })
+                        }}
+                        className="flex items-center text-sm font-medium text-black dark:text-white"
+                      >
+                        <span>Ver veículos</span>
+                        <ArrowRight size={16} className="ml-2" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
+
+          {/* Show more/less button for mobile */}
+          {filteredCategories.length > 4 && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="w-full py-3 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-medium text-sm flex items-center justify-center"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+            >
+              {showAllMobile ? (
+                <>
+                  <span>Mostrar menos</span>
+                  <ChevronUp className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  <span>Mostrar mais {filteredCategories.length - 4} categorias</span>
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </motion.button>
+          )}
+
+          {/* Guidance text for mobile */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
             className="text-xs text-center text-gray-500 dark:text-gray-400 mt-4"
           >
-            Deslize para navegar entre as categorias
+            Toque para expandir e ver detalhes
           </motion.p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-          {categories.map((category, index) => (
+          {filteredCategories.map((category, index) => (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: 20 }}
@@ -343,32 +252,6 @@ export const CategoryGrid = () => {
           ))}
         </div>
       )}
-      {/* Botão para Navegar para a Página de Vehiculos
-      <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="mt-10 text-center"
-        >
-            <button
-            onClick={() => navigate("/vehicles")}
-            className="inline-flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors group"
-            >
-            <span>Ver todos os veículos</span>
-            <motion.span
-                initial={{ x: 0 }}
-                animate={{ x: 5 }}
-                transition={{
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "reverse",
-                duration: 0.8,
-                }}
-                className="ml-2 group-hover:translate-x-1 transition-transform"
-            >
-                <ArrowRight size={16} />
-            </motion.span>
-            </button>
-        </motion.div> */}
     </section>
-  );
-};
+  )
+}

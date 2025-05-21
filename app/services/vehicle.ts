@@ -1,6 +1,6 @@
 import api from './api';
 
-import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams } from '../types/vehicle';
+import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsModel  } from '../types/vehicle';
 
 import type { Review } from '../types/reviews';
 
@@ -111,7 +111,7 @@ export const vehicleService = {
         return response.data;
     },
 
-    async getVehicleStats(): Promise<VehicleStats> {
+    async getVehicleStats(): Promise<VehicleStatsModel> {
         const response = await api.get('/vehicles/stats');
         return response.data;
     },

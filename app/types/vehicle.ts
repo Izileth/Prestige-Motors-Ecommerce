@@ -137,3 +137,14 @@ export type VehicleError = {
     message: string;
     type?: 'auth' | 'api' | 'validation';
 };
+
+
+export type VehicleStatsData = {
+    marcas: { marca: string; quantidade: number }[];
+    estatisticas: {
+        precoMedio: number;
+        quilometragemMedia: number;
+        anoFabricacaoMedio: number;
+        anoModeloMedio: number;
+    };
+};

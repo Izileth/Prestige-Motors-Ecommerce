@@ -1,70 +1,57 @@
 import axios from 'axios';
 
-
-
-
-
 // Cache para evitar múltiplos redirecionamentos
 let isRedirecting = false;
-
 // Tempo mínimo entre redirecionamentos (em milissegundos)
 const REDIRECT_COOLDOWN = 5000;
 let lastRedirectTime = 0;
 
 const isDev = process.env.NODE_ENV === 'development';
+const API_BASE_URL = isDev 
+  ? 'http://localhost:4242/api' 
+  : 'https://prestige-motors-api.onrender.com/api';
 
 const api = axios.create({
-  baseURL: isDev 
-    ? 'http://localhost:4242/api' 
-    : 'https://prestige-motors-api.onrender.com/api',
-  withCredentials: true,
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Importante para que os cookies sejam enviados
   timeout: 100000,
-    headers: { 
-      'Accept': 'application/json',
-      'Cache-Control': 'no-cache',
-  },
-  
-  // Adicione esta configuração para prevenir transformação automática
-  transformRequest: [
-    function (data, headers) {
-      // Se for FormData, não transforme e deixe o axios lidar com os headers
-      if (data instanceof FormData) {
-        return data;
-      }
-      
-      // Para outros tipos de dados, transforme em JSON
-      if (typeof data === 'object') {
-        headers['Content-Type'] = 'application/json';
-        return JSON.stringify(data);
-      }
-      
-      return data;
-    }
-  ]
+  headers: { 
+    'Accept': 'application/json',
+    'Cache-Control': 'no-cache',
+  }
 });
-  
-// Interceptor para adicionar o token de autorização, se disponível
-// Interceptor para adicionar Headers comuns
 
+// Interceptor para adicionar o token de autorização, se disponível
 api.interceptors.request.use(config => {
+  // Para FormData, evitar transformação
   if (config.data instanceof FormData) {
     config.headers['Content-Type'] = 'multipart/form-data';
     return config;
   }
   
+  // Para outros tipos de dados
   if (typeof config.data === 'object' && !config.headers['Content-Type']) {
     config.headers['Content-Type'] = 'application/json';
-    config.data = JSON.stringify(config.data);
+  }
+  
+  // Tentar obter o token do localStorage como fallback
+  const token = localStorage.getItem('token');
+  if (token && !config.headers['Authorization']) {
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
   
   return config;
 });
 
 // Interceptor de resposta para tratamento de erros
-// Interceptor de resposta para tratamento de erros
-
 api.interceptors.response.use(
-  response => response,
+  response => {
+    // Se a resposta incluir um token, salvá-lo no localStorage como fallback
+    if (response.data?.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response;
+  },
   error => {
     const currentTime = Date.now();
     
@@ -79,6 +66,9 @@ api.interceptors.response.use(
 
     // Tratamento para erro 401 (Não Autorizado)
     if (error.response?.status === 401) {
+      // Limpar token do localStorage em caso de erro de autenticação
+      localStorage.removeItem('token');
+      
       if (shouldRedirectToLogin()) { // Função auxiliar
         handleUnauthorizedRedirect();
       }
@@ -122,6 +112,5 @@ function handleUnauthorizedRedirect() {
     setTimeout(() => isRedirecting = false, 1000);
   }, 100);
 }
-
 
 export default api;

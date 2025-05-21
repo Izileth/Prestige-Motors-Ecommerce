@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 
 import { VehicleFilters } from "~/components/template/filter/filter"
+import VehicleStatistics from "~/components/template/statistics/statistcs"
 import { VehicleCard, VehicleCardSkeleton } from "~/components/template/card/card" // Componente extraído de card
 
 // Icons
@@ -174,7 +175,7 @@ const VehicleListingPage = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-row w-96">
+            <div className="flex flex-row w-auto max-w-max items-center justify-center">
               <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
@@ -186,6 +187,7 @@ const VehicleListingPage = () => {
                 Filtros
                 {showFilters && <X size={16} className="ml-2" />}
               </Button>
+              <VehicleStatistics/>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import vehicleService from '~/services/vehicle';
 import type { ReviewCreateInput, VehicleUpdateInput } from '~/types/inputs';
-import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams } from '~/types/vehicle';
+import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsData } from '~/types/vehicle';
 import type { Review } from '~/types/reviews';
 
 interface VehicleState {
@@ -16,7 +16,7 @@ interface VehicleState {
   vendorVehicles: Vehicle[];
   currentVehicle: Vehicle | null;
   reviews: Review[];
-  stats: VehicleStats | null;
+  stats: VehicleStatsData | null;
   userStats: VehicleStats | null;
   views: number;
   loading: boolean;
@@ -38,7 +38,7 @@ interface VehicleState {
   createReview: (vehicleId: string, data: ReviewCreateInput) => Promise<Review>;
   uploadVehicleImages: (vehicleId: string, files: File[]) => Promise<Vehicle>;
   deleteVehicleImage: (vehicleId: string, imageUrl: string) => Promise<void>;
-  fetchVehicleStats: () => Promise<void>;
+  fetchVehicleStats: () => Promise<VehicleStatsData>;
   fetchUserVehicles: () => Promise<void>;
   fetchUserVehicleStats: () => Promise<void>;
   registerVehicleView: (vehicleId: string) => Promise<void>;
@@ -324,17 +324,18 @@ export const useVehicleStore = create<VehicleState>()(
           throw error;
         }
       },
-
       fetchVehicleStats: async () => {
         set({ loading: true, error: null });
         try {
           const stats = await vehicleService.getVehicleStats();
           set({ stats, loading: false });
+          return stats; // Adicione esta linha para retornar os dados
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch stats' 
+          set({
+            loading: false,
+            error: error instanceof Error ? error.message : 'Failed to fetch stats'
           });
+          throw error; // Lança o erro para ser capturado pelo chamador
         }
       },
 
