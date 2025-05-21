@@ -45,7 +45,7 @@ const VehicleStatistics = () => {
 
     if (loading) {
         return (
-        <div className="w-full bg-zinc-50 p-6 w-max-full">
+        <div className="w-full bg-transparent p-6 w-max-full">
             <div className="mb-4 h-6 w-48 animate-pulse rounded bg-zinc-200"></div>
             <div className="grid grid-cols-4 gap-4 sm:grid-cols-2 md:grid-cols-4 w-full">
             {[...Array(4)].map((_, i) => (
@@ -65,7 +65,7 @@ const VehicleStatistics = () => {
     if (error || !stats) {
         return (
         <div className="w-full bg-zinc-50 p-6">
-            <p className="text-sm text-red-500">{error || "Não foi possível carregar as estatísticas"}</p>
+            <p className="text-sm text-zinc-950">{error || "Não foi possível carregar as estatísticas"}</p>
         </div>
         )
     }
@@ -94,28 +94,30 @@ const VehicleStatistics = () => {
     ]
 
     return (
-        <div className="w-full bg-zinc-50 p-6">
-        <h3 className="mb-5 text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
-        <div className="grid grid-cols-4 gap-4 w-full">
-        {statItems.map((item, index) => (
-            <div
-            key={index}
-            className="group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
-            >
-            <div className="mb-2 flex items-center gap-2">
-                <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover:bg-zinc-800 group-hover:text-white">
-                {item.icon}
+        <div className="w-full bg-transparent p-6">
+        <h3 className="mb-5 text-xl font-medium bg-transparent text-zinc-900">Estatísticas de Veículos</h3>
+        <div className="w-full overflow-x-auto">
+            <div className="flex gap-4 w-max">
+                {statItems.map((item, index) => (
+                <div
+                    key={index}
+                    className="min-w-[240px] group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
+                >
+                    <div className="mb-2 flex items-center gap-2">
+                    <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover:bg-zinc-800 group-hover:text-white">
+                        {item.icon}
+                    </div>
+                    <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 truncate">
+                        {item.title}
+                    </span>
+                    </div>
+                    <p className="text-xl font-semibold text-zinc-900 truncate" title={item.value}>
+                    {item.value}
+                    </p>
+                    <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover:w-full" />
                 </div>
-                <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 truncate">
-                {item.title}
-                </span>
+                ))}
             </div>
-            <p className="text-xl font-semibold text-zinc-900 truncate" title={item.value}>
-                {item.value}
-            </p>
-            <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover:w-full" />
-            </div>
-        ))}
         </div>
         </div>
     )

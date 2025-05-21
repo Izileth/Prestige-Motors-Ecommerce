@@ -264,7 +264,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             <CardFooter className="p-5 pt-0">
             <Button
                 variant="default"
-                className="w-full bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
+                className="w-full rounded-none shadow-none bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
                 onClick={() => navigate(`/vehicles/${vehicle.id}`)}
             >
                 Ver detalhes

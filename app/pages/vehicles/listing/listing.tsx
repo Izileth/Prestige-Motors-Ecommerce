@@ -162,7 +162,7 @@ const VehicleListingPage = () => {
         <div className="container mx-auto px-4 w-full">
           <div className="flex flex-col md:flex-col gap-4 items-center w-full max-w-full">
             <div className="flex-1 w-full flex flex-row items-center justify-between">
-              <div className="relative w-auto">
+              <div className="relative w-auto lg:w-2/3">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                   size={18}
