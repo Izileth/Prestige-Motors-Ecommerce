@@ -63,7 +63,7 @@ export interface VehicleVideo {
     url: string;
 }
 
-export interface VehicleStats {
+export interface VehicleUserStats {
     totalVehicles: number;
     byFuelType: Record<string, number>;
     byCategory: Record<string, number>;
@@ -71,7 +71,7 @@ export interface VehicleStats {
 }
 
 
-export interface VehicleStats {
+export interface VehicleUserTotalStats {
     _sum: {
         preco: number | null;
     };

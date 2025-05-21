@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Address } from "~/types/address";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { getTotalVehicles, getCatalogPercentage } from '~/lib/sumstats';
 import {
     LineChart,
     Line,
@@ -141,6 +141,8 @@ export default function DashboardPage() {
     fetchVehicleStats,
   } = useVehicle();
 
+  const totalVehicles = getTotalVehicles(vehicleStats);
+  
   const {
     purchases, // Histórico de compras (substitui userSales)
     sellerSales, // Novo - Histórico como vendedor
@@ -657,17 +659,17 @@ export default function DashboardPage() {
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-500">
                   {((userStats?.totalVehicles || 0) /
-                    (vehicleStats?.totalVehicles || 1)) *
+                    (totalVehicles || 1)) *
                     100 >
                   0
                     ? ((userStats?.totalVehicles || 0) /
-                        (vehicleStats?.totalVehicles || 1)) *
+                        (totalVehicles || 1)) *
                         100 <
                       0.1
                       ? "< 0.1% do catálogo"
                       : `${(
                           ((userStats?.totalVehicles || 0) /
-                            (vehicleStats?.totalVehicles || 1)) *
+                            (totalVehicles || 1)) *
                           100
                         ).toFixed(1)}% do catálogo`
                     : "0% do catálogo"}

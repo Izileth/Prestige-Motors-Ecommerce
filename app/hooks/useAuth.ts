@@ -83,10 +83,13 @@ export function useAuth() {
     [setUser]
     );
 
+
     const logout = useCallback(async () => {
         console.log("Iniciando logout...");
         try {
             await logoutAction();
+            // Limpar o token do localStorage
+            localStorage.removeItem('token');
             console.log("Logout bem-sucedido");
         } catch (error) {
             console.error("Erro durante logout:", error);

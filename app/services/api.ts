@@ -63,7 +63,9 @@ api.interceptors.response.use(
         message: 'O servidor demorou muito para responder' 
       });
     }
-
+    if (error.config.url.includes('/logout')) {
+      return Promise.reject(error);
+    }
     // Tratamento para erro 401 (Não Autorizado)
     if (error.response?.status === 401) {
       // Limpar token do localStorage em caso de erro de autenticação

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import vehicleService from '~/services/vehicle';
 import type { ReviewCreateInput, VehicleUpdateInput } from '~/types/inputs';
-import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsData } from '~/types/vehicle';
+import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsData } from '~/types/vehicle';
 import type { Review } from '~/types/reviews';
 
 interface VehicleState {
@@ -17,7 +17,7 @@ interface VehicleState {
   currentVehicle: Vehicle | null;
   reviews: Review[];
   stats: VehicleStatsData | null;
-  userStats: VehicleStats | null;
+  userStats: VehicleUserStats | null;
   views: number;
   loading: boolean;
   error: string | null;

@@ -5,9 +5,18 @@ import { authService } from '~/services/auth';
 import type { User } from '~/types/user';
 import type { LoginData, RegisterData } from '~/types/auth';
 
+
 interface ResetPasswordState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+}
+export interface AxiosErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
 }
 
 interface AuthState {
@@ -41,19 +50,46 @@ export const useAuthStore = create<AuthState>()(
         error: null,
       },
 
-
       // Ações (equivalentes às suas thunks e reducers)
+
       registerUser: async (userData) => {
         set({ status: 'loading', error: null });
         try {
           const response = await authService.register(userData);
-          set({ status: 'succeeded', user: response.user });
+          if (response?.user && response?.token) {
+            localStorage.setItem('token', response.token);
+            set({ 
+              status: 'succeeded', 
+              user: response.user,
+              error: null
+            });
+          } else {
+            throw new Error('Dados de usuário não encontrados na resposta');
+          }
         } catch (error) {
-          console.log(error, 'Erro na Conexão');
-          set({ status: 'failed', error: 'Erro ao registrar usuário' });
+          // Type guard para erros do Axios
+          const isAxiosError = (err: unknown): err is AxiosErrorResponse => {
+            return typeof err === 'object' && err !== null && 'response' in err;
+          };
+
+          let errorMessage = 'Erro ao registrar usuário';
+          
+          if (isAxiosError(error)) {
+            errorMessage = error.response?.data?.message || error.message || errorMessage;
+          } else if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+
+          console.error('Register error:', error);
+          set({ 
+            status: 'failed', 
+            error: errorMessage
+          });
           throw error;
         }
       },
+
+    
 
       loginUser: async ({ email, senha }) => {
         set({ status: 'loading', error: null });
