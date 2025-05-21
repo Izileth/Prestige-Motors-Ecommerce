@@ -160,9 +160,9 @@ const VehicleListingPage = () => {
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 w-full">
-              <div className="relative w-full">
+          <div className="flex flex-col md:flex-col gap-4 items-center">
+            <div className="flex-1 w-full flex flex-row items-center justify-between">
+              <div className="relative w-auto">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                   size={18}
@@ -174,8 +174,6 @@ const VehicleListingPage = () => {
                   className="w-full pl-10 border-b-zinc-950 rounded-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-zinc-900 transition-all"
                 />
               </div>
-            </div>
-            <div className="flex flex-row w-auto max-w-max items-center justify-center">
               <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
@@ -187,6 +185,8 @@ const VehicleListingPage = () => {
                 Filtros
                 {showFilters && <X size={16} className="ml-2" />}
               </Button>
+            </div>
+            <div className="flex flex-row w-full max-w-max items-center justify-center">
               <VehicleStatistics/>
             </div>
           </div>

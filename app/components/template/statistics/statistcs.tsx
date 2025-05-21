@@ -45,9 +45,9 @@ const VehicleStatistics = () => {
 
     if (loading) {
         return (
-        <div className="w-full bg-zinc-50 p-6">
+        <div className="w-full bg-zinc-50 p-6 w-max-full">
             <div className="mb-4 h-6 w-48 animate-pulse rounded bg-zinc-200"></div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+            <div className="grid grid-cols-4 gap-4 sm:grid-cols-2 md:grid-cols-4 w-full">
             {[...Array(4)].map((_, i) => (
                 <div key={i} className="animate-pulse space-y-3 rounded border border-zinc-200 bg-white p-4">
                 <div className="flex items-center space-x-2">
@@ -97,7 +97,7 @@ const VehicleStatistics = () => {
         <div className="w-full bg-zinc-50 p-6">
         <h3 className="mb-5 text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <div className="grid grid-cols-4 gap-4 sm:grid-cols-2 md:grid-cols-4 w-full">
             {statItems.map((item, index) => (
             <div
                 key={index}

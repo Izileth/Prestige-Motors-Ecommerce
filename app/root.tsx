@@ -36,50 +36,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta
-          name="description"
-          content="Descubra a essência da exclusividade automotiva com a Vortex Motors. Veículos de luxo, performance e design sofisticado que redefinem sua experiência ao volante."
-        />
-        <meta
-          name="keywords"
-          content="Vortex Motors, carros de luxo, veículos exclusivos, performance automotiva, carros premium, experiência personalizada, sofisticação automotiva"
-        />
-        <meta
-          property="og:title"
-          content="Vortex Motors - Exclusividade e Sofisticação Automotiva"
-        />
-        <meta
-          property="og:description"
-          content="Explore a linha exclusiva de veículos de alto padrão da Vortex Motors. Conquiste seu próximo carro com performance e estilo incomparáveis."
-        />
-        <meta
-          property="og:image"
-          content="https://www.prestigemotors.com/og-image.jpg"
-        />
-        <meta property="og:url" content="https://www.prestigemotors.com" />
+        <meta name="description" content="Descubra a essência da exclusividade automotiva com a Prestige Motors. Veículos de luxo, performance e design sofisticado que redefinem sua experiência ao volante."/>
+
+        <link rel="icon" href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" />
+        <link rel="icon" type="image/png" sizes="16x16" href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" />
+     
+
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Prestige Motors | A Elite Implora Por Velocidade" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Prestige Motors" />
+        <meta property="og:description"  content="Explore a linha exclusiva de veículos de alto padrão da Prestige Motors. Conquiste seu próximo carro com performance e estilo incomparáveis." />
+        <meta property="og:url" content="https://www.exemplo.com/" />
+        <meta property="og:image" content="https://www.exemplo.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Vortex Motors - Veículos de Luxo e Exclusividade"
-        />
-        <meta
-          name="twitter:description"
-          content="Descubra a paixão pela excelência automotiva com a Vortex Motors. Uma experiência única para amantes de carros de alto padrão."
-        />
-        <meta name="twitter:image" content="/og-image.jpg" />
-        <link
-          rel="icon"
-          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
-        />
-        <link
-          rel="icon"
-          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
-          type="image/x-icon"
-        />
-        <link
-          rel="apple-touch-icon"
-          href="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg"
-        />
+        <meta name="twitter:title" content="Pretige Motors - Luxo & Velocidade" />
+        <meta name="twitter:description" content="Descubra a paixão pela excelência automotiva com a Prestige  Motors. Uma experiência única para amantes de carros de alto padrão."/>
+        <meta name="twitter:image" content="https://www.exemplo.com/twitter-image.png" />
         <Meta />
         <Links />
       </head>
