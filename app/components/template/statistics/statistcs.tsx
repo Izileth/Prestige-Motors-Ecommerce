@@ -96,25 +96,26 @@ const VehicleStatistics = () => {
     return (
         <div className="w-full bg-zinc-50 p-6">
         <h3 className="mb-5 text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
-
-        <div className="grid grid-cols-4 gap-4 sm:grid-cols-2 md:grid-cols-4 w-full">
-            {statItems.map((item, index) => (
+        <div className="grid grid-cols-4 gap-4 w-full">
+        {statItems.map((item, index) => (
             <div
-                key={index}
-                className="group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
+            key={index}
+            className="group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
             >
-                <div className="mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2">
                 <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover:bg-zinc-800 group-hover:text-white">
-                    {item.icon}
+                {item.icon}
                 </div>
-                <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{item.title}</span>
-                </div>
-                <p className="text-xl font-semibold text-zinc-900" title={item.value}>
-                {item.value}
-                </p>
-                <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover:w-full" />
+                <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 truncate">
+                {item.title}
+                </span>
             </div>
-            ))}
+            <p className="text-xl font-semibold text-zinc-900 truncate" title={item.value}>
+                {item.value}
+            </p>
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover:w-full" />
+            </div>
+        ))}
         </div>
         </div>
     )

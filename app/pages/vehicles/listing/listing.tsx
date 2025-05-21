@@ -159,8 +159,8 @@ const VehicleListingPage = () => {
           scrolled ? "shadow-md py-3" : "py-6"
         }`}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-col gap-4 items-center">
+        <div className="container mx-auto px-4 w-full">
+          <div className="flex flex-col md:flex-col gap-4 items-center w-full max-w-full">
             <div className="flex-1 w-full flex flex-row items-center justify-between">
               <div className="relative w-auto">
                 <Search
@@ -186,7 +186,7 @@ const VehicleListingPage = () => {
                 {showFilters && <X size={16} className="ml-2" />}
               </Button>
             </div>
-            <div className="flex flex-row w-full max-w-max items-center justify-center">
+            <div className="flex flex-row w-full max-w-full items-center justify-center">
               <VehicleStatistics/>
             </div>
           </div>
