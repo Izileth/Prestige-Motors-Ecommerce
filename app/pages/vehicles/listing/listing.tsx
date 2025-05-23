@@ -186,7 +186,7 @@ const VehicleListingPage = () => {
                 {showFilters && <X size={16} className="ml-2" />}
               </Button>
             </div>
-            <div className="flex flex-row w-full max-w-full items-center justify-center">
+            <div className="flex flex-row w-full  max-w-full items-center justify-center">
               <VehicleStatistics/>
             </div>
           </div>

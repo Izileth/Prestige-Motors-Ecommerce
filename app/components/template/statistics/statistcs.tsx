@@ -94,10 +94,10 @@ const VehicleStatistics = () => {
     ]
 
     return (
-        <div className="w-full bg-transparent p-6">
+        <div className="w-full max-w-full bg-transparent p-6">
         <h3 className="mb-5 text-xl font-medium bg-transparent text-zinc-900">Estatísticas de Veículos</h3>
-        <div className="w-full overflow-x-auto">
-            <div className="flex gap-4 w-max">
+        <div className="w-full max-w-full overflow-x-auto">
+            <div className="flex gap-4 w-full max-w-full">
                 {statItems.map((item, index) => (
                 <div
                     key={index}

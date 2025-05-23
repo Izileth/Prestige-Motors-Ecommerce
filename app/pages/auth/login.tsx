@@ -42,14 +42,14 @@ const LoginPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex min-h-screen w-full flex-col items-center justify-center bg-white dark:bg-gray-950 px-4 sm:px-6 lg:px-8"
+        className="flex justify-center min-h-screen w-full flex-col  max-w-full lg:flex-row-reverse gap-4 items-center  bg-white dark:bg-gray-950 px-4 sm:px-6 lg:px-12"
         >
-        <div className="w-full max-w-md space-y-10">
+        <div className="w-full max-w-2xl  lg:px-14 space-y-10">
             <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-center"
+            className="text-center "
             >
             <h1 className="text-4xl font-extralight tracking-tight text-gray-900 dark:text-gray-100">ENTRAR</h1>
             <p className="mt-3 text-sm font-light text-gray-500 dark:text-gray-400">Acesse sua conta para continuar</p>
@@ -256,6 +256,48 @@ const LoginPage = () => {
             </motion.div>
             </motion.div>
         </div>
+        <div className="hidden h-full max-h-full lg:flex lg:flex-1 items-center justify-center relative bg-zinc-200 dark:bg-gray-900">
+                <div className="absolute h-full  inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
+
+                {/* Minimalist Geometric Pattern */}
+                <div className="relative w-full h-full max-h-full flex items-center justify-center p-12">
+                <div className="relative w-full max-w-lg">
+                    {/* Main Circle */}
+                    <div className="absolute inset-0 rounded-full border border-gray-300 dark:border-gray-600 opacity-20" />
+                    <div className="absolute inset-8 rounded-full border border-gray-400 dark:border-gray-500 opacity-30" />
+                    <div className="absolute inset-16 rounded-full border border-gray-500 dark:border-gray-400 opacity-40" />
+                    <div className="absolute inset-24 rounded-full border border-gray-600 dark:border-gray-300 opacity-50" />
+
+                    {/* Center Element */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-600 dark:to-gray-400 opacity-60" />
+                    </div>
+
+                    {/* Floating Elements */}
+                    <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-500 opacity-40 animate-pulse" />
+                    <div
+                    className="absolute top-3/4 right-1/4 w-6 h-6 rounded-full bg-gray-500 dark:bg-gray-400 opacity-30 animate-pulse"
+                    style={{ animationDelay: "1s" }}
+                    />
+                    <div
+                    className="absolute bottom-1/4 left-1/3 w-3 h-3 rounded-full bg-gray-600 dark:bg-gray-300 opacity-50 animate-pulse"
+                    style={{ animationDelay: "2s" }}
+                    />
+                </div>
+                </div>
+
+                {/* Subtle Brand Text */}
+                <div className="absolute bottom-8 left-8 right-8">
+                <div className="text-center">
+                    <h2 className="text-2xl font-extralight text-gray-600 dark:text-gray-300 tracking-wide">
+                    BEM-VINDO DE VOLTA
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-light">
+                    Conecte-se ao Mundo Automotivo
+                    </p>
+                </div>
+                </div>
+            </div>
         </motion.div>
     )
 }
