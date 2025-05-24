@@ -624,14 +624,6 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            onClick={logout}
-            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
         </motion.div>
 
         <motion.div
@@ -745,44 +737,44 @@ export default function DashboardPage() {
             onValueChange={setActiveTab}
             className="space-y-6"
           >
-            <TabsList className="bg-transparent  dark:bg-transparent p-1 rounded-lg">
+            <TabsList className="bg-transparent dark:bg-transparent p-1 rounded-lg w-full">
               <TabsTrigger
                 value="perfil"
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent rounded-none dark:data-[state=active]:bg-transparent data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
               >
-                <User className="w-4 h-4 mr-2" />
-                Perfil
+                <User className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Perfil</span>
               </TabsTrigger>
               <TabsTrigger
                 value="veiculos"
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent rounded-none dark:data-[state=active]:bg-transparent data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
               >
-                <Car className="w-4 h-4 mr-2" />
-                Veículos
+                <Car className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Veículos</span>
               </TabsTrigger>
               <TabsTrigger
                 value="compras"
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent rounded-none dark:data-[state=active]:bg-transparent data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
               >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Compras
+                <ShoppingCart className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Compras</span>
               </TabsTrigger>
               <TabsTrigger
                 value="enderecos"
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent rounded-none dark:data-[state=active]:bg-transparent data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
               >
-                <MapPin className="w-4 h-4 mr-2" />
-                Endereços
+                <MapPin className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Endereços</span>
               </TabsTrigger>
               <TabsTrigger
                 value="estatisticas"
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent rounded-none dark:data-[state=active]:bg-transparent data-[state=active]:text-black dark:data-[state=active]:text-white transition-all"
               >
-                <BarChart2 className="w-4 h-4 mr-2" />
-                Estatísticas
+                <BarChart2 className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Estatísticas</span>
               </TabsTrigger>
             </TabsList>
-
+            
             {/* Aba de perfil */}
             <TabsContent value="perfil" className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

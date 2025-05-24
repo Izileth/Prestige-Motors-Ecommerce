@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useFeaturedVehicles } from '~/hooks/useFeaturedVehicles';
-import { VehicleCard, VehicleCardSkeleton } from '~/components/template/card/card';
+import { VehicleCard} from '~/components/template/card/card';
+import { VehicleCardSkeleton } from '~/components/layout/skeleton/card';
 import { motion } from 'framer-motion';
 import { Button } from '~/components/ui/button';
 import { ArrowRight, RefreshCw } from 'lucide-react';
