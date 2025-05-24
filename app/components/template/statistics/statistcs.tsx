@@ -4,6 +4,7 @@ import { BarChart3, Award, DollarSign, Gauge } from "lucide-react"
 import useVehicle from "~/hooks/useVehicle"
 import type { VehicleStatsData } from "~/types/vehicle"
 
+
 const VehicleStatistics = () => {
     const { fetchVehicleStats } = useVehicle()
     const [stats, setStats] = useState<VehicleStatsData | null>(null)
@@ -45,18 +46,23 @@ const VehicleStatistics = () => {
 
     if (loading) {
         return (
-        <div className="w-full bg-transparent p-6 w-max-full">
+        <div className="w-full bg-transparent p-6">
             <div className="mb-4 h-6 w-48 animate-pulse rounded bg-zinc-200"></div>
-            <div className="grid grid-cols-4 gap-4 sm:grid-cols-2 md:grid-cols-4 w-full">
-            {[...Array(4)].map((_, i) => (
-                <div key={i} className="animate-pulse space-y-3 rounded border border-zinc-200 bg-white p-4">
-                <div className="flex items-center space-x-2">
+            <div className="relative overflow-hidden">
+            <div className="flex gap-4">
+                {[...Array(4)].map((_, i) => (
+                <div
+                    key={i}
+                    className="min-w-[280px] animate-pulse space-y-3 rounded border border-zinc-200 bg-white p-4"
+                >
+                    <div className="flex items-center space-x-2">
                     <div className="h-5 w-5 rounded-full bg-zinc-200"></div>
                     <div className="h-3 w-20 rounded bg-zinc-200"></div>
+                    </div>
+                    <div className="h-6 w-16 rounded bg-zinc-200"></div>
                 </div>
-                <div className="h-6 w-16 rounded bg-zinc-200"></div>
-                </div>
-            ))}
+                ))}
+            </div>
             </div>
         </div>
         )
@@ -64,7 +70,7 @@ const VehicleStatistics = () => {
 
     if (error || !stats) {
         return (
-        <div className="w-full bg-zinc-50 p-6">
+        <div className="w-full bg-transparent p-6">
             <p className="text-sm text-zinc-950">{error || "Não foi possível carregar as estatísticas"}</p>
         </div>
         )
@@ -93,18 +99,28 @@ const VehicleStatistics = () => {
         },
     ]
 
+    // Duplicate items for infinite scroll effect
+    const duplicatedItems = [...statItems, ...statItems]
+
     return (
-        <div className="w-full max-w-full bg-transparent p-6">
-        <h3 className="mb-5 text-xl font-medium bg-transparent text-zinc-900">Estatísticas de Veículos</h3>
-        <div className="w-full max-w-full overflow-x-auto">
-            <div className="flex gap-4 w-full max-w-full">
-                {statItems.map((item, index) => (
+        <div className="w-full bg-transparent p-6">
+        <h3 className="mb-5 text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
+
+        <div className="relative overflow-hidden">
+            {/* Gradient overlays for smooth edges */}
+            <div className="absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+            <div className="absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+
+            {/* Infinite scrolling container */}
+            <div className="infinite-scroll-container group">
+            <div className="infinite-scroll-content">
+                {duplicatedItems.map((item, index) => (
                 <div
                     key={index}
-                    className="min-w-full group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
+                    className="stat-card group/card relative min-w-[280px] sm:min-w-[240px] md:min-w-[280px] overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
                 >
                     <div className="mb-2 flex items-center gap-2">
-                    <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover:bg-zinc-800 group-hover:text-white">
+                    <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover/card:bg-zinc-800 group-hover/card:text-white transition-colors">
                         {item.icon}
                     </div>
                     <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 truncate">
@@ -114,12 +130,13 @@ const VehicleStatistics = () => {
                     <p className="text-xl font-semibold text-zinc-900 truncate" title={item.value}>
                     {item.value}
                     </p>
-                    <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover:w-full" />
+                    <div className="absolute bottom-0 left-0 h-1 w-0 bg-zinc-800 transition-all duration-300 group-hover/card:w-full" />
                 </div>
                 ))}
             </div>
+            </div>
         </div>
-        </div>
+    </div>
     )
 }
 
