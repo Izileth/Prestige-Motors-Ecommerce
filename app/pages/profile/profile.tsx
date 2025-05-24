@@ -10,6 +10,7 @@ import { ptBR } from "date-fns/locale";
 import type { Address } from "~/types/address";
 import { motion, AnimatePresence } from "framer-motion";
 import { getTotalVehicles, getCatalogPercentage } from '~/lib/sumstats';
+import DashboardSkeleton from "~/components/layout/skeleton/dashboard";
 import {
     LineChart,
     Line,
@@ -524,16 +525,10 @@ export default function DashboardPage() {
     return transmissionTypes[type] || type;
   };
 
+
   if (authStatus === "loading" || userLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-950">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black dark:border-white mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-800 dark:text-gray-200">
-            Carregando...
-          </p>
-        </div>
-      </div>
+      <DashboardSkeleton/>
     );
   }
 

@@ -11,7 +11,8 @@ import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 
 import { VehicleFilters } from "~/components/template/filter/filter"
 import VehicleStatistics from "~/components/template/statistics/statistcs"
-import { VehicleCard, VehicleCardSkeleton } from "~/components/template/card/card" // Componente extraído de card
+import { VehicleCard} from "~/components/template/card/card" // Componente extraído de card
+import { VehicleCardSkeleton } from "~/components/layout/skeleton/card"
 
 // Icons
 import { Filter, Search, X } from "lucide-react"
@@ -186,7 +187,7 @@ const VehicleListingPage = () => {
                 {showFilters && <X size={16} className="ml-2" />}
               </Button>
             </div>
-            <div className="flex flex-row w-full  max-w-full items-center justify-center">
+            <div className="flex flex-row w-full  max-w-full items-center justify-center content-center">
               <VehicleStatistics/>
             </div>
           </div>

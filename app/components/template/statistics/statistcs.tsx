@@ -101,7 +101,7 @@ const VehicleStatistics = () => {
                 {statItems.map((item, index) => (
                 <div
                     key={index}
-                    className="min-w-[240px] group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
+                    className="min-w-full group relative overflow-hidden rounded border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm"
                 >
                     <div className="mb-2 flex items-center gap-2">
                     <div className="rounded-full bg-zinc-100 p-1.5 text-zinc-700 group-hover:bg-zinc-800 group-hover:text-white">

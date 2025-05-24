@@ -413,20 +413,20 @@ const Navigation: React.FC<NavigationProps> = ({
                       to="/dashboard"
                       className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
-                      My account
+                      Conta
                     </Link>
                     <Link
                       to="/orders"
                       className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
-                      My orders
+                      Negociações
                     </Link>
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-xs font-extralight tracking-wider uppercase p-0 h-auto hover:bg-transparent hover:text-foreground/80"
                       onClick={handleLogout}
                     >
-                      Sign out
+                      Sair
                     </Button>
                   </>
                 ) : (
@@ -435,13 +435,13 @@ const Navigation: React.FC<NavigationProps> = ({
                       to="/login"
                       className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
-                      Sign in
+                      Entrar
                     </Link>
                     <Link
                       to="/register"
                       className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
-                      Register
+                      Registrar
                     </Link>
                   </>
                 )}

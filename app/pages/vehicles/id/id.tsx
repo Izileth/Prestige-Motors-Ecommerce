@@ -9,6 +9,7 @@ import { Badge } from "~/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Textarea } from "~/components/ui/textarea"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import VehicleDetailsSkeleton from "~/components/layout/skeleton/id"
 import { X } from "lucide-react";
 import {
     Heart,
@@ -220,13 +221,8 @@ const VehicleDetailsPage = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 size={40} className="animate-spin text-gray-400" />
-          <p className="text-gray-600 dark:text-gray-400">Carregando informações do veículo...</p>
-        </div>
-      </div>
-  )
+      <VehicleDetailsSkeleton/>
+    );
 
   if (vehicleError) {
     {vehicleError && (
