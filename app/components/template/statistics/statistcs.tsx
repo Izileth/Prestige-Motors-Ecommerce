@@ -180,7 +180,7 @@ const VehicleStatistics = () => {
                             className="min-w-[240px] group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm mr-4"
                         >
                             <div className="mb-2 flex items-center gap-2">
-                                <div className={`rounded-full bg-gradient-to-r ${item.color} p-1.5 text-white`}>
+                                <div className={`rounded-full bg-gradient-to-r text-zinc-50 p-1.5`}>
                                     {item.icon}
                                 </div>
                                 <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
