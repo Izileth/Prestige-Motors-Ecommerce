@@ -116,7 +116,7 @@ const VehicleStatistics = () => {
     if (loading) {
         return (
             <div className="w-full bg-transparent p-6">
-                <h3 className="mb-5 text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
+                <h3 className="mb-4 text-xl font-light text-zinc-900">Estatísticas de Veículos</h3>
                 <div className="flex gap-4 overflow-x-auto pb-4">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="min-w-[240px] animate-pulse rounded-xl border border-zinc-200 bg-white p-5">
@@ -142,10 +142,10 @@ const VehicleStatistics = () => {
     }
 
     return (
-        <div className="w-full bg-transparent p-6">
-            <div className="flex items-center justify-between mb-5">
+        <div className="w-full bg-transparent py-4">
+            <div className="flex items-center justify-between w-full max-w-full mb-5">
                 <h3 className="text-xl font-medium text-zinc-900">Estatísticas de Veículos</h3>
-                <div className="hidden md:flex gap-2">
+                <div className="flex md:flex gap-2">
                     <button
                         onClick={goToPrev}
                         className="p-2 rounded-full border border-zinc-200 bg-white hover:bg-zinc-50"
@@ -177,10 +177,10 @@ const VehicleStatistics = () => {
                     {infiniteItems.map((item, index) => (
                         <div
                             key={index}
-                            className="min-w-[240px] group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm mr-4"
+                            className="min-w-[240px] group relative overflow-hidden rounded-none  border-none bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-sm mr-4"
                         >
                             <div className="mb-2 flex items-center gap-2">
-                                <div className={`rounded-full bg-gradient-to-r text-zinc-50 p-1.5`}>
+                                <div className={`rounded-full bg-gradient-to-r  text-zinc-950 p-1.5 `}>
                                     {item.icon}
                                 </div>
                                 <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
