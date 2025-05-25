@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router"
 import type { UseFormReturn } from "react-hook-form"
 import { useForm } from "react-hook-form"
 
+import { QuickEditSkeleton } from "~/components/layout/skeleton/edit"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
@@ -327,12 +329,7 @@ export function EditVehiclePage() {
 
   if (loading && !currentVehicle) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 size={40} className="animate-spin text-gray-400" />
-          <p className="text-gray-600 dark:text-gray-400">Carregando informações do veículo...</p>
-        </div>
-      </div>
+      <QuickEditSkeleton/>
     )
   }
 
