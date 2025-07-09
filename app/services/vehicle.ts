@@ -1,8 +1,8 @@
 import api from './api';
 
-import type { Vehicle, VehicleStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsModel  } from '../types/vehicle';
+import type { Vehicle, VehicleGlobalStats, VehicleCreateInput, VehicleUserStats,VehicleSearchParams, VehicleAddress, AddressUpdatePayload, AddressRemovePayload, VehicleWithAddress  } from '../types/vehicle';
 
-import type { Review } from '../types/reviews';
+import type { Review, ReviewStats, ReviewUpdateInput } from '../types/reviews';
 
 import type { VehicleUpdateInput, ReviewCreateInput } from '../types/inputs';
 
@@ -105,13 +105,28 @@ export const vehicleService = {
         const response = await api.post(`/vehicles/${vehicleId}/reviews`, data);
         return response.data;
     },
+  
+    async updateReview(reviewId: string, data: ReviewUpdateInput): Promise<Review> {
+        const response = await api.put(`/reviews/${reviewId}`, data);
+        return response.data;
+    },
 
+    async deleteReview(reviewId: string): Promise<void> {
+        await api.delete(`/reviews/${reviewId}`);
+    },
     async getVehicleReviews(vehicleId: string): Promise<Review[]> {
         const response = await api.get(`/vehicles/${vehicleId}/reviews`);
         return response.data;
     },
 
-    async getVehicleStats(): Promise<VehicleStatsModel> {
+    async getReviewStats(vehicleId: string): Promise<ReviewStats> {
+        const response = await api.get(`/vehicles/${vehicleId}/reviews/stats`);
+        return response.data;
+    },
+
+    // Obter estatísticas globais de veículos
+
+    async getVehicleStats(): Promise<VehicleGlobalStats> {
         const response = await api.get('/vehicles/stats');
         return response.data;
     },
@@ -123,7 +138,7 @@ export const vehicleService = {
         return response.data.data || []; // Acessa a propriedade data
     },
 
-    async getUserVehicleStats(): Promise<VehicleStats> {
+    async getUserVehicleStats(): Promise<VehicleUserStats> {
         const response = await api.get('/vehicles/me/vehicle-stats');
         return response.data.stats || null;
     },
@@ -162,11 +177,45 @@ export const vehicleService = {
         return response.data;
     },
 
+    // Adicionar ou atualizar endereço de um veículo
+    async updateVehicleAddress(payload: AddressUpdatePayload): Promise<VehicleWithAddress> {
+        const { vehicleId, address } = payload;
+        
+        // Se o endereço tem ID, é uma atualização, senão é criação
+        const method = address.id ? 'put' : 'post';
+        const url = address.id 
+            ? `/vehicles/${vehicleId}/address/${address.id}`
+            : `/vehicles/${vehicleId}/address`;
+
+        const response = await api[method](url, address);
+        return response.data;
+    },
+
+    // Remover endereço de um veículo
+    async removeVehicleAddress(payload: AddressRemovePayload): Promise<VehicleWithAddress> {
+        const { vehicleId } = payload;
+        const response = await api.delete(`/vehicles/${vehicleId}/address`);
+        return response.data;
+    },
+
+    // Obter endereço de um veículo
+    async getVehicleAddress(vehicleId: string): Promise<VehicleAddress | null> {
+        try {
+            const response = await api.get(`/vehicles/${vehicleId}/address`);
+            return response.data;
+        } catch (error: any) {
+            if (error.response?.status === 404) {
+                return null;
+            }
+            throw error;
+        }
+    },
     async deleteVehicleImage(vehicleId: string, imageId: string): Promise<void> {
     // Enviar o ID da imagem com um nome de parâmetro mais claro
     await api.delete(`/vehicles/${vehicleId}/images`, {
         data: { imageId } // Usar imageId em vez de imageUrl para maior clareza
     });
+    
     } 
 };
 

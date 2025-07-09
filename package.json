@@ -55,7 +55,7 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.24.4",
-    "zustand": "^5.0.4"
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.3",

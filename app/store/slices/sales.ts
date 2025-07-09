@@ -30,6 +30,8 @@ const initialState: SaleState = {
         totalRevenue: 0,
         averageSalePrice: 0,
         byPaymentMethod: {},
+        byVehicleCategory: {},
+        topSellers: [],
         byStatus: {},
         monthlySales: [],
         topVehicles: [],

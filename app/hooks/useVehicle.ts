@@ -1,4 +1,4 @@
-// use-vehicle.ts
+
 import { useCallback } from 'react';
 import { useVehicleStore } from '~/store/slices/vehicle';
 import type { Vehicle, VehicleCreateInput, VehicleSearchParams } from '~/types/vehicle';

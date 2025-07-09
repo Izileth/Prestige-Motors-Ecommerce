@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '~/store/hooks';
 import * as saleActions from '~/store/slices/sales';
 
@@ -6,12 +7,28 @@ import type { SaleData, UpdateSaleData, Sale } from '../types/sale';
 const useSale = () => {
     const dispatch = useAppDispatch();
     const saleState = useAppSelector((state) => state.sales);
+        
+    const loadingStates = useMemo(() => ({
+        creating: saleState.loading && saleState.currentSale === null,
+        updating: saleState.loading && saleState.currentSale !== null,
+        fetchingStats: saleState.loading && saleState.stats.global === null
+    }), [saleState]);
+
 
     return {
         ...saleState,
+        loadingStates,
+
+        createSale: async (data: SaleData) => {
+            try {
+                return await dispatch(saleActions.createSale(data)).unwrap();
+            } catch (error) {
+                console.error("Failed to create sale:", error);
+                throw error;
+            }
+        },
         
-        // Operações básicas de vendas
-        createSale: (data: SaleData) => dispatch(saleActions.createSale(data)),
+
         fetchSaleById: (id: string) => dispatch(saleActions.fetchSaleById(id)),
         updateSale: (id: string, data: UpdateSaleData) => dispatch(saleActions.updateSale({ id, data })),
 
@@ -28,6 +45,10 @@ const useSale = () => {
         // Utilitários
         resetSaleState: () => dispatch(saleActions.resetSaleState()),
         setCurrentSale: (sale: Sale | null) => dispatch(saleActions.setCurrentSale(sale)),
+        clearAll: () => {
+            dispatch(saleActions.clearStats());
+            dispatch(saleActions.resetSaleState());
+        }
     };
 };
 

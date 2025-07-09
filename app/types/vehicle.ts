@@ -1,5 +1,6 @@
 import type { Review, ReviewStats } from "./reviews";
 
+// Vehicle Interface
 export interface Vehicle {
     id: string;
     marca: string;
@@ -63,32 +64,10 @@ export interface VehicleVideo {
     url: string;
 }
 
-export interface VehicleUserStats {
-    totalVehicles: number;
-    byFuelType: Record<string, number>;
-    byCategory: Record<string, number>;
-    averagePrice: number;
-}
 
 
-export interface VehicleUserTotalStats {
-    _sum: {
-        preco: number | null;
-    };
-    _avg: {
-        preco: number | null;
-        anoFabricacao: number | null;
-        anoModelo: number | null;
-    };
-    _min: {
-        preco: number | null;
-    };
-    _max: {
-        preco: number | null;
-    };
-}
 
-
+// Vehicle Search Parameters Interface
 export interface VehicleSearchParams {
     userId?: string;
     marca?: string;
@@ -106,6 +85,7 @@ export interface VehicleSearchParams {
 }
 
 
+// Vehicle Create Input Interface
 export interface VehicleCreateInput {
     marca: string;
     modelo: string;
@@ -139,12 +119,81 @@ export type VehicleError = {
 };
 
 
-export type VehicleStatsData = {
-    marcas: { marca: string; quantidade: number }[];
-    estatisticas: {
-        precoMedio: number;
-        quilometragemMedia: number;
-        anoFabricacaoMedio: number;
-        anoModeloMedio: number;
-    };
-};
+
+// Stats User & Global Interfaces
+export interface VehicleStatsSummary {
+    totalVehicles: number;
+    totalViews: number;
+    totalValue: number;
+    averagePrice: number;
+    averageMileage: number;
+    totalFavorites: number;
+    statusDistribution: Record<'VENDIDO' | 'DISPONIVEL' | 'RESERVADO', number>;
+}
+
+export interface TopPerformerVehicle {
+    id: string;
+    marca: string;
+    modelo: string;
+    anoFabricacao: number;
+    anoModelo: number;
+    preco: number;
+    precoPromocional?: number;
+    visualizacoes: number;
+    status: 'DISPONIVEL' | 'VENDIDO' | 'RESERVADO';
+    imagens: Array<{
+        url: string;
+    }>;
+    mainImage: string;
+}
+
+export interface TimeRange {
+    start: string; 
+    end: string; 
+}
+
+export interface VehicleStatsResponse {
+    summary: VehicleStatsSummary;
+    topPerformers: TopPerformerVehicle[];
+    viewsTrend: Array<{
+        date: string;
+        views: number;
+    }>; // Pode ser mais específico conforme seus dados
+    timeRange: TimeRange;
+}
+
+export interface UserVehicleStatsResponse extends VehicleStatsResponse {
+}
+
+export type VehicleGlobalStats = VehicleStatsResponse;
+export type VehicleUserStats = UserVehicleStatsResponse
+
+//Address Interface
+
+export interface VehicleAddress {
+    id?: string;
+    cep: string;
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    pais?: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export interface VehicleWithAddress extends Vehicle {
+    localizacao: VehicleAddress | null;
+}
+
+export interface AddressUpdatePayload {
+    vehicleId: string;
+    address: VehicleAddress;
+}
+
+export interface AddressRemovePayload {
+    vehicleId: string;
+}
+

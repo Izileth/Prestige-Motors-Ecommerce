@@ -1,9 +1,9 @@
-// vehicle-store.ts
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import vehicleService from '~/services/vehicle';
 import type { ReviewCreateInput, VehicleUpdateInput } from '~/types/inputs';
-import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleStatsData } from '~/types/vehicle';
+import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleGlobalStats } from '~/types/vehicle';
 import type { Review } from '~/types/reviews';
 
 interface VehicleState {
@@ -16,7 +16,7 @@ interface VehicleState {
   vendorVehicles: Vehicle[];
   currentVehicle: Vehicle | null;
   reviews: Review[];
-  stats: VehicleStatsData | null;
+  stats: VehicleGlobalStats | null;
   userStats: VehicleUserStats | null;
   views: number;
   loading: boolean;
@@ -38,7 +38,7 @@ interface VehicleState {
   createReview: (vehicleId: string, data: ReviewCreateInput) => Promise<Review>;
   uploadVehicleImages: (vehicleId: string, files: File[]) => Promise<Vehicle>;
   deleteVehicleImage: (vehicleId: string, imageUrl: string) => Promise<void>;
-  fetchVehicleStats: () => Promise<VehicleStatsData>;
+  fetchVehicleStats: () => Promise<VehicleGlobalStats>;
   fetchUserVehicles: () => Promise<void>;
   fetchUserVehicleStats: () => Promise<void>;
   registerVehicleView: (vehicleId: string) => Promise<void>;

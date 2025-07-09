@@ -1,3 +1,4 @@
+export type SaleStatus = 'PENDENTE' | 'CONCLUIDA' | 'CANCELADA' | 'EM_NEGOCIACAO' | 'FATURADA';
 export interface Sale {
     id: string;
     vehicleId: string;
@@ -59,10 +60,18 @@ export interface SaleStats {
         total: number;
         average?: number;
     }>;
+    byVehicleCategory: Record<
+    string, { count: number; total: number 
+    }>;
     topVehicles: Array<{
         vehicleId: string;
         model: string;
         brand: string;
+        salesCount: number;
+        totalRevenue: number;
+    }>;
+    topSellers: Array<{
+        seller: { nome: string; email: string };
         salesCount: number;
         totalRevenue: number;
     }>;
