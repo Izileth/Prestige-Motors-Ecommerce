@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useAuth } from "~/hooks/useAuth";
 import useUserStore from "~/hooks/useUser";
 import useVehicle from "~/hooks/useVehicle";
