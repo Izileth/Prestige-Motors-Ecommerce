@@ -200,6 +200,7 @@ export const vehicleService = {
             : `/vehicles/${vehicleId}/address`;
 
         const response = await api[method](url, address);
+        console.log("Endereço Atualizado!", response.data);
         return response.data;
     },
 
@@ -207,6 +208,7 @@ export const vehicleService = {
     async removeVehicleAddress(payload: AddressRemovePayload): Promise<VehicleWithAddress> {
         const { vehicleId } = payload;
         const response = await api.delete(`/vehicles/${vehicleId}/address`);
+        console.log("Endereço Removido!", response.data);
         return response.data;
     },
 
@@ -214,6 +216,7 @@ export const vehicleService = {
     async getVehicleAddress(vehicleId: string): Promise<VehicleAddress | null> {
         try {
             const response = await api.get(`/vehicles/${vehicleId}/address`);
+            console.log("Endereço obtido!", response.data);
             return response.data;
         } catch (error: any) {
             if (error.response?.status === 404) {

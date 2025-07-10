@@ -7,8 +7,7 @@ import { Heart, Zap, ShieldCheck, Flame, Crown, Calendar, Gauge, MapPin, Chevron
 import type { Vehicle } from "~/types/vehicle";
 import { formatPrice } from "~/utils/format";
 import { getFuelType, getTransmissionType } from "~/utils/vehicle";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router";
 interface FavoriteVehiclesProps {
   favorites: Vehicle[];
 }

@@ -31,6 +31,7 @@ import {
   ArrowRight,
   Save,
   X,
+  MapPin
 } from "lucide-react"
 import { Switch } from "~/components/ui/switch"
 import type { VehicleFormValues } from "../create/create"
@@ -52,6 +53,8 @@ import {
 
 import type { VehicleImage } from "~/types/vehicle"
 import { FuelType, TransmissionType, BodyType, VehicleCategory, VehicleClass, acceptedFileTypes } from '~/types/enuns';
+
+import { VehicleAddressSection } from "~/components/pages/vehilce/tabs/addresses"
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -449,10 +452,10 @@ export function EditVehiclePage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-transparent dark:bg-gray-900 p-1 rounded-lg mb-6">
+              <TabsList className="grid w-full grid-cols-5  grid-rows-5 bg-transparent dark:bg-gray-900 p-1 rounded-lg mb-6">
                 <TabsTrigger
                   value="basic"
-                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2"
+                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2 h-10"
                 >
                   <Car className="h-4 w-4" />
                   <span className="hidden sm:inline">Informações Básicas</span>
@@ -460,7 +463,7 @@ export function EditVehiclePage() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="images"
-                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2"
+                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2 h-10"
                 >
                   <ImageIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">Imagens</span>
@@ -468,7 +471,7 @@ export function EditVehiclePage() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="technical"
-                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2"
+                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2 h-10"
                 >
                   <Settings className="h-4 w-4" />
                   <span className="hidden sm:inline">Detalhes Técnicos</span>
@@ -476,12 +479,20 @@ export function EditVehiclePage() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="additional"
-                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2"
+                  className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white  flex items-center gap-2 h-10"
                 >
                   <Tag className="h-4 w-4" />
                   <span className="hidden sm:inline">Opções Adicionais</span>
                   <span className="sm:hidden">Opções</span>
                 </TabsTrigger>
+                  <TabsTrigger
+                    value="location"
+                    className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white flex items-center gap-2 h-10"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    <span className="hidden sm:inline">Localização</span>
+                    <span className="sm:hidden">Local</span>
+                  </TabsTrigger>
               </TabsList>
 
               <TabsContent value="basic">
@@ -1244,6 +1255,33 @@ export function EditVehiclePage() {
                       </div>
                     </CardContent>
                   </Card>
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="location">
+                <motion.div variants={fadeIn} initial="hidden" animate="visible">
+                  <VehicleAddressSection 
+                    vehicleId={id?.toString() || ''} 
+                    isEditing
+                  />
+                  
+                  <div className="flex justify-between mt-8">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setActiveTab("technical")}
+                      className="border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300"
+                    >
+                      Voltar: Detalhes Técnicos
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => setActiveTab("additional")}
+                      className="bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100"
+                    >
+                      Próximo: Opções Adicionais
+                    </Button>
+                  </div>
                 </motion.div>
               </TabsContent>
             </Tabs>

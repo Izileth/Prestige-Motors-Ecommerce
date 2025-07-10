@@ -197,3 +197,17 @@ export interface AddressRemovePayload {
     vehicleId: string;
 }
 
+
+export interface AddressOperationResult {
+    success: boolean;
+    error?: string;
+    address?: VehicleAddress | null;
+}
+
+export interface VehicleWithAddress extends Vehicle {
+    localizacao: VehicleAddress | null;
+    addressStatus?: {
+        loading: boolean;
+        error?: string;
+    };
+}
