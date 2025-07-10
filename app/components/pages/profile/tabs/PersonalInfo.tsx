@@ -293,8 +293,8 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </CardFooter>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+      <div className="grid grid-cols-1 lg:flex flex-row justify-between w-7xl gap-4">
+        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 w-full">
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-gray-100">Alterar Senha</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -396,7 +396,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
           </CardFooter>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 w-full">
           <CardHeader>
             <CardTitle className="text-red-600 dark:text-red-400">Excluir Conta</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">

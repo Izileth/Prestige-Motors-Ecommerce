@@ -7,21 +7,21 @@ const REDIRECT_COOLDOWN = 5000;
 let lastRedirectTime = 0;
 
 const isDev = process.env.NODE_ENV === 'development';
-const API_BASE_URL = isDev 
-  ? 'http://localhost:4242/api' 
+const API_BASE_URL = isDev
+  ? 'http://localhost:4242/api'
   : 'https://prestige-motors-api.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Importante para que os cookies sejam enviados
+  withCredentials: true,
   timeout: 100000,
-  headers: { 
+  headers: {
     'Accept': 'application/json',
     'Cache-Control': 'no-cache',
   }
 });
 
-// Interceptor para adicionar o token de autorização, se disponível
+// Interceptor para adicionar o token de autorização
 api.interceptors.request.use(config => {
   // Para FormData, evitar transformação
   if (config.data instanceof FormData) {
@@ -34,10 +34,18 @@ api.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json';
   }
   
-  // Tentar obter o token do localStorage como fallback
+  // Adicionar token se disponível e não for uma rota que usa apenas cookies
   const token = localStorage.getItem('token');
   if (token && !config.headers['Authorization']) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    // Rotas que usam apenas cookies (não precisam de token)
+    const cookieOnlyRoutes = ['/users/check-session', '/users/logout'];
+    const isCookieOnlyRoute = cookieOnlyRoutes.some(route => 
+      config.url?.includes(route)
+    );
+    
+    if (!isCookieOnlyRoute) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
   }
   
   return config;
@@ -46,7 +54,7 @@ api.interceptors.request.use(config => {
 // Interceptor de resposta para tratamento de erros
 api.interceptors.response.use(
   response => {
-    // Se a resposta incluir um token, salvá-lo no localStorage como fallback
+    // Se a resposta incluir um token, salvá-lo no localStorage
     if (response.data?.token) {
       localStorage.setItem('token', response.data.token);
     }
@@ -58,22 +66,31 @@ api.interceptors.response.use(
     // Tratamento específico para timeout
     if (error.code === 'ECONNABORTED') {
       console.error('Timeout: Servidor não respondeu a tempo');
-      return Promise.reject({ 
+      return Promise.reject({
         customError: 'SERVER_TIMEOUT',
-        message: 'O servidor demorou muito para responder' 
+        message: 'O servidor demorou muito para responder'
       });
     }
-    if (error.config.url.includes('/logout')) {
+
+    // Não interceptar erros de logout
+    if (error.config?.url?.includes('/logout')) {
       return Promise.reject(error);
     }
+
     // Tratamento para erro 401 (Não Autorizado)
     if (error.response?.status === 401) {
       // Limpar token do localStorage em caso de erro de autenticação
-      localStorage.removeItem('token');
+      const token = localStorage.getItem('token');
+      if (token) {
+        localStorage.removeItem('token');
+        console.log('Token removido devido a erro 401');
+      }
       
-      if (shouldRedirectToLogin()) { // Função auxiliar
+      // Só redirecionar se não estivermos em uma rota de autenticação
+      if (shouldRedirectToLogin()) {
         handleUnauthorizedRedirect();
       }
+      
       return Promise.reject({
         customError: 'UNAUTHORIZED',
         message: 'Sessão expirada ou não autorizada'
@@ -98,8 +115,11 @@ api.interceptors.response.use(
 
 // Funções auxiliares
 function shouldRedirectToLogin() {
+  const currentPath = window.location.pathname;
+  const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password'];
+  
   return (
-    !window.location.pathname.includes('/login') &&
+    !authRoutes.some(route => currentPath.includes(route)) &&
     !isRedirecting &&
     (Date.now() - lastRedirectTime > REDIRECT_COOLDOWN)
   );
@@ -110,7 +130,9 @@ function handleUnauthorizedRedirect() {
   lastRedirectTime = Date.now();
   
   setTimeout(() => {
-    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    const currentPath = window.location.pathname;
+    const redirectUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    window.location.href = redirectUrl;
     setTimeout(() => isRedirecting = false, 1000);
   }, 100);
 }

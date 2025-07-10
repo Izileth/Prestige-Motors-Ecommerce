@@ -112,9 +112,9 @@ export const VehiclesByCategoryPage = () => {
               transition={{ duration: 0.5 }}
               className="flex flex-col"
             >
-              <h1 className="text-2xl font-extralight tracking-tight text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
                 {filters.categoria
-                  ? `VEÍCULOS DA CATEGORIA ${getCategoryName(filters.categoria).toUpperCase()}`
+                  ? `VEÍCULOS DA CATEGORIA DE ${getCategoryName(filters.categoria).toUpperCase()}`
                   : "TODOS OS VEÍCULOS"}
               </h1>
               {vehicles.length > 0 && !loading && (

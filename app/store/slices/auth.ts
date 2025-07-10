@@ -1,15 +1,14 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authService } from '~/services/auth';
 import type { User } from '~/types/user';
 import type { LoginData, RegisterData } from '~/types/auth';
 
-
 interface ResetPasswordState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
+
 export interface AxiosErrorResponse {
   response?: {
     data?: {
@@ -23,34 +22,85 @@ interface AuthState {
   user: User | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  resetPasswordState: ResetPasswordState; // Renomeado para evitar conflito
+  resetPasswordState: ResetPasswordState;
+  isInitialized: boolean; // Novo campo para controlar inicialização
   
   // Actions
-    
   registerUser: (userData: RegisterData) => Promise<void>;
   loginUser: (credentials: LoginData) => Promise<void>;
   logoutUser: () => Promise<void>;
   checkSession: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (data: { token: string; senha: string }) => Promise<void>; // Mantido como ação
+  resetPassword: (data: { token: string; senha: string }) => Promise<void>;
   logout: () => void;
   clearResetPasswordStatus: () => void;
   setUser: (user: User | null) => void;
+  initialize: () => Promise<void>; // Nova função para inicializar
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      // Estado inicial (equivalente ao seu initialState)
+      // Estado inicial
       user: null,
       status: 'idle',
       error: null,
-      resetPasswordState: { // Atualizado para o novo nome
+      isInitialized: false,
+      resetPasswordState: {
         status: 'idle',
         error: null,
       },
 
-      // Ações (equivalentes às suas thunks e reducers)
+      // Nova função para inicializar o estado
+      initialize: async () => {
+        if (get().isInitialized) return;
+        
+        set({ status: 'loading' });
+        
+        try {
+          // Primeiro, verificar se há um token no localStorage
+          const token = localStorage.getItem('token');
+          
+          if (token) {
+            // Se há token, verificar se ainda é válido
+            const user = await authService.getCurrentUser();
+            set({ 
+              user, 
+              status: 'succeeded', 
+              error: null,
+              isInitialized: true 
+            });
+          } else {
+            // Se não há token, tentar verificar sessão via cookie
+            const user = await authService.checkSession();
+            if (user) {
+              set({ 
+                user, 
+                status: 'succeeded', 
+                error: null,
+                isInitialized: true 
+              });
+            } else {
+              set({ 
+                user: null, 
+                status: 'idle', 
+                error: null,
+                isInitialized: true 
+              });
+            }
+          }
+        } catch (error) {
+          console.log('Erro na inicialização:', error);
+          // Limpar qualquer token inválido
+          localStorage.removeItem('token');
+          set({ 
+            user: null, 
+            status: 'idle', 
+            error: null,
+            isInitialized: true 
+          });
+        }
+      },
 
       registerUser: async (userData) => {
         set({ status: 'loading', error: null });
@@ -67,7 +117,6 @@ export const useAuthStore = create<AuthState>()(
             throw new Error('Dados de usuário não encontrados na resposta');
           }
         } catch (error) {
-          // Type guard para erros do Axios
           const isAxiosError = (err: unknown): err is AxiosErrorResponse => {
             return typeof err === 'object' && err !== null && 'response' in err;
           };
@@ -89,15 +138,19 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-    
-
       loginUser: async ({ email, senha }) => {
         set({ status: 'loading', error: null });
         try {
           const response = await authService.login({ email, senha });
           if (response?.user) {
             console.log("Dados recebidos da API:", response.user);
-            set({ status: 'succeeded', user: response.user });
+            
+            // Se a resposta incluir um token, salvá-lo
+            if (response.token) {
+              localStorage.setItem('token', response.token);
+            }
+            
+            set({ status: 'succeeded', user: response.user, error: null });
           } else {
             throw new Error('Dados de usuário não encontrados na resposta');
           }
@@ -111,9 +164,21 @@ export const useAuthStore = create<AuthState>()(
       logoutUser: async () => {
         try {
           await authService.logout();
-          get().logout();
+          localStorage.removeItem('token');
+          set({ 
+            user: null, 
+            status: 'idle', 
+            error: null 
+          });
         } catch (error) {
           console.error('Erro durante logout:', error);
+          // Mesmo com erro, limpar o estado local
+          localStorage.removeItem('token');
+          set({ 
+            user: null, 
+            status: 'idle', 
+            error: null 
+          });
           throw error;
         }
       },
@@ -124,7 +189,8 @@ export const useAuthStore = create<AuthState>()(
           const user = await authService.getCurrentUser();
           set({ status: 'succeeded', user });
         } catch (error) {
-          console.log(error, 'Token Expirado');
+          console.log(error, 'Erro na verificação de sessão');
+          localStorage.removeItem('token');
           set({ status: 'failed', user: null });
           throw error;
         }
@@ -146,7 +212,7 @@ export const useAuthStore = create<AuthState>()(
             } 
           });
         } catch (error) {
-          console.log(error, 'Erro na Definição de Senha');
+          console.log(error, 'Erro na solicitação de reset de senha');
           set({ 
             resetPasswordState: { 
               status: 'failed', 
@@ -173,7 +239,7 @@ export const useAuthStore = create<AuthState>()(
             } 
           });
         } catch (error) {
-          console.log(error, 'Erro na Modificação');
+          console.log(error, 'Erro no reset de senha');
           set({ 
             resetPasswordState: { 
               status: 'failed', 
@@ -184,12 +250,14 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      // Reducers simples (equivalentes aos seus reducers)
-      logout: () => set({ 
-        user: null, 
-        status: 'idle', 
-        error: null 
-      }),
+      logout: () => {
+        localStorage.removeItem('token');
+        set({ 
+          user: null, 
+          status: 'idle', 
+          error: null 
+        });
+      },
 
       clearResetPasswordStatus: () => set({
         resetPasswordState: {
@@ -206,14 +274,16 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       partialize: (state) => ({ 
-        user: state.user 
+        user: state.user,
+        // Não persistir isInitialized para forçar nova inicialização
       }),
     }
   )
 );
 
-// Selectors (opcionais, podem ser usados diretamente do store)
+// Selectors
 export const selectCurrentUser = () => useAuthStore.getState().user;
 export const selectAuthStatus = () => useAuthStore.getState().status;
 export const selectResetPasswordStatus = () => useAuthStore.getState().resetPasswordState;
 export const selectAuthError = () => useAuthStore.getState().error;
+export const selectIsInitialized = () => useAuthStore.getState().isInitialized;
