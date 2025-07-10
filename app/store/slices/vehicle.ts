@@ -6,6 +6,7 @@ import type { ReviewCreateInput, VehicleUpdateInput } from '~/types/inputs';
 import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleGlobalStats } from '~/types/vehicle';
 import type { Review } from '~/types/reviews';
 import type { VehicleStatsData } from '~/components/template/statistics/statistcs';
+import type { UserStats } from '~/types/user';
 interface VehicleState {
   // Estado (igual ao Redux)
   vehicles: Vehicle[];
@@ -17,7 +18,7 @@ interface VehicleState {
   currentVehicle: Vehicle | null;
   reviews: Review[];
   stats: VehicleStatsData | null;
-  userStats: VehicleUserStats | null;
+  userStats:UserStats| null;
   views: number;
   loading: boolean;
   error: string | null;

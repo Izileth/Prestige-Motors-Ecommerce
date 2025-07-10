@@ -7,6 +7,7 @@ import type { Review, ReviewStats, ReviewUpdateInput, ReviewCreateInput } from '
 import type { VehicleUpdateInput } from '../types/inputs';
 
 import type { VehicleStatsData } from '~/components/template/statistics/statistcs';
+import type { UserStats } from '~/types/user';
 
 export const vehicleService = {
 
@@ -150,7 +151,7 @@ export const vehicleService = {
         return response.data.data || []; // Acessa a propriedade data
     },
 
-    async getUserVehicleStats(): Promise<VehicleUserStats> {
+    async getUserVehicleStats(): Promise<UserStats> {
         const response = await api.get('/vehicles/me/vehicle-stats');
         return response.data.stats || null;
     },
