@@ -1,8 +1,16 @@
 import { useState, useEffect, useRef } from "react"
 import { BarChart3, Award, DollarSign, Gauge, ChevronLeft, ChevronRight } from "lucide-react"
 import useVehicle from "~/hooks/useVehicle"
-import type { VehicleStatsData } from "~/types/vehicle"
 
+export type VehicleStatsData = {
+    marcas: { marca: string; quantidade: number }[];
+    estatisticas: {
+        precoMedio: number;
+        quilometragemMedia: number;
+        anoFabricacaoMedio: number;
+        anoModeloMedio: number;
+    };
+};
 const VehicleStatistics = () => {
     const { fetchVehicleStats } = useVehicle()
     const [stats, setStats] = useState<VehicleStatsData | null>(null)

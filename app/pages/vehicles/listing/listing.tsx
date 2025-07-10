@@ -156,7 +156,7 @@ const VehicleListingPage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Header de busca com sticky */}
       <div
-        className={`sticky top-0 z-10 bg-white dark:bg-gray-950 transition-all duration-300 ${
+        className={`z-10 bg-white dark:bg-gray-950 transition-all duration-300 ${
           scrolled ? "shadow-md py-3" : "py-6"
         }`}
       >

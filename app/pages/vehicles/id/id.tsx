@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Textarea } from "~/components/ui/textarea"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import VehicleDetailsSkeleton from "~/components/layout/skeleton/id"
-import { X } from "lucide-react";
+import { User, X, Edit2, Trash2 } from "lucide-react";
 import {
     Heart,
     Star,
@@ -32,10 +32,15 @@ import {
     ChevronRight,
 } from "lucide-react"
 import useVehicle from "~/hooks/useVehicle"
-import type { ReviewCreateInput } from "~/types/inputs"
+import { useReviews } from "~/hooks/useReview"
+import useUserStore from "~/hooks/useUser"
+
+import type { ReviewCreateInput, ReviewUpdateInput ,Review } from "~/types/reviews"
 import { motion, AnimatePresence } from "framer-motion"
 
 import type { VehicleError } from "~/types/vehicle"
+
+import { useAuth } from "~/hooks/useAuth"
 
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -46,17 +51,30 @@ const VehicleDetailsPage = () => {
     loading,
     error,
     fetchVehicleById,
-    createReview,
     addFavorite,
     removeFavorite,
     fetchUserFavorites,
   } = useVehicle()
 
+  const { createReview: createVehicleReview,  updateReview, deleteReview } = useReviews(id)
+
+  const { user } = useAuth()
+
+
   const [activeImage, setActiveImage] = useState<number>(0)
-  const [newReview, setNewReview] = useState<ReviewCreateInput>({
-    rating: 5,
-    comentario: "",
-  })
+
+  const [reviewForm, setReviewForm] = useState<{
+    mode: 'create' | 'edit';
+    data: ReviewCreateInput | ReviewUpdateInput;
+    editingId?: string;
+  }>({
+    mode: 'create',
+    data: {
+      vehicleId: id !== undefined ? id : "",
+      rating: 5,
+      comentario: "",
+    }
+  });
   const [isPostingReview, setIsPostingReview] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -134,11 +152,28 @@ const VehicleDetailsPage = () => {
 
     try {
       setIsPostingReview(true);
-      await createReview(id, newReview);
-      setNewReview({ rating: 5, comentario: "" });
+      
+      if (reviewForm.mode === 'create') {
+        await createVehicleReview({  // Primeiro parâmetro: vehicleId (string)
+            vehicleId: id,
+            rating: reviewForm.data.rating,
+            comentario: reviewForm.data.comentario
+        });
+      } else if (reviewForm.mode === 'edit' && reviewForm.editingId) {
+        await updateReview(reviewForm.editingId, {
+          ...reviewForm.data,
+          id: reviewForm.editingId
+        });
+      }
+      
+      // Resetar formulário
+      setReviewForm({
+        mode: 'create',
+        data: { vehicleId: id, rating: 5, comentario: "" }
+      });
       setVehicleError(null);
       
-      // Recarrega apenas a seção de avaliações
+      // Recarregar reviews
       await fetchVehicleById(id);
     } catch (error) {
       const err = error as Error;
@@ -149,8 +184,42 @@ const VehicleDetailsPage = () => {
     } finally {
       setIsPostingReview(false);
     }
+};
+
+  const handleEditReview = (review: Review) => {
+    setReviewForm({
+      mode: 'edit',
+      data: {
+        vehicleId: review.vehicleId,
+        rating: review.rating,
+        comentario: review.comentario || ""
+      },
+      editingId: review.id
+    });
+    
+    // Scroll para o formulário
+    document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir esta avaliação?')) return;
+    
+    try {
+      await deleteReview(reviewId);
+      if (id) {
+        await fetchVehicleById(id);
+      } else {
+        console.error("id is undefined");
+      }
+      setVehicleError(null);
+    } catch (error) {
+      const err = error as Error;
+      setVehicleError({
+        message: err.message || 'Não foi possível excluir a avaliação',
+        type: 'api'
+      });
+    }
+  };
   const handleShare = async () => {
     if (!currentVehicle) return
 
@@ -283,7 +352,7 @@ const VehicleDetailsPage = () => {
   if (!currentVehicle)
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+        <div className="max-w-md w-full  p-8   text-center">
           <div className="text-gray-900 dark:text-gray-100 mb-4 text-lg">Veículo não encontrado</div>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             O veículo que você está procurando não está disponível ou foi removido.
@@ -470,29 +539,29 @@ const VehicleDetailsPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Tabs defaultValue="details" className="mb-8">
-                <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-900 p-1 rounded-lg">
+                <TabsList className="grid w-full grid-cols-3 bg-transparent dark:bg-gray-900 p-1 rounded-lg">
                   <TabsTrigger
                     value="details"
-                    className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-md"
+                    className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
                   >
                     Detalhes
                   </TabsTrigger>
                   <TabsTrigger
                     value="specs"
-                    className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-md"
+                    className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
                   >
                     Especificações
                   </TabsTrigger>
                   <TabsTrigger
                     value="reviews"
-                    className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-md"
+                    className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
                   >
-                    Avaliações ({currentVehicle?.reviewStats?.totalReviews || 0})
+                    Avaliações  <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{currentVehicle?.reviewStats?.totalReviews || 0}</span>
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="details">
-                  <Card className="mt-4 border-0 shadow-sm bg-white dark:bg-gray-900">
+                  <Card className="mt-4 border-0 shadow-sm bg-transparent dark:bg-gray-900">
                     <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">Descrição</CardHeader>
                     <CardContent>
                       <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -504,7 +573,7 @@ const VehicleDetailsPage = () => {
 
                 <TabsContent value="specs">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+                    <Card className="border-0 shadow-sm bg-transparent dark:bg-gray-900">
                       <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">
                         Informações Gerais
                       </CardHeader>
@@ -562,7 +631,7 @@ const VehicleDetailsPage = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+                    <Card className="border-0 shadow-sm bg-transparent dark:bg-gray-900">
                       <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">Mecânica</CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
@@ -618,128 +687,237 @@ const VehicleDetailsPage = () => {
                     </Card>
                   </div>
                 </TabsContent>
+                
 
                 <TabsContent value="reviews">
                   <div className="mt-4 space-y-6">
-                    {currentVehicle?.avaliacoes && currentVehicle.avaliacoes.length > 0 ? (
-                      currentVehicle.avaliacoes.map((review) => (
-                        <motion.div
-                          key={review.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
-                            <CardContent className="pt-6">
-                              <div className="flex items-start md:items-center gap-4 mb-4">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center shrink-0">
-                                  {review.user.avatar ? (
-                                    <img
-                                      src={review.user.avatar || "/placeholder.svg"}
-                                      alt={`${review.user.nome}`}
-                                      className="w-full h-full rounded-full object-cover"
-                                    />
-                                  ) : (
-                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                      {review.user.nome.substring(0, 2).toUpperCase()}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                    <h4 className="font-medium text-gray-900 dark:text-gray-100">{review.user.nome}</h4>
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                                      {new Date(review.createdAt)?.toLocaleDateString("pt-BR")}
-                                    </span>
+                    {!user && (
+                      <Alert className="mb-6">
+                        <AlertTitle>Faça login para avaliar</AlertTitle>
+                        <AlertDescription>
+                          Você precisa estar logado para deixar uma avaliação.
+                          <Button 
+                            variant="link" 
+                            className="h-auto p-0 ml-2"
+                            onClick={() => navigate('/login', { state: { from: location.pathname } })}
+                          >
+                            Clique aqui para fazer login
+                          </Button>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    <div className="max-w-4xl mx-auto">
+                      <div className="space-y-8">
+                        {/* Header da seção */}
+                        <div className="border-b border-gray-200 pb-6">
+                          <h2 className="text-2xl font-light text-gray-900 mb-2">Avaliações</h2>
+                          <p className="text-gray-600 text-sm">
+                            {currentVehicle?.avaliacoes?.length || 0} avaliações
+                          </p>
+                        </div>
+
+                        {/* Alerta para usuários não logados */}
+                        {!user && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-gray-50 border border-gray-200 rounded-lg p-6"
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <User size={20} className="text-gray-500" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-medium text-gray-900 mb-1">Faça login para avaliar</h3>
+                                <p className="text-gray-600 text-sm mb-3">
+                                  Você precisa estar logado para deixar uma avaliação.
+                                </p>
+                                <button className="text-sm text-gray-900 hover:text-gray-700 underline underline-offset-2 transition-colors">
+                                  Clique aqui para fazer login
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+
+                        {/* Lista de avaliações */}
+                        <div className="space-y-6">
+                          {currentVehicle?.avaliacoes && currentVehicle.avaliacoes.length > 0 ? (
+                            currentVehicle.avaliacoes.map((review, index) => (
+                              <motion.div
+                                key={review.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="group"
+                              >
+                                <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors">
+                                  <div className="flex items-start gap-4">
+                                    {/* Avatar */}
+                                    <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
+                                      {review.user?.avatar ? (
+                                        <img
+                                          src={review.user.avatar}
+                                          alt={review.user.nome}
+                                          className="w-full h-full rounded-full object-cover"
+                                        />
+                                      ) : (
+                                        <span className="text-white text-sm font-medium">
+                                          {review.user?.nome.substring(0, 2).toUpperCase()}
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    {/* Conteúdo da avaliação */}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-medium text-gray-900">{review.user?.nome}</h4>
+                                        <span className="text-xs text-gray-500">
+                                          {new Date(review.createdAt)?.toLocaleDateString("pt-BR")}
+                                        </span>
+                                      </div>
+
+                                      {/* Rating */}
+                                      <div className="flex items-center gap-1 mb-3">
+                                        {[...Array(5)].map((_, i) => (
+                                          <Star
+                                            key={i}
+                                            size={16}
+                                            className={
+                                              i < review.rating
+                                                ? "fill-gray-900 text-gray-900"
+                                                : "text-gray-300"
+                                            }
+                                          />
+                                        ))}
+                                      </div>
+
+                                      {/* Comentário */}
+                                      {review.comentario && (
+                                        <p className="text-gray-700 leading-relaxed mb-4">
+                                          {review.comentario}
+                                        </p>
+                                      )}
+
+                                      {/* Ações */}
+                                      {(review.userId === user?.id || user?.role === 'ADMIN') && (
+                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <button
+                                            onClick={() => handleEditReview(review)}
+                                            className="inline-flex items-center gap-1 px-3 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                                          >
+                                            <Edit2 size={12} />
+                                            Editar
+                                          </button>
+                                          <button
+                                            onClick={() => handleDeleteReview(review.id)}
+                                            className="inline-flex items-center gap-1 px-3 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                                          >
+                                            <Trash2 size={12} />
+                                            Excluir
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  <div className="flex items-center gap-1 mt-1">
-                                    {[...Array(5)].map((_, i) => (
+                                </div>
+                              </motion.div>
+                            ))
+                          ) : (
+                            <div className="text-center py-16 border border-gray-200 rounded-lg">
+                              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                                <MessageSquare size={24} className="text-gray-400" />
+                              </div>
+                              <p className="text-gray-500 font-medium mb-1">Nenhuma avaliação ainda</p>
+                              <p className="text-gray-400 text-sm">Seja o primeiro a avaliar este veículo</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Formulário de avaliação */}
+                        <div id="review-form" className="border-t border-gray-200 pt-8">
+                          <div className="bg-white border border-gray-200 rounded-lg p-6">
+                            <h3 className="text-lg font-medium text-gray-900 mb-6">
+                              {reviewForm.mode === 'edit' ? 'Editar avaliação' : 'Deixe sua avaliação'}
+                            </h3>
+
+                            <div className="space-y-6">
+                              {/* Rating */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                  Sua avaliação
+                                </label>
+                                <div className="flex items-center gap-1">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => setReviewForm(prev => ({
+                                        ...prev,
+                                        data: { ...prev.data, rating: star }
+                                      }))}
+                                      className="focus:outline-none transition-transform hover:scale-110 p-1"
+                                    >
                                       <Star
-                                        key={i}
-                                        size={16}
+                                        size={20}
                                         className={
-                                          i < review.rating
-                                            ? "fill-black text-black dark:fill-white dark:text-white"
-                                            : "text-gray-300 dark:text-gray-700"
+                                          star <= reviewForm.data.rating
+                                            ? "fill-gray-900 text-gray-900"
+                                            : "text-gray-300 hover:text-gray-400"
                                         }
                                       />
-                                    ))}
-                                  </div>
+                                    </button>
+                                  ))}
                                 </div>
                               </div>
-                              {review.comentario && (
-                                <p className="text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
-                                  {review.comentario}
-                                </p>
-                              )}
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                        <p className="text-gray-500 dark:text-gray-400">Nenhuma avaliação ainda.</p>
-                        <p className="text-gray-500 dark:text-gray-400 mt-2">Seja o primeiro a avaliar este veículo.</p>
-                      </div>
-                    )}
 
-                    <Card className="border-0 shadow-none bg-white dark:bg-gray-900">
-                      <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">
-                        Deixe sua avaliação
-                      </CardHeader>
-                      <CardContent className="rounded-none shadow-none">
-                        <form onSubmit={handleReviewSubmit} className="space-y-4 rounded-none shadow-none">
-                          <div className="rounded-none">
-                            <label className="block mb-2 font-light text-gray-700 dark:text-gray-300">Sua avaliação</label>
-                            <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
+                              {/* Comentário */}
+                              <div>
+                                <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-3">
+                                  Comentário (opcional)
+                                </label>
+                                <textarea
+                                  id="comment"
+                                  value={reviewForm.data.comentario || ""}
+                                  onChange={(e) => setReviewForm(prev => ({
+                                    ...prev,
+                                    data: { ...prev.data, comentario: e.target.value }
+                                  }))}
+                                  placeholder="Conte sua experiência com este veículo..."
+                                  rows={4}
+                                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm transition-colors"
+                                />
+                              </div>
+
+                              {/* Botões */}
+                              <div className="flex gap-3">
                                 <button
-                                  key={star}
-                                  type="button"
-                                  onClick={() => setNewReview({ ...newReview, rating: star })}
-                                  className="focus:outline-none transition-transform hover:scale-110"
+                                  onClick={handleReviewSubmit}
+                                  disabled={isPostingReview}
+                                  className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
-                                  <Star
-                                    size={12}
-                                    className={
-                                      star <= newReview.rating
-                                        ? "fill-black text-black dark:fill-white dark:text-white"
-                                        : "text-gray-300 dark:text-gray-700"
-                                    }
-                                  />
+                                  {isPostingReview && <Loader2 className="animate-spin" size={16} />}
+                                  {reviewForm.mode === 'edit' ? 'Atualizar avaliação' : 'Enviar avaliação'}
                                 </button>
-                              ))}
+
+                                {reviewForm.mode === 'edit' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setReviewForm({
+                                      mode: 'create',
+                                      data: { vehicleId: '1', rating: 5, comentario: '' }
+                                    })}
+                                    className="px-6 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-colors"
+                                  >
+                                    Cancelar
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <label htmlFor="comment" className="block mb-2 font-light text-gray-700 dark:text-gray-300">
-                              Comentário (opcional)
-                            </label>
-                            <Textarea
-                              id="comment"
-                              value={newReview.comentario || ""}
-                              onChange={(e) => setNewReview({ ...newReview, comentario: e.target.value })}
-                              placeholder="Conte sua experiência com este veículo..."
-                              className="border-gray-200 dark:border-gray-800 focus:ring-gray-900 dark:focus:ring-gray-400"
-                            />
-                          </div>
-                          <Button
-                            type="submit"
-                            className="mt-2 bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300"
-                            disabled={isPostingReview}
-                          >
-                            {isPostingReview ? (
-                              <span className="flex items-center">
-                                <Loader2 className="animate-spin mr-2" size={18} />
-                                Enviando...
-                              </span>
-                            ) : (
-                              "Enviar avaliação"
-                            )}
-                          </Button>
-                        </form>
-                      </CardContent>
-                    </Card>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
               </Tabs>

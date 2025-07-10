@@ -2,10 +2,11 @@ import api from './api';
 
 import type { Vehicle, VehicleGlobalStats, VehicleCreateInput, VehicleUserStats,VehicleSearchParams, VehicleAddress, AddressUpdatePayload, AddressRemovePayload, VehicleWithAddress  } from '../types/vehicle';
 
-import type { Review, ReviewStats, ReviewUpdateInput } from '../types/reviews';
+import type { Review, ReviewStats, ReviewUpdateInput, ReviewCreateInput } from '../types/reviews';
 
-import type { VehicleUpdateInput, ReviewCreateInput } from '../types/inputs';
+import type { VehicleUpdateInput } from '../types/inputs';
 
+import type { VehicleStatsData } from '~/components/template/statistics/statistcs';
 
 export const vehicleService = {
 
@@ -35,6 +36,7 @@ export const vehicleService = {
 
     async createVehicle(data: VehicleCreateInput): Promise<Vehicle> {
         const response = await api.post<Vehicle>('/vehicles', data);
+         console.log("Veículo Criado!", response.data);
         return response.data;
     },
 
@@ -101,21 +103,31 @@ export const vehicleService = {
     },
 
 
-    async createReview(vehicleId: string, data: ReviewCreateInput): Promise<Review> {
-        const response = await api.post(`/vehicles/${vehicleId}/reviews`, data);
+
+    async createReview(data: ReviewCreateInput): Promise<Review> {
+        const { vehicleId, ...reviewData } = data;
+        const response = await api.post(`/vehicles/${vehicleId}/reviews`, reviewData);
+        console.log("Avaliação Criada!", response.data);
         return response.data;
     },
-  
+
     async updateReview(reviewId: string, data: ReviewUpdateInput): Promise<Review> {
-        const response = await api.put(`/reviews/${reviewId}`, data);
+        const response = await api.put(`/vehicles/reviews/${reviewId}`, data);
+        console.log("Avaliação Atualizada!", response.data);
         return response.data;
     },
 
     async deleteReview(reviewId: string): Promise<void> {
-        await api.delete(`/reviews/${reviewId}`);
+        console.log("Excluindo Avaliação com ID:", reviewId);
+        await api.delete(`/vehicles/reviews/${reviewId}`);
     },
     async getVehicleReviews(vehicleId: string): Promise<Review[]> {
         const response = await api.get(`/vehicles/${vehicleId}/reviews`);
+        // Verifica se a resposta contém dados
+        if (!response.data || !Array.isArray(response.data)) {
+            return [];
+        }
+        console.log("Avaliações obtidas:", response.data);
         return response.data;
     },
 
@@ -126,7 +138,7 @@ export const vehicleService = {
 
     // Obter estatísticas globais de veículos
 
-    async getVehicleStats(): Promise<VehicleGlobalStats> {
+    async getVehicleStats(): Promise<VehicleStatsData> {
         const response = await api.get('/vehicles/stats');
         return response.data;
     },

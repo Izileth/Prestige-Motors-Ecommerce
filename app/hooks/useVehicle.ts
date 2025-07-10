@@ -34,7 +34,6 @@ const useVehicle = () => {
     addFavorite,
     removeFavorite,
     fetchVehicleReviews,
-    createReview,
     uploadVehicleImages,
     uploadVehicleVideos,
     fetchVehicleStats,
@@ -153,7 +152,6 @@ const useVehicle = () => {
     addFavorite: addFavoriteSafe, // Usando a versão segura
     removeFavorite: removeFavoriteSafe, // Usando a versão segura
     fetchVehicleReviews,
-    createReview,
     uploadVehicleImages,
     uploadVehicleVideos,
     fetchVehicleStats,

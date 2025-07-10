@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "~/hooks/useAuth";
 import useUserStore from "~/hooks/useUser";
 import useVehicle from "~/hooks/useVehicle";
-//import useSale from "~/hooks/useSale";
+import useSale from "~/hooks/useSale";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Address } from "~/types/address";
@@ -144,17 +144,17 @@ export default function DashboardPage() {
 
   const totalVehicles = getTotalVehicles(vehicleStats);
   
-  //const {
-    //purchases, // Histórico de compras (substitui userSales)
-    //sellerSales, // Novo - Histórico como vendedor
-    //stats, // Agora contém { global, user }
-    //loading: saleLoading,
-    //error: saleError,
-    //fetchPurchasesByUser, // Substitui fetchSalesByUser
-    //fetchSalesBySeller, // Novo
-    //fetchGlobalSalesStats, // Substitui fetchSalesStats
-    //fetchUserSalesStats,
-  //} = useSale();
+  const {
+    purchases, // Histórico de compras (substitui userSales)
+    sellerSales, // Novo - Histórico como vendedor
+    stats, // Agora contém { global, user }
+    loading: saleLoading,
+    error: saleError,
+    fetchPurchasesByUser, // Substitui fetchSalesByUser
+    fetchSalesBySeller, // Novo
+    fetchGlobalSalesStats, // Substitui fetchSalesStats
+    fetchUserSalesStats,
+  } = useSale();
 
   const [activeTab, setActiveTab] = useState("perfil");
   const [isEditing, setIsEditing] = useState(false);
@@ -198,10 +198,10 @@ export default function DashboardPage() {
       getUserAddresses(user.id);
       fetchUserFavorites();
       fetchVehicleStats();
-      //fetchPurchasesByUser(user.id);
-     // fetchSalesBySeller(user.id); // Novo
-      //fetchGlobalSalesStats();
-     // fetchUserSalesStats(user.id); // Novo
+      fetchPurchasesByUser(user.id);
+      fetchSalesBySeller(user.id); // Novo
+      fetchGlobalSalesStats();
+     fetchUserSalesStats(user.id); // Novo
       getUserStats(user.id); // Adicione esta linha
     }
   }, [isAuthenticated, user?.id]);

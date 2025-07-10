@@ -5,7 +5,7 @@ import vehicleService from '~/services/vehicle';
 import type { ReviewCreateInput, VehicleUpdateInput } from '~/types/inputs';
 import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleGlobalStats } from '~/types/vehicle';
 import type { Review } from '~/types/reviews';
-
+import type { VehicleStatsData } from '~/components/template/statistics/statistcs';
 interface VehicleState {
   // Estado (igual ao Redux)
   vehicles: Vehicle[];
@@ -16,7 +16,7 @@ interface VehicleState {
   vendorVehicles: Vehicle[];
   currentVehicle: Vehicle | null;
   reviews: Review[];
-  stats: VehicleGlobalStats | null;
+  stats: VehicleStatsData | null;
   userStats: VehicleUserStats | null;
   views: number;
   loading: boolean;
@@ -35,10 +35,9 @@ interface VehicleState {
   addFavorite: (vehicleId: string) => Promise<void>;
   removeFavorite: (vehicleId: string) => Promise<void>;
   fetchVehicleReviews: (vehicleId: string) => Promise<void>;
-  createReview: (vehicleId: string, data: ReviewCreateInput) => Promise<Review>;
   uploadVehicleImages: (vehicleId: string, files: File[]) => Promise<Vehicle>;
   deleteVehicleImage: (vehicleId: string, imageUrl: string) => Promise<void>;
-  fetchVehicleStats: () => Promise<VehicleGlobalStats>;
+  fetchVehicleStats: () => Promise<VehicleStatsData>;
   fetchUserVehicles: () => Promise<void>;
   fetchUserVehicleStats: () => Promise<void>;
   registerVehicleView: (vehicleId: string) => Promise<void>;
@@ -251,25 +250,7 @@ export const useVehicleStore = create<VehicleState>()(
           });
         }
       },
-
-      createReview: async (vehicleId, data) => {
-        set({ loading: true, error: null, success: false });
-        try {
-          const review = await vehicleService.createReview(vehicleId, data);
-          set(state => ({
-            reviews: [...state.reviews, review],
-            loading: false,
-            success: true
-          }));
-          return review;
-        } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to create review' 
-          });
-          throw error;
-        }
-      },
+    
 
       uploadVehicleImages: async (vehicleId, files) => {
         set({ loading: true, error: null, success: false });
