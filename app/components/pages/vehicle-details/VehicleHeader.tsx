@@ -1,5 +1,5 @@
 import type React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Heart, Share2, ChevronLeft } from "lucide-react";
 
