@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { VehicleAddressManager } from '~/components/pages/vehilce/address';
+import { VehicleAddressManager } from '~/components/pages/vehilce/create/address-manager';
 import { Card, CardHeader, CardTitle, CardDescription } from '~/components/ui/card';
 import { MapPin } from 'lucide-react';
 
