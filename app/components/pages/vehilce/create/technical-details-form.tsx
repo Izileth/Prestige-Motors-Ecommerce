@@ -8,7 +8,7 @@ import { Button } from '~/components/ui/button';
 import { Settings, Tag } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { FuelType, TransmissionType, BodyType, VehicleCategory, VehicleClass } from '~/types/enuns';
-import { getFuelTypeLabel, getTransmissionTypeLabel, getBodyTypeLabel, getCategoryLabel, getClassLabel } from '~/utils/vehicle';
+import { getFuelType, getTransmissionType, getBodyType, getCategoryType, getClassType } from '~/utils/vehicle';
 import { fadeIn, staggerContainer } from '~/lib/animations';
 
 interface TechnicalDetailsFormProps {
@@ -73,7 +73,7 @@ export const TechnicalDetailsForm = ({ onNext, onBack }: TechnicalDetailsFormPro
                         <SelectContent>
                             {Object.values(FuelType).map((fuel) => (
                             <SelectItem key={fuel} value={fuel}>
-                                {getFuelTypeLabel(fuel)}
+                                {getFuelType(fuel)}
                             </SelectItem>
                             ))}
                         </SelectContent>
@@ -100,7 +100,7 @@ export const TechnicalDetailsForm = ({ onNext, onBack }: TechnicalDetailsFormPro
                         <SelectContent>
                             {Object.values(TransmissionType).map((transmission) => (
                             <SelectItem key={transmission} value={transmission}>
-                                {getTransmissionTypeLabel(transmission)}
+                                {getTransmissionType(transmission)}
                             </SelectItem>
                             ))}
                         </SelectContent>
@@ -124,7 +124,7 @@ export const TechnicalDetailsForm = ({ onNext, onBack }: TechnicalDetailsFormPro
                         <SelectContent>
                             {Object.values(BodyType).map((body) => (
                             <SelectItem key={body} value={body}>
-                                {getBodyTypeLabel(body)}
+                                {getBodyType(body)}
                             </SelectItem>
                             ))}
                         </SelectContent>
@@ -253,7 +253,7 @@ export const TechnicalDetailsForm = ({ onNext, onBack }: TechnicalDetailsFormPro
                         <SelectContent>
                         {Object.values(VehicleCategory).map((category) => (
                             <SelectItem key={category} value={category}>
-                            {getCategoryLabel(category)}
+                            {getCategoryType(category)}
                             </SelectItem>
                         ))}
                         </SelectContent>
@@ -278,7 +278,7 @@ export const TechnicalDetailsForm = ({ onNext, onBack }: TechnicalDetailsFormPro
                         <SelectContent>
                         {Object.values(VehicleClass).map((classe) => (
                             <SelectItem key={classe} value={classe}>
-                            {getClassLabel(classe)}
+                            {getClassType(classe)}
                             </SelectItem>
                         ))}
                         </SelectContent>

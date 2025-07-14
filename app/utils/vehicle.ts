@@ -1,5 +1,5 @@
 
-export const getFuelTypeLabel = (type: string) => {
+export const getFuelType = (type: string) => {
   const labels: Record<string, string> = {
     GASOLINA: "Gasolina",
     ETANOL: "Etanol",
@@ -12,7 +12,7 @@ export const getFuelTypeLabel = (type: string) => {
   return labels[type] || type;
 };
 
-export const getTransmissionTypeLabel = (type: string) => {
+export const getTransmissionType = (type: string) => {
   const labels: Record<string, string> = {
     MANUAL: "Manual",
     AUTOMATICO: "Automático",
@@ -22,7 +22,7 @@ export const getTransmissionTypeLabel = (type: string) => {
   return labels[type] || type;
 };
 
-export const getBodyTypeLabel = (type: string) => {
+export const getBodyType = (type: string) => {
   const labels: Record<string, string> = {
     HATCH: "Hatch",
     SEDAN: "Sedã",
@@ -39,7 +39,7 @@ export const getBodyTypeLabel = (type: string) => {
   return labels[type] || type;
 };
 
-export const getCategoryLabel = (category: string) => {
+export const getCategoryType = (category: string) => {
   const labels: Record<string, string> = {
     HYPERCAR: "Hypercar",
     SUPERCAR: "Supercar",
@@ -62,7 +62,7 @@ export const getCategoryLabel = (category: string) => {
   return labels[category] || category;
 };
 
-export const getClassLabel = (vehicleClass: string) => {
+export const getClassType = (vehicleClass: string) => {
   const labels: Record<string, string> = {
     D: "Classe D (Básico)",
     C: "Classe C (Intermediário)",

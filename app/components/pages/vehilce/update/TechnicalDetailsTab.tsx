@@ -34,11 +34,11 @@ import {
   VehicleClass,
 } from "~/types/enuns";
 import {
-  getFuelTypeLabel,
-  getTransmissionTypeLabel,
-  getBodyTypeLabel,
-  getCategoryLabel,
-  getClassLabel,
+  getFuelType,
+  getTransmissionType,
+  getBodyType,
+  getCategoryType,
+  getClassType,
 } from "~/utils/vehicle";
 
 const fadeIn = {
@@ -127,7 +127,7 @@ export function TechnicalDetailsTab({ onBack, onNext }: TechnicalDetailsTabProps
                       <SelectContent>
                         {Object.values(FuelType).map((fuel) => (
                           <SelectItem key={fuel} value={fuel}>
-                            {getFuelTypeLabel(fuel)}
+                            {getFuelType(fuel)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -159,7 +159,7 @@ export function TechnicalDetailsTab({ onBack, onNext }: TechnicalDetailsTabProps
                       <SelectContent>
                         {Object.values(TransmissionType).map((transmission) => (
                           <SelectItem key={transmission} value={transmission}>
-                            {getTransmissionTypeLabel(transmission)}
+                            {getTransmissionType(transmission)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -188,7 +188,7 @@ export function TechnicalDetailsTab({ onBack, onNext }: TechnicalDetailsTabProps
                       <SelectContent>
                         {Object.values(BodyType).map((body) => (
                           <SelectItem key={body} value={body}>
-                            {getBodyTypeLabel(body)}
+                            {getBodyType(body)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -336,7 +336,7 @@ export function TechnicalDetailsTab({ onBack, onNext }: TechnicalDetailsTabProps
                     <SelectContent>
                       {Object.values(VehicleCategory).map((category) => (
                         <SelectItem key={category} value={category}>
-                          {getCategoryLabel(category)}
+                          {getCategoryType(category)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -366,7 +366,7 @@ export function TechnicalDetailsTab({ onBack, onNext }: TechnicalDetailsTabProps
                     <SelectContent>
                       {Object.values(VehicleClass).map((classe) => (
                         <SelectItem key={classe} value={classe}>
-                          {getClassLabel(classe)}
+                          {getClassType(classe)}
                         </SelectItem>
                       ))}
                     </SelectContent>
