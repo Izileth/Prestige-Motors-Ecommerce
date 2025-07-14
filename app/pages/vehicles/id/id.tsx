@@ -295,7 +295,7 @@ const VehicleDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 pb-16">
+    <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 pb-16 md:px-6">
       <VehicleHeader
         isFavorite={isFavorite(currentVehicle.id)}
         scrolled={scrolled}

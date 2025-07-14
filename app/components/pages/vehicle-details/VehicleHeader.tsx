@@ -20,16 +20,16 @@ const VehicleHeader: React.FC<VehicleHeaderProps> = ({
 
   return (
     <div
-      className={`sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 ${
+      className={`sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300  ${
         scrolled ? "shadow-sm py-3" : "py-6"
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto ">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900"
+            className="text-gray-700 dark:text-gray-300  hover:bg-gray-100 dark:hover:bg-gray-900"
           >
             <ChevronLeft size={16} className="mr-2" /> Voltar
           </Button>

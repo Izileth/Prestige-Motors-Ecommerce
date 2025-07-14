@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Loader2, MapPin, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
+import type { FormEvent } from 'react';
+
+import type { VehicleAddress } from '~/types/vehicle';
 import { useAddressStore } from '~/store/slices/address';
 interface VehicleAddressManagerProps {
   vehicleId: string;
@@ -26,6 +29,8 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
   } = useAddressStore();;
   
 
+  const [forceRefresh, setForceRefresh] = useState(Date.now());
+
   const [formData, setFormData] = useState({
     cep: '',
     logradouro: '',
@@ -38,9 +43,12 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
   });
 
   // Carrega o endereço ao montar o componente
+
   useEffect(() => {
-    getAddress(vehicleId);
-  }, [vehicleId, getAddress]);
+    if (vehicleId) {
+      getAddress(vehicleId);
+    }
+  }, [vehicleId, forceRefresh])
 
   // Preenche o formulário quando o endereço é carregado
   useEffect(() => {
@@ -58,6 +66,8 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
     }
   }, [currentAddress]);
 
+  
+
   // Feedback visual para operações
   useEffect(() => {
     if (success) {
@@ -74,17 +84,30 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
     }
   }, [error, resetAddressState]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await updateAddress({
-        vehicleId,
-        address: formData
-      });
-    } catch {
-      toast.error('Falha ao atualizar endereço');
-    }
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const addressData: VehicleAddress = {
+    cep: formData.get('cep') as string,
+    logradouro: formData.get('logradouro') as string,
+    numero: formData.get('numero') as string,
+    bairro: formData.get('bairro') as string,
+    cidade: formData.get('cidade') as string,
+    estado: formData.get('estado') as string,
+    pais: formData.get('pais') as string,
   };
+  try {
+    await updateAddress({
+      vehicleId,
+      address: addressData
+    });
+    setForceRefresh(Date.now()); // Forçar recarga após atualização
+    onSuccess?.();
+  } catch (error) {
+    console.error('Update failed:', error);
+  }
+};
 
   const handleRemove = async () => {
     toast.promise(

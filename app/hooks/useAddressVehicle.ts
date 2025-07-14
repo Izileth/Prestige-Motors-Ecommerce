@@ -5,6 +5,7 @@ import type {
     AddressUpdatePayload,
     AddressRemovePayload
 } from '~/types/vehicle';
+import vehicleService from '~/services/vehicle';
 
 export const useVehicleAddress = () => {
     const {
@@ -18,15 +19,18 @@ export const useVehicleAddress = () => {
         reset
     } = useAddressStore();
 
-    // Versão memoizada com tratamento de erro aprimorado
+ 
     const handleGetAddress = useCallback(async (vehicleId: string) => {
         try {
-            await getAddress(vehicleId);
+        // Forçar nova requisição ignorando cache
+        const timestamp = Date.now();
+        const address = await vehicleService.getVehicleAddress(vehicleId);
+        return address;
         } catch (err) {
-            console.error('Failed to load address:', err);
-            throw err;
+        console.error('Failed to load address:', err);
+        throw err;
         }
-    }, [getAddress]);
+    }, []);
 
     const handleUpdateAddress = useCallback(async (payload: AddressUpdatePayload) => {
         try {

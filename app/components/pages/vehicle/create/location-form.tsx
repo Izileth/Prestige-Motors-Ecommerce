@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
-import { VehicleAddressSection } from "~/components/pages/vehilce/create/address-section";
+import { VehicleAddressSection } from "~/components/pages/vehicle/create/address-section";
 import { fadeIn } from "~/lib/animations";
 import { id } from "date-fns/locale";
 

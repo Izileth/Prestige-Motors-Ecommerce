@@ -326,7 +326,7 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full px-4 py-8">
         <ProfileHeader currentUser={currentUser} />
         <StatsCards userStats={userStats} totalVehicles={totalVehicles} />
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />

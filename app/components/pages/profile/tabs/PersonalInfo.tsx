@@ -292,9 +292,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
           </Button>
         </CardFooter>
       </Card>
+      
 
-      <div className="grid grid-cols-1 lg:flex flex-row justify-between w-7xl gap-4">
-        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 w-full">
+        <Card className=" max-w-full border-0 shadow-sm bg-white dark:bg-gray-900 lg:w-7xl" >
+          
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-gray-100">Alterar Senha</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -396,7 +397,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
           </CardFooter>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 w-full">
+        <Card className="w-full border-0 shadow-sm bg-white dark:bg-gray-900" >
           <CardHeader>
             <CardTitle className="text-red-600 dark:text-red-400">Excluir Conta</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -489,7 +490,6 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
             </Dialog>
           </CardContent>
         </Card>
-      </div>
     </div>
   );
 };

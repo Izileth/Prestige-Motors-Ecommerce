@@ -31,19 +31,19 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
         <TabsList className="grid w-full grid-cols-3 bg-transparent dark:bg-gray-900 p-1 rounded-lg">
           <TabsTrigger
             value="details"
-            className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
+            className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
           >
             Detalhes
           </TabsTrigger>
           <TabsTrigger
             value="specs"
-            className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
+            className="data-[state=active]:border-b-zinc-950  data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
           >
             Especificações
           </TabsTrigger>
           <TabsTrigger
             value="reviews"
-            className="data-[state=active]:border-b-zinc-950 dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
+            className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-none"
           >
             Avaliações{" "}
             <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
@@ -53,10 +53,10 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
         </TabsList>
 
         <TabsContent value="details">
-          <Card className="mt-4 border-0 shadow-sm bg-transparent dark:bg-gray-900">
+          <Card className="mt-4 border-0 shadow-none bg-transparent dark:bg-gray-900">
             <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">Descrição</CardHeader>
             <CardContent>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed shadow-none ">
                 {vehicle.descricao || "Nenhuma descrição fornecida."}
               </p>
             </CardContent>

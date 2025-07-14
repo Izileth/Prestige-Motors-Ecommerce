@@ -32,6 +32,7 @@ export const vehicleService = {
 
     async getVehicleById(id: string): Promise<Vehicle> {
         const response = await api.get(`/vehicles/${id}`);
+        console.log("Veículo Encontrado!", response.data);
         return response.data;
     },
 
@@ -43,6 +44,7 @@ export const vehicleService = {
 
     async updateVehicle(id: string, data: VehicleUpdateInput): Promise<Vehicle> {
         const response = await api.put(`/vehicles/${id}`, data);
+        console.log("Veículo Atualizado!", response.data);
         return response.data;
     },
 
@@ -168,11 +170,11 @@ export const vehicleService = {
 
     async uploadImages(vehicleId: string, files: File[]): Promise<Vehicle> {
         const formData = new FormData();
-        files.forEach(file => formData.append('images', file)); // <-- 'images' deve bater com o nome no multer
+        files.forEach(file => formData.append('images', file));
         
         const response = await api.post(`/vehicles/${vehicleId}/images`, formData, {
             headers: {
-            'Content-Type': 'multipart/form-data', // <-- Isso está correto
+            'Content-Type': 'multipart/form-data', 
             },
         });
         return response.data;
