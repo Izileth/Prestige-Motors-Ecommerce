@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Button } from "~/src/components/ui/button";
 import { Skeleton } from "~/src/components/ui/skeleton";
 import { Heart, Search, ArrowRight } from "lucide-react";
