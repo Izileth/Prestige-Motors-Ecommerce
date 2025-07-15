@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import { Zap, Search, PlusCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const fadeIn = {
     hidden: { opacity: 0, y: 20 },
