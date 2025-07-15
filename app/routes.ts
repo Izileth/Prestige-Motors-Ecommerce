@@ -24,7 +24,7 @@ export default [
     route("passwords/reset", "routes/password/reset/reset.tsx"),
     
     route("dashboard", "routes/user/dashboard.tsx"),
-    route("vehicles/user", "routes/vehicle/profile/profile.tsx"),
+    route("vehicles/user", "routes/vehicle/user/list.tsx"),
 
     route("vehicles", "routes/vehicle/vehicle.tsx"),
     route("vehicles/:id", "routes/vehicle/id/id.tsx"),

@@ -1,5 +1,5 @@
 import type { Route } from "./+types/ecological";
-import SustainabilityPage from "~/pages/about/ecological/ecological";
+import SustainabilityPage from "~/src/pages/about/ecological/ecological";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Políticas Ecológicas | Prestige Motors" },

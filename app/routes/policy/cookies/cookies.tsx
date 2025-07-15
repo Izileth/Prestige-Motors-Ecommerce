@@ -1,5 +1,5 @@
 import type { Route } from "./+types/cookies";
-import CookiePolicyPage from "~/pages/polities/cookies/cookies";
+import CookiePolicyPage from "~/src/pages/polities/cookies/cookies";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Política de Cookies | Prestige Motors" },

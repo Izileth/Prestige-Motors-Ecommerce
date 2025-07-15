@@ -1,5 +1,5 @@
 import type { Route } from "./+types/newsletter";
-import NewsletterPage from "~/pages/newsletter/newsletter";
+import NewsletterPage from "~/src/pages/newsletter/newsletter";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Exclusivos | Prestige Motors" },

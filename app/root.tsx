@@ -10,11 +10,11 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
-import { createStore } from "./store/global";
-import Navigation from "./components/layout/navigation/navgation";
-import { Baseboard } from "./components/layout/baseboard/baseboard";
-import { Banner } from "./components/layout/banner/banner";
-import Footer from "./components/layout/footer/footer";
+import { createStore } from "~/src/store/global";
+import Navigation from "~/src/components/layout/navigation/navgation";
+import { Baseboard } from "~/src/components/layout/baseboard/baseboard";
+import { Banner } from "~/src/components/layout/banner/banner";
+import Footer from "~/src/components/layout/footer/footer";
 
 
 export const links: Route.LinksFunction = () => [

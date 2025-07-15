@@ -1,5 +1,5 @@
 import type { Route } from "./+types/destacts";
-import DestactsPage from "~/pages/featureds/featureds";
+import DestactsPage from "~/src/pages/featureds/featureds";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Destaques | Prestige Motors" },

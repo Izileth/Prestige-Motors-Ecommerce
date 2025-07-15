@@ -1,5 +1,5 @@
 import type { Route } from "./+types/terms";
-import TermsPage from "~/pages/polities/terms/terms";
+import TermsPage from "~/src/pages/polities/terms/terms";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Termos & Condições | Prestige Motors" },

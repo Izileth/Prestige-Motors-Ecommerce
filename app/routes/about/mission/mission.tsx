@@ -1,5 +1,5 @@
 import type { Route } from "./+types/mission";
-import OurMissionPage from "~/pages/about/mission/mission";
+import OurMissionPage from "~/src/pages/about/mission/mission";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Quem Somos | Prestige Motors" },

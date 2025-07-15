@@ -1,5 +1,5 @@
 import type { Route } from "./+types/create";
-import CreateVehiclePage from "~/pages/vehicles/create/create";
+import CreateVehiclePage from "~/src/pages/vehicles/create/create";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Adcionar um Veículo | Prestige Motors" },

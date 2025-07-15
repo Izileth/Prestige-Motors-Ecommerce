@@ -1,5 +1,5 @@
 import type { Route } from "./+types/forgout";
-import RecoverPasswordPage from "~/pages/passwords/forgout";
+import RecoverPasswordPage from "~/src/pages/passwords/forgout";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Redefinição de Senha | Prestige Motors" },

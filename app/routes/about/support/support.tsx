@@ -1,5 +1,5 @@
 import type { Route } from "./+types/support";
-import SupportPage from "~/pages/about/support/support";
+import SupportPage from "~/src/pages/about/support/support";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Suporte | Prestige Motors" },

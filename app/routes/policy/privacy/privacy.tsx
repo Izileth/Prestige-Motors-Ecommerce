@@ -1,5 +1,5 @@
 import type { Route } from "./+types/privacy";
-import PrivacyPolicyPage from "~/pages/polities/privacy/privacy";
+import PrivacyPolicyPage from "~/src/pages/polities/privacy/privacy";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Política de Privacidade | Prestige Motors" },

@@ -1,5 +1,5 @@
 import type { Route } from "./+types/register";
-import RegisterPage from "~/pages/auth/register";
+import RegisterPage from "~/src/pages/auth/register";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Registro | Prestige Motors" },

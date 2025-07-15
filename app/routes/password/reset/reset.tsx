@@ -1,5 +1,5 @@
 import type { Route } from "./+types/reset";
-import ResetPasswordPage from "~/pages/passwords/reset";
+import ResetPasswordPage from "~/src/pages/passwords/reset";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Criação de Senha | Prestige Motors" },

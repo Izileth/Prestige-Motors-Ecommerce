@@ -1,5 +1,5 @@
 import type { Route } from "./+types/dashboard";
-import DashboardPage from "~/pages/profile/profile";
+import DashboardPage from "~/src/pages/profile/profile";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Dashboard | Prestige Motors" },
