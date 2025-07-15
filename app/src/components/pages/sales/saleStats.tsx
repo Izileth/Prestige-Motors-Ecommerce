@@ -40,7 +40,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-6xl mx-auto p-4">
+      <div className="w-full max-w-full mx-auto p-4">
         <Card className="border border-gray-200 shadow-sm bg-white">
           <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5">
             <div className="flex items-center gap-3">

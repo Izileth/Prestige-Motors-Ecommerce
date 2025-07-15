@@ -1,25 +1,34 @@
-import type React from "react"
-import { useEffect } from "react"
-import useSale from "~/src/hooks/useSale"
-import SalesList from "./salesList"
-import { Card, CardHeader, CardTitle, CardContent } from "~/src/components/ui/card"
-import { History } from "lucide-react"
+import React, { useEffect, useCallback, useMemo } from "react";
+import useSale from "~/src/hooks/useSale";
+import SalesList from "./salesList";
+import { Card, CardHeader, CardTitle, CardContent } from "~/src/components/ui/card";
+import { History } from "lucide-react";
 
 interface VehicleSalesProps {
-  vehicleId: string
+  vehicleId: string;
 }
 
 const VehicleSales: React.FC<VehicleSalesProps> = ({ vehicleId }) => {
-  const { vehicleSales, fetchSalesByVehicle, setCurrentSale } = useSale()
+  const { vehicleSales, fetchSalesByVehicle, setCurrentSale } = useSale();
+
+  // Memoize fetch function to prevent unnecessary recreations
+  const fetchVehicleSales = useCallback(async () => {
+    try {
+      await fetchSalesByVehicle(vehicleId);
+    } catch (error) {
+      console.error("Error fetching vehicle sales:", error);
+    }
+  }, [vehicleId, fetchSalesByVehicle]);
 
   useEffect(() => {
-    fetchSalesByVehicle(vehicleId)
-  }, [vehicleId])
+    fetchVehicleSales();
+  }, [fetchVehicleSales]);
 
-  const currentYear = new Date().getFullYear()
+  // Memoize current year to avoid recalculating
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4">
+    <div className="w-full max-w-full mx-auto p-4">
       <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200 hover:shadow-md">
         <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5 flex items-center gap-3">
           <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -30,18 +39,21 @@ const VehicleSales: React.FC<VehicleSalesProps> = ({ vehicleId }) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <SalesList sales={vehicleSales} onSelectSale={setCurrentSale} title="Vendas Anteriores" />
+          <SalesList 
+            sales={vehicleSales} 
+            onSelectSale={setCurrentSale} 
+            title="Vendas Anteriores" 
+          />
         </CardContent>
       </Card>
 
-      {/* Copyright Notice */}
       <div className="mt-6 pt-4 border-t border-gray-100">
         <p className="text-xs text-gray-400 text-center font-light tracking-wide">
           © {currentYear} Vehicle Sales History. All rights reserved.
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VehicleSales
+export default React.memo(VehicleSales);

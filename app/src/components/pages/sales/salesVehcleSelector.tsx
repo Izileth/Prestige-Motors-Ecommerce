@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Command,
+    Command,
     CommandEmpty,
     CommandGroup,
     CommandItem,
@@ -18,14 +18,40 @@ interface VehicleSelectorProps {
     onSelectVehicle: (vehicleId: string) => void;
 }
 
-const VehicleSelector: React.FC<VehicleSelectorProps> = ({ selectedVehicle, onSelectVehicle }) => {
-  const [open, setOpen] = useState(false);
+const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({ 
+    selectedVehicle, 
+    onSelectVehicle 
+    }) => {
+    const [open, setOpen] = useState(false);
     const { userVehicles, fetchUserVehicles, loading } = useVehicle();
 
-    // Carrega os veículos do usuário quando o componente é montado
+    // Memoize fetch function
+    const loadUserVehicles = useCallback(async () => {
+        try {
+        await fetchUserVehicles();
+        } catch (error) {
+        console.error("Error loading vehicles:", error);
+        }
+    }, [fetchUserVehicles]);
+
     useEffect(() => {
-        fetchUserVehicles();
-    }, []);
+        loadUserVehicles();
+    }, [loadUserVehicles]);
+
+    // Memoize selected vehicle label
+    const selectedVehicleLabel = useMemo(() => {
+        if (!selectedVehicle) return null;
+        const vehicle = userVehicles.find(v => v.id === selectedVehicle);
+        return vehicle ? `${vehicle.marca} ${vehicle.modelo}` : '';
+    }, [selectedVehicle, userVehicles]);
+
+    // Memoize button content to avoid unnecessary recalculations
+    const buttonContent = useMemo(() => {
+        if (loading) return "Carregando veículos...";
+        if (selectedVehicle) return selectedVehicleLabel;
+        if (userVehicles.length > 0) return "Selecione um veículo";
+        return "Nenhum veículo disponível";
+    }, [loading, selectedVehicle, selectedVehicleLabel, userVehicles.length]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -37,14 +63,7 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({ selectedVehicle, onSe
             className="w-full justify-between"
             disabled={loading || userVehicles.length === 0}
             >
-            {selectedVehicle
-                ? userVehicles.find((v) => v.id === selectedVehicle)?.marca + ' ' + 
-                userVehicles.find((v) => v.id === selectedVehicle)?.modelo
-                : loading 
-                ? "Carregando veículos..."
-                : userVehicles.length > 0
-                    ? "Selecione um veículo"
-                    : "Nenhum veículo disponível"}
+            {buttonContent}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -81,15 +100,16 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({ selectedVehicle, onSe
                             src={vehicle.imagens.find(img => img.isMain)?.url || vehicle.imagens[0].url} 
                             alt={vehicle.marca} 
                             className="w-8 h-8 object-cover rounded"
+                            loading="lazy" // Otimização para carregamento de imagem
                             />
                         )}
                         <div>
                             <p>{vehicle.marca} {vehicle.modelo}</p>
                             <p className="text-xs text-muted-foreground">
-                            {vehicle.anoFabricacao} • {vehicle.preco.toLocaleString('pt-BR', { 
+                            {vehicle.anoFabricacao} • {new Intl.NumberFormat('pt-BR', { 
                                 style: 'currency', 
                                 currency: 'BRL' 
-                            })}
+                            }).format(vehicle.preco)}
                             </p>
                         </div>
                         </div>
@@ -102,6 +122,8 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({ selectedVehicle, onSe
         </PopoverContent>
         </Popover>
     );
-};
+});
+
+VehicleSelector.displayName = 'VehicleSelector'; // Para facilitar debugging
 
 export default VehicleSelector;

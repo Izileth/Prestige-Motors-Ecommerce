@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandItem,
-    CommandList,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
 } from '~/src/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '~/src/components/ui/popover';
 import { Button } from '~/src/components/ui/button';
@@ -19,12 +19,66 @@ interface UserSelectorProps {
     onSelectUser: (userId: string) => void;
 }
 
-const UserSelector: React.FC<UserSelectorProps> = ({ role, selectedUser, onSelectUser }) => {
+const UserSelector: React.FC<UserSelectorProps> = memo(({ 
+    role = 'buyer', 
+    selectedUser, 
+    onSelectUser 
+    }) => {
     const [open, setOpen] = useState(false);
     const { currentUser } = useUserStore();
 
-    // Usamos apenas o usuário logado
-    const users = currentUser ? [currentUser] : [];
+    // Memoize users array to prevent unnecessary recalculations
+    const users = useMemo(() => 
+        currentUser ? [currentUser] : []
+    , [currentUser]);
+
+    // Memoize selected user name
+    const selectedUserName = useMemo(() => {
+        if (!selectedUser) return null;
+        return users.find((user) => user.id === selectedUser)?.nome;
+    }, [selectedUser, users]);
+
+    // Memoize button content to avoid unnecessary re-renders
+    const buttonContent = useMemo(() => {
+        if (selectedUserName) return selectedUserName;
+        if (currentUser) return currentUser.nome;
+        return `Selecione um ${role === 'buyer' ? 'comprador' : 'vendedor'}...`;
+    }, [selectedUserName, currentUser, role]);
+
+    // Memoize the command items to prevent unnecessary re-renders
+    const commandItems = useMemo(() => (
+        users.map((user) => (
+        <CommandItem
+            key={user.id}
+            value={user.id}
+            onSelect={() => {
+            onSelectUser(user.id);
+            setOpen(false);
+            }}
+        >
+            <Check
+            className={cn(
+                "mr-2 h-4 w-4",
+                selectedUser === user.id ? "opacity-100" : "opacity-0"
+            )}
+            />
+            <div className="flex items-center gap-2">
+            {user.avatar && (
+                <img 
+                src={user.avatar} 
+                alt={user.nome} 
+                className="w-8 h-8 rounded-full"
+                loading="lazy" // Otimização para carregamento de imagem
+                />
+            )}
+            <div>
+                <p>{user.nome}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+            </div>
+        </CommandItem>
+        ))
+    ), [users, selectedUser, onSelectUser]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -34,13 +88,9 @@ const UserSelector: React.FC<UserSelectorProps> = ({ role, selectedUser, onSelec
             role="combobox"
             aria-expanded={open}
             className="w-full justify-between"
-            disabled={!currentUser} // Desabilita se não houver usuário logado
+            disabled={!currentUser}
             >
-            {selectedUser
-                ? users.find((user) => user.id === selectedUser)?.nome
-                : currentUser
-                ? currentUser.nome
-                : `Selecione um ${role === 'buyer' ? 'comprador' : 'vendedor'}...`}
+            {buttonContent}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -52,36 +102,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ role, selectedUser, onSelec
                 <CommandEmpty>Nenhum usuário disponível</CommandEmpty>
                 ) : (
                 <CommandGroup>
-                    {users.map((user) => (
-                    <CommandItem
-                        key={user.id}
-                        value={user.id}
-                        onSelect={() => {
-                        onSelectUser(user.id);
-                        setOpen(false);
-                        }}
-                    >
-                        <Check
-                        className={cn(
-                            "mr-2 h-4 w-4",
-                            selectedUser === user.id ? "opacity-100" : "opacity-0"
-                        )}
-                        />
-                        <div className="flex items-center gap-2">
-                        {user.avatar && (
-                            <img 
-                            src={user.avatar} 
-                            alt={user.nome} 
-                            className="w-8 h-8 rounded-full"
-                            />
-                        )}
-                        <div>
-                            <p>{user.nome}</p>
-                            <p className="text-xs text-muted-foreground">{user.email}</p>
-                        </div>
-                        </div>
-                    </CommandItem>
-                    ))}
+                    {commandItems}
                 </CommandGroup>
                 )}
             </CommandList>
@@ -89,6 +110,8 @@ const UserSelector: React.FC<UserSelectorProps> = ({ role, selectedUser, onSelec
         </PopoverContent>
         </Popover>
     );
-};
+});
+
+UserSelector.displayName = 'UserSelector'; // Para facilitar debugging
 
 export default UserSelector;
