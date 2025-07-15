@@ -47,7 +47,7 @@ export const FormTabs = ({ activeTab, onTabChange }: FormTabsProps) => (
                 className="data-[state=active]:border-b-zinc-950 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none dark:data-[state=active]:bg-gray-800 data-[state=active]:text-black dark:data-[state=active]:text-white flex items-center gap-2 h-10"
             >
                 <MapPin className="h-4 w-4" />
-                <span className="hidden sm:inline">Localização</span>
+                <span className="hidden sm:inline">Localização <span className="text-xs text-zinc-950 bg-zinc-200 p-2 rounded-full ">Opcional</span> </span>
                 <span className="sm:hidden">Local</span>
             </TabsTrigger>
             

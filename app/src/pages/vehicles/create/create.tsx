@@ -3,23 +3,25 @@ import { useNavigate } from "react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import useVehicle from "~/src/hooks/useVehicle";
 import {
   vehicleFormSchema,
   type VehicleFormValues,
 } from "../../../schemas/schema";
 
-import { FormHeader } from "~/src/components/pages/vehicle/create/form-header";
-import { PageHeader } from "~/src/components/pages/vehicle/create/page-header";
-import { ProgressBar } from "~/src/components/pages/vehicle/create/progress-bar";
-import { FormNotifications } from "~/src/components/pages/vehicle/create/form-notifications";
-import { FormTabs } from "~/src/components/pages/vehicle/create/form-tabs";
-import { BasicInfoForm } from "~/src/components/pages/vehicle/create/basic-info-form";
-import { ImageForm } from "~/src/components/pages/vehicle/create/image-form";
-import { TechnicalDetailsForm } from "~/src/components/pages/vehicle/create/technical-details-form";
-import { AdditionalOptionsForm } from "~/src/components/pages/vehicle/create/additional-options-form";
-import { LocationForm } from "~/src/components/pages/vehicle/create/location-form";
+import {
+  FormHeader,
+  FormNotifications,
+  FormTabs,
+  ImageForm,
+  BasicInfoForm,
+  TechnicalDetailsForm,
+  AdditionalOptionsForm,
+  LocationForm,
+  PageHeader,
+  ProgressBar
+} from "~/src/components/pages/vehicle/create"
+
 import { TabsContent, Tabs } from "~/src/components/ui/tabs";
 import { Form } from "~/src/components/ui/form";
 

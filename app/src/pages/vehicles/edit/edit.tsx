@@ -16,7 +16,7 @@ import {
   LocationTab,
   CancelationDialog,
   ImageViewer,
-} from "~/src/components/pages/vehicle/update";
+} from "~/src/components/pages/vehicle/edit";
 import { Button } from "~/src/components/ui/button";
 import { Form } from "~/src/components/ui/form";
 import { Tabs, TabsContent } from "~/src/components/ui/tabs";

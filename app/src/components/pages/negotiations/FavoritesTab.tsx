@@ -4,6 +4,18 @@ import { Button } from "~/src/components/ui/button";
 import { Skeleton } from "~/src/components/ui/skeleton";
 import { Heart, Search, ArrowRight } from "lucide-react";
 import { FavoriteVehicleCard } from "./FavoriteVehicleCard";
+import type { Vehicle } from "~/src/types/vehicle";
+
+interface FavoritesTabProps {
+    loading: boolean;
+    favorites: Vehicle[];
+    expandedVehicle: string | null;
+    toggleExpandVehicle: (vehicleId: string) => void;
+    handleRemoveFavorite: (vehicleId: string) => void;
+    // Props que serão repassadas para o NegotiationForm
+    onSendMessage?: (vehicleId: string, message: string) => Promise<void>;
+    [key: string]: any; // Para outras props adicionais
+}
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -27,7 +39,15 @@ const itemVariants = {
     },
 };
 
-export const FavoritesTab = ({ loading, favorites, ...props }) => {
+export const FavoritesTab = ({ 
+    loading, 
+    favorites, 
+    expandedVehicle, 
+    toggleExpandVehicle, 
+    handleRemoveFavorite,
+    onSendMessage,
+    ...props 
+}: FavoritesTabProps) => {
     return (
         <motion.div
             key="favorites"
@@ -99,7 +119,15 @@ export const FavoritesTab = ({ loading, favorites, ...props }) => {
             ) : (
                 <div className="space-y-6">
                     {favorites.map((vehicle) => (
-                        <FavoriteVehicleCard key={vehicle.id} vehicle={vehicle} {...props} />
+                        <FavoriteVehicleCard 
+                            key={vehicle.id} 
+                            vehicle={vehicle}
+                            expandedVehicle={expandedVehicle}
+                            toggleExpandVehicle={toggleExpandVehicle}
+                            handleRemoveFavorite={handleRemoveFavorite}
+                            onSendMessage={onSendMessage}
+                            {...props}
+                        />
                     ))}
                 </div>
             )}

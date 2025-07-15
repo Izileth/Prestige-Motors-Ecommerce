@@ -14,12 +14,13 @@ import { useAuth } from "~/src/hooks/useAuth";
 import type { ReviewCreateInput, ReviewUpdateInput, Review } from "~/src/types/reviews";
 import type { VehicleError } from "~/src/types/vehicle";
 
-import VehicleHeader from "~/src/components/pages/vehicle-details/VehicleHeader";
-import VehicleImageGallery from "~/src/components/pages/vehicle-details/VehicleImageGallery";
-import VehicleInfo from "~/src/components/pages/vehicle-details/VehicleInfo";
-import VehicleDetails from "~/src/components/pages/vehicle-details/VehicleDetails";
-import VehicleSidebar from "~/src/components/pages/vehicle-details/VehicleSidebar";
-import VehicleReviews from "~/src/components/pages/vehicle-details/VehicleReviews";
+import VehicleHeader from "~/src/components/pages/vehicle/id/VehicleHeader";
+import VehicleImageGallery from "~/src/components/pages/vehicle/id/VehicleImageGallery";
+import VehicleInfo from "~/src/components/pages/vehicle/id/VehicleInfo";
+import VehicleDetails from "~/src/components/pages/vehicle/id/VehicleDetails";
+import VehicleSidebar from "~/src/components/pages/vehicle/id/VehicleSidebar";
+import VehicleReviews from "~/src/components/pages/vehicle/id/VehicleReviews";
+
 
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();

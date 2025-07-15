@@ -8,8 +8,18 @@ const tabVariants = {
     inactive: { opacity: 0.7, x: 0 },
     active: { opacity: 1, x: 0 },
 };
+type ActiveTab = "favorites" | "negotiations";
 
-export const NegotiationsSidebar = ({ activeTab, setActiveTab, favoritesCount, handleProfile }) => {
+// Interface para as props do componente
+interface NegotiationsSidebarProps {
+    activeTab: ActiveTab;
+    setActiveTab: (tab: ActiveTab) => void;
+    favoritesCount: number;
+    handleProfile: () => void;
+}
+
+
+export const NegotiationsSidebar = ({ activeTab, setActiveTab, favoritesCount, handleProfile }: NegotiationsSidebarProps) => {
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}

@@ -1,8 +1,18 @@
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import { X, ChevronRight } from "lucide-react";
 import { NegotiationForm } from "./NegotiationForm";
 import type { Vehicle } from "~/src/types/vehicle";
+
+interface FavoriteVehicleCardProps {
+    vehicle: Vehicle;
+    expandedVehicle: string | null;
+    toggleExpandVehicle: (vehicleId: string) => void;
+    handleRemoveFavorite: (vehicleId: string) => void;
+    [key: string]: any; // Para outras props que podem ser passadas para o NegotiationForm
+}
+
 const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -15,14 +25,44 @@ const itemVariants = {
     },
 };
 
-const formatPrice = (price: number) => {
+const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
     }).format(price);
 };
 
-export const FavoriteVehicleCard = ({ vehicle, expandedVehicle, toggleExpandVehicle, handleRemoveFavorite, ...props }) => {
+export const FavoriteVehicleCard = ({ 
+    vehicle, 
+    expandedVehicle, 
+    toggleExpandVehicle, 
+    handleRemoveFavorite, 
+    ...props 
+}: FavoriteVehicleCardProps) => {
+    // Estados para o formulário de negociação
+    const [message, setMessage] = useState<string>('');
+    const [isMessageSending, setIsMessageSending] = useState<boolean>(false);
+    
+    const [messageSent, setMessageSent] = useState<boolean>(false);
+    const [hoveredButton, setHoveredButton] = useState<
+        "message" | "phone" | "email" | "whatsapp" | null
+    >(null);
+  
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const handleSendMessage = async (vehicleId: string) => {
+        setIsMessageSending(true);
+        try {
+            // Aqui você implementaria a lógica de envio da mensagem
+            // await sendMessage(vehicleId, message);
+            setMessageSent(true);
+            setTimeout(() => setMessageSent(false), 3000); // Esconde a mensagem de sucesso após 3 segundos
+        } catch (error) {
+            console.error("Erro ao enviar mensagem:", error);
+        } finally {
+            setIsMessageSending(false);
+        }
+    };
+
     return (
         <motion.div
             key={vehicle.id}
@@ -35,7 +75,7 @@ export const FavoriteVehicleCard = ({ vehicle, expandedVehicle, toggleExpandVehi
                         {vehicle.imagens?.length > 0 ? (
                             <img
                                 src={vehicle.imagens[0].url || "/placeholder.svg"}
-                                alt={vehicle.modelo}
+                                alt={`${vehicle.marca} ${vehicle.modelo}`}
                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                             />
                         ) : (
@@ -95,7 +135,18 @@ export const FavoriteVehicleCard = ({ vehicle, expandedVehicle, toggleExpandVehi
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden border-t border-gray-100 dark:border-gray-900"
                     >
-                        <NegotiationForm vehicle={vehicle} {...props} />
+                        <NegotiationForm 
+                            vehicle={vehicle}
+                            message={message}
+                            setMessage={setMessage}
+                            isMessageSending={isMessageSending}
+                            messageSent={messageSent}
+                            handleSendMessage={handleSendMessage}
+                            hoveredButton={hoveredButton}
+                            setHoveredButton={setHoveredButton}
+                            messagesEndRef={messagesEndRef}
+                            {...props}
+                        />
                     </motion.div>
                 )}
             </AnimatePresence>

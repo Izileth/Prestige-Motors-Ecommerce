@@ -12,9 +12,9 @@ import {
     VehicleGrid,
     EmptyState,
     DeleteConfirmationDialog,
-} from "~/src/components/pages/user-vehicles";
+} from "~/src/components/pages/vehicle/user";
 
-import type { StatusFilter } from "~/src/components/pages/user-vehicles";
+import type { StatusFilter } from "~/src/components/pages/vehicle/user";
 
 import type { Vehicle } from "~/src/types/vehicle";
 const staggerContainer = {

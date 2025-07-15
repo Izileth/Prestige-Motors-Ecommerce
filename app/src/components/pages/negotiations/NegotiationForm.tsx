@@ -3,8 +3,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import { Textarea } from "~/src/components/ui/textarea";
 import { MessageSquare, Phone, Mail } from "lucide-react";
+import type { Vehicle } from "~/src/types/vehicle";
+import type { RefObject } from "react";
 
-export const NegotiationForm = ({ vehicle, message, setMessage, isMessageSending, messageSent, handleSendMessage, hoveredButton, setHoveredButton, messagesEndRef }) => {
+interface NegotiationFormProps {
+    vehicle: Vehicle;
+    message: string;
+    setMessage: (message: string) => void;
+    isMessageSending: boolean;
+    messageSent: boolean;
+    handleSendMessage: (vehicleId: string) => void;
+    hoveredButton: "message" | "phone" | "email" | "whatsapp" | null;
+    setHoveredButton: (button: "message" | "phone" | "email" | "whatsapp" | null) => void;
+    messagesEndRef: RefObject<HTMLDivElement | null>;
+}
+
+
+export const NegotiationForm = ({ vehicle, message, setMessage, isMessageSending, messageSent, handleSendMessage, hoveredButton, setHoveredButton, messagesEndRef }: NegotiationFormProps) => {
+    
     return (
         <div className="p-6 space-y-4" ref={messagesEndRef}>
             <h4 className="text-sm font-light text-gray-500 dark:text-gray-400">
