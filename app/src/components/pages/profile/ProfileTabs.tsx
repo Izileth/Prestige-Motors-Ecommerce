@@ -13,7 +13,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ activeTab, onTabChange }) => 
       defaultValue="perfil"
       value={activeTab}
       onValueChange={onTabChange}
-      className="space-y-6"
+      className="space-y-6 mb-6"
     >
       <TabsList className="bg-transparent dark:bg-transparent p-1 rounded-lg w-full">
         <TabsTrigger

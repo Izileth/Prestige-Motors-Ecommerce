@@ -80,7 +80,7 @@ const ProfileTabContent: React.FC<ProfileTabContentProps> = ({
   userStats,
 }) => {
   return (
-    <Tabs value={activeTab} className="w-full">
+    <Tabs value={activeTab} className="w-full mb-10">
       <TabsContent value="perfil">
         <PersonalInfo
           currentUser={currentUser}

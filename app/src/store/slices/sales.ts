@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { saleService } from '~/src/services/sale';
 import type { Sale, SaleData, SaleStats, UpdateSaleData } from '~/src/types/sale';
-
+import type { UserTransactionsResponse } from '~/src/types/transactions';
 export interface SaleState {
     sales: Sale[];
     purchases: Sale[];
@@ -16,6 +16,7 @@ export interface SaleState {
     loading: boolean;
     error: string | null;
     success: boolean;
+    transactions: UserTransactionsResponse;
 }
 
 const initialState: SaleState = {
@@ -24,6 +25,10 @@ const initialState: SaleState = {
     sellerSales: [],
     vehicleSales: [],
     currentSale: null,
+    transactions: {
+      asSeller: [],
+      asBuyer: []
+    },
     stats: {
         global: {
         totalSales: 0,
@@ -73,6 +78,17 @@ export const updateSale = createAsyncThunk(
       return await saleService.updateSale(id, data);
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to update sale');
+    }
+  }
+);
+
+export const fetchUserTransactions = createAsyncThunk(
+  'sales/fetchTransactions',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      return await saleService.getUserTransactions(userId);
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch transactions');
     }
   }
 );
@@ -164,6 +180,9 @@ const saleSlice = createSlice({
       })
       .addCase(fetchPurchasesByUser.fulfilled, (state, action) => {
         state.purchases = action.payload;
+      })
+      .addCase(fetchUserTransactions.fulfilled, (state, action) => {
+        state.transactions = action.payload;
       })
       .addCase(fetchSalesBySeller.fulfilled, (state, action) => {
         state.sellerSales = action.payload;

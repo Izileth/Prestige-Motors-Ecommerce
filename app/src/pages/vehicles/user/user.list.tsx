@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useVehicle from "~/src/hooks/useVehicle";
 import { useAuth } from "~/src/hooks/useAuth";
 import { motion } from "framer-motion";
@@ -51,12 +51,24 @@ export function UserVehicleList() {
     const [viewMode, setViewMode] = useState<"table" | "grid">("table");
     const [showFilters, setShowFilters] = useState(false);
 
+    const fetchData = useCallback(async () => {
+        try {
+            await fetchUserVehicles();
+            await fetchUserFavorites();
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+            // Tratar erro de limite de chamadas aqui
+        }
+    }, [fetchUserVehicles, fetchUserFavorites]);
+
+
+    // Adicione as funções como dependências do useEffect
+
     useEffect(() => {
         if (user?.id) {
-            fetchUserVehicles();
-            fetchUserFavorites();
+            fetchData();
         }
-    }, [user?.id]);
+    }, [user?.id, fetchData]);
 
     const vehiclesToRender = Array.isArray(userVehicles)
         ? userVehicles
@@ -85,6 +97,7 @@ export function UserVehicleList() {
         }
     };
 
+
     const toggleFavorite = async (vehicleId: string) => {
         try {
             if (isFavorite(vehicleId)) {
@@ -92,7 +105,8 @@ export function UserVehicleList() {
             } else {
                 await addFavorite(vehicleId);
             }
-            await fetchUserFavorites();
+            // Remova esta linha para evitar chamada adicional
+            // await fetchUserFavorites();
         } catch (error) {
             console.error("Erro ao atualizar favoritos:", error);
         }

@@ -3,7 +3,7 @@ import { Welcome } from "~/src/pages/home/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Home | Presitige Motors" },
+    { title: "Incio | Presitige Motors" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }

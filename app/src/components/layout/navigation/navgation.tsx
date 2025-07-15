@@ -132,6 +132,7 @@ const Navigation: React.FC<NavigationProps> = ({
     },
     { name: "Catálogo", href: "/vehicles" },
     { name: "Divulgar Veículo", href: "/vehicles/create" },
+    { name: "Vendas & Negócios", href: "/sale/dashboard" },
   ];
 
   // Use custom menu items if provided, otherwise use default
@@ -375,7 +376,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         <p className="flex flex-row items-center text-xs font-normal uppercase tracking-wider text-muted-foreground">
                           {item.name}  <ChevronDown size={14} className="pl-1" />
                         </p>
-                        <div className="space-y-4 mt-0 pl-1  border-l-zinc-500 border-l-2 ">
+                        <div className="space-y-4 mt-0 pl-1  border-l-zinc-900 border-l-2 ">
                           {item.submenu.map((subItem, subIndex) => (
                             <Link
                               key={subIndex}
@@ -395,7 +396,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         key={index}
                         to={item.href}
                         className={cn(
-                          "block text-xs  font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
+                          "block text-sm  font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
                           isActive(item.href) && "font-normal"
                         )}
                       >
@@ -411,19 +412,19 @@ const Navigation: React.FC<NavigationProps> = ({
                   <>
                     <Link
                       to="/dashboard"
-                      className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Conta
                     </Link>
                     <Link
                       to="/orders"
-                      className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Negociações
                     </Link>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-xs font-extralight tracking-wider uppercase p-0 h-auto hover:bg-transparent hover:text-foreground/80"
+                      className="w-full justify-start text-sm font-extralight tracking-wider uppercase p-0 h-auto hover:bg-transparent hover:text-foreground/80"
                       onClick={handleLogout}
                     >
                       Sair
@@ -433,13 +434,13 @@ const Navigation: React.FC<NavigationProps> = ({
                   <>
                     <Link
                       to="/login"
-                      className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Entrar
                     </Link>
                     <Link
                       to="/register"
-                      className="block text-xs font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Registrar
                     </Link>

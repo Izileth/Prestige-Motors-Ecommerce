@@ -235,7 +235,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">Ano Médio:</span>
               <span className="text-sm text-gray-900 dark:text-gray-100">
-                Fab: {Math.round(safeStats.anoFabricacaoMedio)} | Mod: {Math.round(safeStats.anoModeloMedio)}
+                Fabricação - {Math.round(safeStats.anoFabricacaoMedio)} | Modelo - {Math.round(safeStats.anoModeloMedio)}
               </span>
             </div>
           </div>
