@@ -58,7 +58,7 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
                 </div>
                 </div>
             ) : (
-                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ul className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
                 {sales.map((sale) => (
                     <li key={sale.id}>
                     <Card
@@ -67,10 +67,10 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
                     >
                         <CardContent className="p-4 flex flex-col h-full">
                         <div className="flex items-center gap-3 mb-3">
-                            {sale.vehicle?.imagem ? (
+                            {sale.vehicle?.imagemPrincipal ? (
                             <div className="relative w-16 h-16 rounded-md overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
                                 <img
-                                src={sale.vehicle.imagem || "/placeholder.svg"}
+                                src={sale.vehicle.imagemPrincipal || "/placeholder.svg"}
                                 alt={`${sale.vehicle.marca} ${sale.vehicle.modelo}`}
                                 className="transition-transform duration-300 group-hover:scale-105 object-center object-cover fill-accent-foreground"
                                 />

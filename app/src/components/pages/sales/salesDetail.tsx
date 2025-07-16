@@ -79,10 +79,10 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 Veículo
                 </h3>
                 <Separator className="bg-gray-100" />
-                {sale.vehicle?.imagem ? (
+                {sale.vehicle?.imagemPrincipal ? (
                 <div className="relative w-full h-48 rounded-md overflow-hidden border border-gray-200 bg-gray-50">
                     <img
-                    src={sale.vehicle.imagem || "/placeholder.svg"}
+                    src={sale.vehicle.imagemPrincipal || "/placeholder.svg"}
                     alt={`${sale.vehicle.marca} ${sale.vehicle.modelo}`}
                     className="transition-transform duration-300 hover:scale-105 h-full w-full object-cover"
                     />
@@ -122,25 +122,25 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                     <dl className="space-y-1 text-sm text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{sale.comprador?.nome || "N/A"}</dd>
+                        <dd className="font-light">{sale.comprador?.nome || "Não informado"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light">{sale.comprador?.email || "N/A"}</dd>
+                        <dd className="font-light text-sm">{sale.comprador?.email || "Não informado"}</dd>
                     </div>
                     </dl>
                 </div>
                 {/* Seller Info */}
                 <div className="space-y-2">
                     <h4 className="font-semibold text-gray-800 text-base border-b border-gray-100 pb-2 mb-2">Vendedor</h4>
-                    <dl className="space-y-1 text-sm text-gray-700">
+                    <dl className="space-y-1 text-xs text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{sale.vendedor?.nome || "N/A"}</dd>
+                        <dd className="font-light">{sale.vendedor?.nome || "Não informado"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light">{sale.vendedor?.email || "N/A"}</dd>
+                        <dd className="font-light">{sale.vendedor?.email || "Não informado"}</dd>
                     </div>
                     </dl>
                 </div>

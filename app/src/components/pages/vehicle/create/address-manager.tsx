@@ -1,16 +1,48 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import { Button } from "~/src/components/ui/button"
 import { Input } from "~/src/components/ui/input"
-import { Label } from "~/src/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "~/src/components/ui/card"
-import { Loader2, MapPin, CheckCircle2, Trash2, Building2 } from "lucide-react"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/src/components/ui/form"
+import { Loader2, MapPin, CheckCircle2, Trash2, Building2, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { useVehicleAddress } from "~/src/hooks/useVehiclesAddress"
-import type { FormEvent } from "react"
-
 import { useNavigate } from "react-router"
+
+// Schema de validação
+const addressSchema = z.object({
+  cep: z.string()
+    .min(8, "CEP deve ter 8 dígitos")
+    .max(8, "CEP deve ter 8 dígitos")
+    .regex(/^\d{8}$/, "CEP deve conter apenas números"),
+  logradouro: z.string()
+    .min(1, "Logradouro é obrigatório")
+    .max(255, "Logradouro muito longo"),
+  numero: z.string()
+    .min(1, "Número é obrigatório")
+    .max(20, "Número muito longo"),
+  complemento: z.string().max(100, "Complemento muito longo").optional(),
+  bairro: z.string()
+    .min(1, "Bairro é obrigatório")
+    .max(100, "Bairro muito longo"),
+  cidade: z.string()
+    .min(1, "Cidade é obrigatória")
+    .max(100, "Cidade muito longa"),
+  estado: z.string()
+    .min(2, "Estado deve ter 2 caracteres")
+    .max(2, "Estado deve ter 2 caracteres")
+    .regex(/^[A-Z]{2}$/, "Estado deve conter apenas letras maiúsculas"),
+  pais: z.string()
+    .min(1, "País é obrigatório")
+    .max(100, "País muito longo"),
+})
+
+type AddressFormData = z.infer<typeof addressSchema>
+
 interface VehicleAddressManagerProps {
   vehicleId: string
   onSuccess?: () => void
@@ -20,32 +52,57 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
   const { currentAddress, success, loading, error, createAddress, updateAddress, removeAddress, getAddress } =
     useVehicleAddress()
 
-  const router = useNavigate()  
+  const router = useNavigate()
 
-  const [forceRefresh, setForceRefresh] = useState(Date.now())
-  const [formData, setFormData] = useState({
-    cep: "",
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    pais: "Brasil",
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRemoving, setIsRemoving] = useState(false)
+  const [hasLoadError, setHasLoadError] = useState(false)
+
+  // Configuração do React Hook Form
+  const form = useForm<AddressFormData>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      cep: "",
+      logradouro: "",
+      numero: "",
+      complemento: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      pais: "Brasil",
+    },
   })
 
   // Load address on component mount
   useEffect(() => {
-    if (vehicleId) {
-      getAddress(vehicleId)
+    const loadAddress = async () => {
+      if (vehicleId) {
+        setIsInitialLoading(true)
+        setHasLoadError(false)
+        
+        try {
+          await getAddress(vehicleId)
+          setHasLoadError(false)
+        } catch (err: any) {
+          // Apenas mostra erro se não for "endereço não encontrado"
+          if (err?.message && !err.message.includes('não encontrado') && !err.message.includes('not found')) {
+            setHasLoadError(true)
+            toast.error("Erro ao carregar dados do endereço")
+          }
+        } finally {
+          setIsInitialLoading(false)
+        }
+      }
     }
-  }, [vehicleId, forceRefresh])
+
+    loadAddress()
+  }, [vehicleId, getAddress])
 
   // Populate form when address is loaded
-
   useEffect(() => {
     if (currentAddress) {
-      setFormData({
+      form.reset({
         cep: currentAddress.cep || "",
         logradouro: currentAddress.logradouro || "",
         numero: currentAddress.numero || "",
@@ -54,10 +111,9 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
         cidade: currentAddress.cidade || "",
         estado: currentAddress.estado || "",
         pais: currentAddress.pais || "Brasil",
-      });
+      })
     } else {
-      // Reseta o formulário quando não há endereço
-      setFormData({
+      form.reset({
         cep: "",
         logradouro: "",
         numero: "",
@@ -66,105 +122,108 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
         cidade: "",
         estado: "",
         pais: "Brasil",
-      });
+      })
     }
-  }, [currentAddress]);
+  }, [currentAddress, form])
 
   // Visual feedback for operations
-    
   useEffect(() => {
-    if (success) {
-      toast.success("Operação realizada com sucesso!", {
+    if (success && (isSubmitting || isRemoving)) {
+      const message = isRemoving ? "Endereço removido com sucesso!" : 
+                     currentAddress ? "Endereço atualizado com sucesso!" : "Endereço adicionado com sucesso!"
+      
+      toast.success(message, {
         action: {
           label: "Ver veículo",
           onClick: () => router(`/vehicles/${vehicleId}`)
         },
         duration: 3000
-      });
-      onSuccess?.();
-      // Redireciona após 3 segundos
-      setTimeout(() => router(`/vehicles/${vehicleId}`), 3000);
+      })
+      
+      onSuccess?.()
+      
+      // Reset estados
+      setIsSubmitting(false)
+      setIsRemoving(false)
+      
+      // Redireciona após delay
+      setTimeout(() => router(`/vehicles/${vehicleId}`), 1500)
     }
-  }, [success, onSuccess, router, vehicleId]);
+  }, [success, isSubmitting, isRemoving, currentAddress, onSuccess, router, vehicleId])
 
-
+  // Tratamento de erro
   useEffect(() => {
-    if (error) {
+    if (error && (isSubmitting || isRemoving)) {
       toast.error(error)
+      setIsSubmitting(false)
+      setIsRemoving(false)
     }
-  }, [error])
+  }, [error, isSubmitting, isRemoving])
 
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log('✅ preventDefault executed');
+  // Submit handler
+  const onSubmit = async (data: AddressFormData) => {
+    if (isSubmitting) return
     
-    // Use o estado formData que já está sincronizado com os inputs
-    // (não precisa criar novo FormData, pois você já tem tudo no state)
+    setIsSubmitting(true)
+    
     const addressData = {
-      cep: formData.cep,
-      logradouro: formData.logradouro,
-      numero: formData.numero,
-      complemento: formData.complemento || undefined,
-      bairro: formData.bairro,
-      cidade: formData.cidade,
-      estado: formData.estado,
-      pais: formData.pais,
-    };
-
-    console.log('📋 Form data:', addressData);
+      cep: data.cep,
+      logradouro: data.logradouro,
+      numero: data.numero,
+      complemento: data.complemento || undefined,
+      bairro: data.bairro,
+      cidade: data.cidade,
+      estado: data.estado,
+      pais: data.pais,
+    }
 
     try {
       if (currentAddress?.id) {
-        console.log('🔄 Updating address with ID:', currentAddress.id);
         await updateAddress({
           vehicleId,
           address: {
             id: currentAddress.id,
             ...addressData
           }
-        });
+        })
       } else {
-        console.log('➕ Creating new address');
         await createAddress({
           vehicleId,
           address: addressData
-        });
+        })
       }
-      
-      setForceRefresh(Date.now());
-      onSuccess?.();
     } catch (error) {
-      console.error('❌ Operation failed:', error);
+      console.error('❌ Operation failed:', error)
+      setIsSubmitting(false)
     }
-  };
-
+  }
 
   const handleRemove = async () => {
-    toast.promise(
-      removeAddress({
-        vehicleId,
-      }),
-      {
-        loading: "Removendo endereço...",
-        success: "Endereço removido com sucesso!",
-        error: "Falha ao remover endereço",
-      },
-    )
+    if (isRemoving) return
+    
+    setIsRemoving(true)
+    
+    try {
+      await removeAddress({ vehicleId })
+    } catch (error) {
+      console.error('❌ Remove failed:', error)
+      setIsRemoving(false)
+    }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
+  // Função para formatar CEP
   const formatCEP = (value: string) => {
     const numbers = value.replace(/\D/g, "")
     return numbers.replace(/(\d{5})(\d{3})/, "$1-$2")
   }
 
+  // Estados de loading
+  const isFormDisabled = isInitialLoading || isSubmitting || isRemoving
+  const showLoadingSpinner = isInitialLoading
+  const showRemoveButton = currentAddress && !isInitialLoading
+
   return (
-    <div className="w-full max-w-full mx-auto p-1">
+    <div className="w-full max-w-full mx-auto ">
       <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200 hover:shadow-md">
         <CardHeader className="border-b border-gray-100 bg-gray-50/30 py-4">
           <div className="flex items-center justify-between">
@@ -172,17 +231,21 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
               <div className="p-2 bg-white border border-gray-200 rounded-lg">
                 <MapPin className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
               </div>
-              <span className="tracking-tight">Localização do Veículo</span>
+              <span className="tracking-tight">
+                {currentAddress ? "Editar Localização" : "Adicionar Localização"}
+              </span>
             </CardTitle>
-            {currentAddress && (
+            
+            {showRemoveButton && (
               <Button
+                type="button"
                 variant="ghost"
                 size="sm"
                 onClick={handleRemove}
-                disabled={loading}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-all duration-200"
+                disabled={isFormDisabled}
+                className="text-red-500 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-200"
               >
-                {loading ? (
+                {isRemoving ? (
                   <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
                 ) : (
                   <>
@@ -196,179 +259,248 @@ export function VehicleAddressManager({ vehicleId, onSuccess }: VehicleAddressMa
         </CardHeader>
 
         <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Address Icon and Description */}
-            <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
-              <Building2 className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
-              <p className="text-sm text-gray-600 font-light">Preencha os dados de localização do veículo</p>
-            </div>
-
-            {/* Form Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="cep" className="text-sm font-medium text-gray-700 tracking-tight">
-                  CEP
-                </Label>
-                <Input
-                  id="cep"
-                  name="cep"
-                  value={formatCEP(formData.cep)}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "")
-                    setFormData((prev) => ({
-                      ...prev,
-                      cep: value,
-                    }))
-                  }}
-                  placeholder="00000-000"
-                  maxLength={9}
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2 sm:col-span-2 lg:col-span-2">
-                <Label htmlFor="logradouro" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Logradouro
-                </Label>
-                <Input
-                  id="logradouro"
-                  name="logradouro"
-                  value={formData.logradouro}
-                  onChange={handleInputChange}
-                  placeholder="Rua, Avenida, Travessa..."
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="numero" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Número
-                </Label>
-                <Input
-                  id="numero"
-                  name="numero"
-                  value={formData.numero}
-                  onChange={handleInputChange}
-                  placeholder="123"
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="complemento" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Complemento
-                </Label>
-                <Input
-                  id="complemento"
-                  name="complemento"
-                  value={formData.complemento}
-                  onChange={handleInputChange}
-                  placeholder="Apto, Bloco, Sala..."
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bairro" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Bairro
-                </Label>
-                <Input
-                  id="bairro"
-                  name="bairro"
-                  value={formData.bairro}
-                  onChange={handleInputChange}
-                  placeholder="Centro, Vila..."
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cidade" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Cidade
-                </Label>
-                <Input
-                  id="cidade"
-                  name="cidade"
-                  value={formData.cidade}
-                  onChange={handleInputChange}
-                  placeholder="São Paulo"
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="estado" className="text-sm font-medium text-gray-700 tracking-tight">
-                  Estado
-                </Label>
-                <Input
-                  id="estado"
-                  name="estado"
-                  value={formData.estado.toUpperCase()}
-                  onChange={(e) => {
-                    setFormData((prev) => ({ ...prev, estado: e.target.value.toUpperCase() }))
-                  }}
-                  placeholder="SP"
-                  required
-                  maxLength={2}
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="pais" className="text-sm font-medium text-gray-700 tracking-tight">
-                  País
-                </Label>
-                <Input
-                  id="pais"
-                  name="pais"
-                  value={formData.pais}
-                  onChange={handleInputChange}
-                  placeholder="Brasil"
-                  required
-                  className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white"
-                />
+          {/* Loading inicial */}
+          {showLoadingSpinner && (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center gap-3 text-gray-600">
+                <Loader2 className="h-5 w-5 animate-spin" strokeWidth={1.5} />
+                <span>Carregando dados do endereço...</span>
               </div>
             </div>
+          )}
 
-            {/* Submit Button */}
-
-            <div className="flex justify-end pt-4 border-t border-gray-100 gap-3">
-              <Button
-                type="button"
-                onClick={() => router(`/vehicles/${vehicleId}`)}
-                variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                onClick={() => handleSubmit({ preventDefault: () => {} } as any)}
-                className="bg-gray-900 hover:bg-gray-800 text-white border-0 px-6 py-2 transition-all duration-200 font-medium tracking-tight"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" strokeWidth={1.5} />
-                    Salvando...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" strokeWidth={1.5} />
-                    {currentAddress ? "Atualizar Endereço" : "Adicionar Endereço"}
-                  </>
-                )}
-              </Button>
+          {/* Erro de carregamento */}
+          {hasLoadError && (
+            <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+              <AlertCircle className="h-5 w-5 text-red-500" strokeWidth={1.5} />
+              <div className="flex-1">
+                <p className="text-sm text-red-700 font-medium">Erro ao carregar endereço</p>
+                <p className="text-xs text-red-600 mt-1">Tente novamente ou adicione um novo endereço</p>
+              </div>
             </div>
-          </form>
+          )}
+
+          {/* Formulário */}
+          {!showLoadingSpinner && (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Address Icon and Description */}
+                <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
+                  <Building2 className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
+                  <p className="text-sm text-gray-600 font-light">
+                    {currentAddress ? "Edite os dados de localização do veículo" : "Preencha os dados de localização do veículo"}
+                  </p>
+                </div>
+
+                {/* Form Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* CEP */}
+                  <FormField
+                    control={form.control}
+                    name="cep"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">CEP</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="00000-000"
+                            maxLength={9}
+                            disabled={isFormDisabled}
+                            value={formatCEP(field.value)}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, "")
+                              field.onChange(value)
+                            }}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Logradouro */}
+                  <div className="sm:col-span-2 lg:col-span-2">
+                    <FormField
+                      control={form.control}
+                      name="logradouro"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Logradouro</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Rua, Avenida, Travessa..."
+                              disabled={isFormDisabled}
+                              className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Número */}
+                  <FormField
+                    control={form.control}
+                    name="numero"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Número</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="123"
+                            disabled={isFormDisabled}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Complemento */}
+                  <FormField
+                    control={form.control}
+                    name="complemento"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Complemento</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Apto, Bloco, Sala..."
+                            disabled={isFormDisabled}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Bairro */}
+                  <FormField
+                    control={form.control}
+                    name="bairro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Bairro</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Centro, Vila..."
+                            disabled={isFormDisabled}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Cidade */}
+                  <FormField
+                    control={form.control}
+                    name="cidade"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Cidade</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="São Paulo"
+                            disabled={isFormDisabled}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Estado */}
+                  <FormField
+                    control={form.control}
+                    name="estado"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">Estado</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="SP"
+                            maxLength={2}
+                            disabled={isFormDisabled}
+                            value={field.value.toUpperCase()}
+                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* País */}
+                  <FormField
+                    control={form.control}
+                    name="pais"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 tracking-tight">País</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Brasil"
+                            disabled={isFormDisabled}
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 transition-colors duration-200 bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-end pt-4 border-t border-gray-100 gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => router(`/vehicles/${vehicleId}`)}
+                    variant="outline"
+                    disabled={isFormDisabled}
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    onClick={form.handleSubmit(onSubmit)}
+                    disabled={isFormDisabled}
+                    className="bg-gray-900 hover:bg-gray-800 text-white border-0 px-6 py-2 transition-all duration-200 font-medium tracking-tight disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" strokeWidth={1.5} />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                        {currentAddress ? "Atualizar Endereço" : "Adicionar Endereço"}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
         </CardContent>
       </Card>
-      
     </div>
   )
 }

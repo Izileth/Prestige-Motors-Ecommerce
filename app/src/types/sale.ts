@@ -14,7 +14,7 @@ export interface Sale {
         marca: string;
         modelo: string;
         anoFabricacao: number;
-        imagem?: string;
+        imagemPrincipal?: string | null;
     };
     comprador?: {
         nome: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import useSale from "~/src/hooks/useSale";
 import { useAuth } from "~/src/hooks/useAuth";
 import SalesStats from "~/src/components/pages/sales/saleStats";
@@ -23,6 +23,10 @@ const SalesDashboard = () => {
     
     const { user } = useAuth();
     
+    // Refs para controlar se os dados já foram carregados
+    const hasLoadedDataRef = useRef(false);
+    const lastUserIdRef = useRef("");
+    
     // Memoize user data to prevent unnecessary re-renders
     const { id: userId, role } = useMemo(() => ({
         id: user?.id || "",
@@ -31,40 +35,96 @@ const SalesDashboard = () => {
 
     const isAdmin = useMemo(() => role === "ADMIN", [role]);
 
-    // Memoized fetch functions with useCallback
+    // Memoized fetch functions with useCallback - STABLE REFERENCES
     const fetchAdminData = useCallback(async () => {
-        await fetchGlobalSalesStats();
-        await fetchUserSalesStats(userId);
-    }, [fetchGlobalSalesStats, fetchUserSalesStats, userId]);
+        if (!userId) return;
+        
+        try {
+            // Só busca stats globais se não existirem
+            if (!stats.global) {
+                await fetchGlobalSalesStats();
+            }
+            
+            // Só busca stats do usuário se não existirem
+            if (!stats.user) {
+                await fetchUserSalesStats(userId);
+            }
+        } catch (error) {
+            console.error("Error fetching admin data:", error);
+        }
+    }, [userId, fetchGlobalSalesStats, fetchUserSalesStats, stats.global, stats.user]);
 
     const fetchUserData = useCallback(async () => {
-        await getUserTransactions(userId);
-    }, [getUserTransactions, userId]);
-
-    // Optimized useEffect for data fetching
-    useEffect(() => {
         if (!userId) return;
-
-        const fetchData = async () => {
-            try {
-                if (isAdmin) {
-                    await fetchAdminData();
-                } else {
-                    await fetchUserData();
-                }
-            } catch (error) {
-                console.error("Error fetching dashboard data:", error);
+        
+        try {
+            // Só busca transações se não existirem ou se o usuário mudou
+            const hasTransactions = transactions.asBuyer.length > 0 || transactions.asSeller.length > 0;
+            
+            if (!hasTransactions || lastUserIdRef.current !== userId) {
+                await getUserTransactions(userId);
+                lastUserIdRef.current = userId;
             }
-        };
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    }, [userId, getUserTransactions, transactions.asBuyer.length, transactions.asSeller.length]);
 
-        fetchData();
+    // Função principal de fetch com controle de execução única
+    const fetchData = useCallback(async () => {
+        if (!userId || hasLoadedDataRef.current) return;
+        
+        hasLoadedDataRef.current = true;
+        
+        try {
+            if (isAdmin) {
+                await fetchAdminData();
+            } else {
+                await fetchUserData();
+            }
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+            // Reset flag em caso de erro para permitir retry
+            hasLoadedDataRef.current = false;
+        }
     }, [userId, isAdmin, fetchAdminData, fetchUserData]);
 
-    // Memoized loading state
-    const isLoading = useMemo(() => (
-        loadingStates.fetchingStats || 
-        loadingStates.fetchingTransactions
-    ), [loadingStates.fetchingStats, loadingStates.fetchingTransactions]);
+    // Effect mais controlado - executa apenas quando necessário
+    useEffect(() => {
+        // Reset flag quando o usuário muda
+        if (lastUserIdRef.current !== userId) {
+            hasLoadedDataRef.current = false;
+        }
+        
+        fetchData();
+    }, [fetchData]);
+
+    // Effect para reset quando o usuário muda
+    useEffect(() => {
+        if (userId && lastUserIdRef.current && lastUserIdRef.current !== userId) {
+            hasLoadedDataRef.current = false;
+        }
+    }, [userId]);
+
+    // Memoized loading state - mais específico
+    const isLoading = useMemo(() => {
+        // Considera loading apenas se não há dados E está carregando
+        const hasAnyData = stats.global || stats.user || 
+                          transactions.asBuyer.length > 0 || 
+                          transactions.asSeller.length > 0;
+        
+        return !hasAnyData && (
+            loadingStates.fetchingStats || 
+            loadingStates.fetchingTransactions
+        );
+    }, [
+        loadingStates.fetchingStats, 
+        loadingStates.fetchingTransactions,
+        stats.global,
+        stats.user,
+        transactions.asBuyer.length,
+        transactions.asSeller.length
+    ]);
 
     // Memoized current year
     const currentYear = useMemo(() => new Date().getFullYear(), []);
