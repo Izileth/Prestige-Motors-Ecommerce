@@ -1,12 +1,37 @@
 import api from './api';
 import type { UserUpdateData, UserStats } from '../types/user';
 import type { AddressData } from '~/src/types/address';
-
+import type { GetUsersParams, GetUsersResponse } from '../types/users';
 
 export const userService = {
-    async getUsers() {
-        const response = await api.get('/users/');
+    baseUrl: '/users',
+
+    async getUsers(params?: GetUsersParams): Promise<GetUsersResponse> {
+        try {
+        const searchParams = new URLSearchParams();
+        
+        if (params?.page) searchParams.append('page', params.page.toString());
+        if (params?.limit) searchParams.append('limit', params.limit.toString());
+        if (params?.search) searchParams.append('search', params.search);
+        if (params?.role) searchParams.append('role', params.role);
+
+        const url = `${this.baseUrl}/${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+        const response = await api.get<GetUsersResponse>(url);
+        
         return response.data;
+        } catch (error: any) {
+        console.error('Erro no serviço de usuários:', error);
+        
+        // Tratar diferentes tipos de erro
+        if (error.response?.status === 401) {
+            throw new Error('Não autorizado para acessar usuários');
+        }
+        if (error.response?.status === 403) {
+            throw new Error('Sem permissão para acessar usuários');
+        }
+        
+        throw new Error('Falha ao buscar usuários');
+        }
     },
 
     async getUserById(id: string) {

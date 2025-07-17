@@ -15,7 +15,9 @@ import type { Vehicle } from '~/src/types/vehicle';
 
 interface VehicleSelectorProps {
     selectedVehicle: string;
+    placeholder: string;
     onSelectVehicle: (vehicleId: string) => void;
+    disabled?: boolean;
 }
 
 const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({ 
@@ -111,6 +113,9 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({
                                 currency: 'BRL' 
                             }).format(vehicle.preco)}
                             </p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted-foreground">{vehicle.categoria}  {vehicle.classe}</p>
                         </div>
                         </div>
                     </CommandItem>

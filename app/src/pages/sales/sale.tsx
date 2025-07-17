@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import useSale from "~/src/hooks/useSale";
 import { useAuth } from "~/src/hooks/useAuth";
@@ -8,7 +9,7 @@ import CreateSaleForm from "~/src/components/pages/sales/salesForm";
 import { Card, CardContent, CardHeader, CardTitle } from "~/src/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/src/components/ui/tabs";
 import { Loader2, LayoutDashboard, BarChart2, ListOrdered, PlusCircle } from "lucide-react";
-
+import DashboardSkeleton from "~/src/components/layout/skeleton/dashboard";
 const SalesDashboard = () => {
     const {
         currentSale,
@@ -23,10 +24,20 @@ const SalesDashboard = () => {
     
     const { user } = useAuth();
     
-    // Refs para controlar se os dados já foram carregados
-    const hasLoadedDataRef = useRef(false);
+    // Refs para controlar carregamento
+    const hasLoadedGlobalStats = useRef(false);
+    const hasLoadedUserStats = useRef(false);
+    const hasLoadedTransactions = useRef(false);
     const lastUserIdRef = useRef("");
+    const isMountedRef = useRef(true);
     
+    // Cleanup no unmount
+    useEffect(() => {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
+
     // Memoize user data to prevent unnecessary re-renders
     const { id: userId, role } = useMemo(() => ({
         id: user?.id || "",
@@ -35,80 +46,77 @@ const SalesDashboard = () => {
 
     const isAdmin = useMemo(() => role === "ADMIN", [role]);
 
-    // Memoized fetch functions with useCallback - STABLE REFERENCES
-    const fetchAdminData = useCallback(async () => {
-        if (!userId) return;
-        
-        try {
-            // Só busca stats globais se não existirem
-            if (!stats.global) {
-                await fetchGlobalSalesStats();
-            }
-            
-            // Só busca stats do usuário se não existirem
-            if (!stats.user) {
-                await fetchUserSalesStats(userId);
-            }
-        } catch (error) {
-            console.error("Error fetching admin data:", error);
-        }
-    }, [userId, fetchGlobalSalesStats, fetchUserSalesStats, stats.global, stats.user]);
-
-    const fetchUserData = useCallback(async () => {
-        if (!userId) return;
-        
-        try {
-            // Só busca transações se não existirem ou se o usuário mudou
-            const hasTransactions = transactions.asBuyer.length > 0 || transactions.asSeller.length > 0;
-            
-            if (!hasTransactions || lastUserIdRef.current !== userId) {
-                await getUserTransactions(userId);
-                lastUserIdRef.current = userId;
-            }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    }, [userId, getUserTransactions, transactions.asBuyer.length, transactions.asSeller.length]);
-
-    // Função principal de fetch com controle de execução única
-    const fetchData = useCallback(async () => {
-        if (!userId || hasLoadedDataRef.current) return;
-        
-        hasLoadedDataRef.current = true;
-        
-        try {
-            if (isAdmin) {
-                await fetchAdminData();
-            } else {
-                await fetchUserData();
-            }
-        } catch (error) {
-            console.error("Error fetching dashboard data:", error);
-            // Reset flag em caso de erro para permitir retry
-            hasLoadedDataRef.current = false;
-        }
-    }, [userId, isAdmin, fetchAdminData, fetchUserData]);
-
-    // Effect mais controlado - executa apenas quando necessário
+    // Reset flags quando usuário muda
     useEffect(() => {
-        // Reset flag quando o usuário muda
-        if (lastUserIdRef.current !== userId) {
-            hasLoadedDataRef.current = false;
-        }
-        
-        fetchData();
-    }, [fetchData]);
-
-    // Effect para reset quando o usuário muda
-    useEffect(() => {
-        if (userId && lastUserIdRef.current && lastUserIdRef.current !== userId) {
-            hasLoadedDataRef.current = false;
+        if (userId && lastUserIdRef.current !== userId) {
+            hasLoadedGlobalStats.current = false;
+            hasLoadedUserStats.current = false;
+            hasLoadedTransactions.current = false;
+            lastUserIdRef.current = userId;
         }
     }, [userId]);
 
-    // Memoized loading state - mais específico
+    // Função para buscar stats globais - REMOVIDO stats.global das dependências
+    const fetchAdminData = useCallback(async () => {
+        if (!userId || !isMountedRef.current) return;
+        
+        try {
+            // Verifica se já tem dados E se já carregou - APENAS STATS GLOBAIS
+            if (!stats.global && !hasLoadedGlobalStats.current && !loadingStates.fetchingStats) {
+                console.log("Buscando stats globais...");
+                hasLoadedGlobalStats.current = true;
+                await fetchGlobalSalesStats();
+            }
+        } catch (error) {
+            console.error("Error fetching admin data:", error);
+            // Reset em caso de erro
+            hasLoadedGlobalStats.current = false;
+        }
+    }, [userId, fetchGlobalSalesStats, loadingStates.fetchingStats]);
+
+    // Função para buscar dados do usuário - REMOVIDO transactions das dependências
+    const fetchUserData = useCallback(async () => {
+        if (!userId || !isMountedRef.current) return;
+        
+        try {
+            const hasTransactions = transactions.asBuyer.length > 0 || transactions.asSeller.length > 0;
+            
+            // Busca transações
+            if (!hasTransactions && !hasLoadedTransactions.current && !loadingStates.fetchingTransactions) {
+                console.log("Buscando transações do usuário...");
+                hasLoadedTransactions.current = true;
+                await getUserTransactions(userId);
+            }
+            
+            // Busca stats do usuário (necessário para usuários não-admin também)
+            if (!stats.user && !hasLoadedUserStats.current && !loadingStates.fetchingStats) {
+                console.log("Buscando stats do usuário...");
+                hasLoadedUserStats.current = true;
+                await fetchUserSalesStats(userId);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            hasLoadedTransactions.current = false;
+            hasLoadedUserStats.current = false;
+        }
+    }, [userId, getUserTransactions, fetchUserSalesStats, loadingStates.fetchingTransactions, loadingStates.fetchingStats]);
+
+    // Effect para carregar dados iniciais
+    useEffect(() => {
+        if (!userId) return;
+        
+        const loadData = async () => {
+            if (isAdmin) {
+                await fetchAdminData();
+            }
+            await fetchUserData();
+        };
+        
+        loadData();
+    }, [userId, isAdmin, fetchAdminData, fetchUserData]);
+
+    // Memoized loading state
     const isLoading = useMemo(() => {
-        // Considera loading apenas se não há dados E está carregando
         const hasAnyData = stats.global || stats.user || 
                           transactions.asBuyer.length > 0 || 
                           transactions.asSeller.length > 0;
@@ -131,8 +139,8 @@ const SalesDashboard = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <Loader2 className="animate-spin h-12 w-12 text-primary" />
+            <div className="flex justify-center items-center h-auto w-full max-w-full">
+                <DashboardSkeleton />
             </div>
         );
     }
@@ -151,7 +159,7 @@ const SalesDashboard = () => {
                 
                 <CardContent className="p-6">
                     <div className="mb-8">
-                        <SalesStats stats={isAdmin ? stats.global : stats.user} />
+                        <SalesStats stats={stats.user} />
                     </div>
 
                     <Tabs defaultValue="transactions" className="w-full">
@@ -250,11 +258,7 @@ const SalesDashboard = () => {
 
                         {isAdmin && (
                             <TabsContent value="global-stats" className="mt-6">
-                                <SalesStats
-                                    stats={stats.global}
-                                    title="Estatísticas Globais de Vendas"
-                                    description="Visão geral do desempenho de vendas em toda a plataforma."
-                                />
+                           
                             </TabsContent>
                         )}
 

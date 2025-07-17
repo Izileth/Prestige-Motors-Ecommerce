@@ -1,8 +1,8 @@
 import { Skeleton } from "~/src/components/ui/skeleton"
 export default function DashboardSkeleton() {
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-4">
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="min-h-screen h-full w-full max-w-full bg-gray-50 dark:bg-gray-950 p-4">
+        <div className="max-w-full w-full">
             
             {/* Nome do Usuário */}
             <div className="mb-6">

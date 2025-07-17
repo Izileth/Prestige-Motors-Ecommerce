@@ -1,5 +1,5 @@
 import api from './api';
-import type { SaleData, SaleStats, UpdateSaleData,  } from '../types/sale';
+import type { SaleData, SaleStats, UpdateSaleData, UserSaleStats } from '../types/sale';
 import type { UserTransactionsResponse } from '../types/transactions';
 
 export const saleService = {
@@ -49,8 +49,9 @@ export const saleService = {
         return response.data;
     },
 
-    async getUserSalesStats(userId: string): Promise<SaleStats> {
+    async getUserSalesStats(userId: string): Promise<UserSaleStats> {
         const response = await api.get(`/sales/${userId}/stats`);
+        
         console.log("Estatisticas de Vendas do Usuário Encontradas!", response.data);
         return response.data;
     },

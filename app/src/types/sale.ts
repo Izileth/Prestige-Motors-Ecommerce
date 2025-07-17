@@ -33,6 +33,7 @@ export interface SaleData {
     formaPagamento: string;
     parcelas?: number;
     observacoes?: string;
+    categoria: string;
 }
 
 export interface UpdateSaleData {
@@ -79,4 +80,116 @@ export interface SaleStats {
         labels: string[];
         data: number[];
     };
+}
+
+// User Sale Stats
+
+export interface User {
+    id: string;
+    nome: string;
+    email: string;
+}
+
+export interface SalesTotals {
+    sales: number;
+    revenue: number;
+    averageSale: number;
+    minSale: number;
+    maxSale: number;
+}
+
+export interface PurchasesTotals {
+    purchases: number;
+    spent: number;
+    averagePurchase: number;
+    minPurchase: number;
+    maxPurchase: number;
+}
+
+export interface PaymentMethodStats {
+    count: number;
+    total: number;
+}
+
+export interface PaymentMethodData {
+    [paymentMethod: string]: PaymentMethodStats;
+}
+
+export interface StatusData {
+    [status: string]: number;
+}
+
+export interface MonthlySales {
+  month: string;
+    count: number;
+    total: number;
+}
+
+export interface VehicleCategoryStats {
+    count: number;
+    total: number;
+}
+
+export interface VehicleCategoryData {
+    [category: string]: VehicleCategoryStats;
+}
+
+export interface Seller {
+    nome?: string;
+    email?: string;
+}
+
+export interface RecentSale {
+    id: string;
+    precoVenda: number;
+    dataVenda: string;
+    status: string;
+    formaPagamento: string;
+    categoriaVeiculo: string | null;
+    vendedor?: Seller;
+}
+
+export interface Ranking {
+    position: number;
+    totalSellers: number;
+}
+
+export interface AsSellerData {
+    totals: SalesTotals;
+    byPaymentMethod: PaymentMethodData;
+    byStatus: StatusData;
+    monthlySales: MonthlySales[];
+    byVehicleCategory: VehicleCategoryData;
+    recentSales: RecentSale[];
+    ranking: Ranking;
+}
+
+export interface AsBuyerData {
+    totals: PurchasesTotals;
+    byPaymentMethod: PaymentMethodData;
+    byStatus: StatusData;
+    monthlyPurchases: MonthlySales[];
+    byVehicleCategory: VehicleCategoryData;
+    recentPurchases: RecentSale[];
+}
+
+export interface UserSaleStats {
+    user: User;
+    asSeller: AsSellerData;
+    asBuyer: AsBuyerData;
+}
+
+// Tipos auxiliares para componentes específicos
+export interface ChartData {
+    name: string;
+    value: number;
+    color?: string;
+}
+
+export interface MonthlyChartData {
+  month: string;
+    sales: number;
+    purchases: number;
+    revenue: number;
+    spent: number;
 }
