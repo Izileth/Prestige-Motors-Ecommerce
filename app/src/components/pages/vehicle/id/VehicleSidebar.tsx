@@ -70,7 +70,7 @@ const VehicleSidebar: React.FC<VehicleSidebarProps> = ({ vehicle }) => {
               <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Localização</h3>
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <MapPin size={18} className="text-gray-400 dark:text-gray-500" />
-                <span>{vehicle.localizacaoId || "São Paulo, SP"}</span>
+                <span>{vehicle.localizacao?.cidade || "São Paulo"} { vehicle.localizacao?.estado && `, ${vehicle.localizacao?.estado}` || "SP"}</span>
               </div>
             </div>
 

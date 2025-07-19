@@ -101,12 +101,12 @@ const AddressManager: React.FC<AddressManagerProps> = ({
 
   return (
     <div className="w-full max-w-full mx-auto p-1">
-      <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200">
-        <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5">
+      <Card className="bg-white transition-all duration-200">
+        <CardHeader className=" bg-gray-50/30 px-6 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-xl tracking-tight">
-                <div className="p-2 bg-white border border-gray-200 rounded-lg">
+                <div className="p-2 bg-white border border-gray-200">
                   <Home className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
                 </div>
                 Meus Endereços
@@ -144,7 +144,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
                 exit="exit"
                 className="overflow-hidden"
               >
-                <Card className="border border-gray-200 shadow-sm bg-gray-50/20">
+                <Card className="border bg-gray-50/20">
                   <CardHeader className="border-b border-gray-100 px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -322,7 +322,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
               <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-3">
                 {addresses.map((address, index) => (
                   <motion.div key={address.id} variants={fadeIn} custom={index}>
-                    <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                    <Card className=" transition-all duration-200 bg-white">
                       <CardContent className="p-5">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div className="flex-1 space-y-1">
@@ -371,7 +371,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="text-center py-16 px-6 bg-gray-50/50 rounded-lg border border-gray-200"
+                className="text-center py-16 px-6 bg-gray-50/50 border border-gray-200"
               >
                 <div className="max-w-sm mx-auto">
                   <div className="p-4 bg-white border border-gray-200 rounded-full w-fit mx-auto mb-6">

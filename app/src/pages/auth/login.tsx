@@ -256,48 +256,27 @@ const LoginPage = () => {
             </motion.div>
             </motion.div>
         </div>
-        <div className="hidden h-full max-h-full lg:flex lg:flex-1 items-center justify-center relative bg-zinc-200 dark:bg-gray-900">
-                <div className="absolute h-full  inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
+        <div className="h-screen w-full hidden  lg:flex lg:flex-1 items-center justify-center relative bg-transparent dark:bg-gray-900 py-6 grayscale-100">
+            <div className="hidden lg:block w-full h-full relative overflow-hidden bg-cover bg-center bg-no-repeat bg-[url('https://i.pinimg.com/1200x/52/53/eb/5253eb778e0397dbe5bacdbae2ac7301.jpg')] dark:bg-[url('https://i.pinimg.com/1200x/63/3b/47/633b47a95ebe98379c7c1f59c4a73ac9.jpg')]">
+                
+                {/* Layer de fade em cima e embaixo */}
+                <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/70"></div>
 
-                {/* Minimalist Geometric Pattern */}
-                <div className="relative w-full h-full max-h-full flex items-center justify-center p-12">
-                <div className="relative w-full max-w-lg">
-                    {/* Main Circle */}
-                    <div className="absolute inset-0 rounded-full border border-gray-300 dark:border-gray-600 opacity-20" />
-                    <div className="absolute inset-8 rounded-full border border-gray-400 dark:border-gray-500 opacity-30" />
-                    <div className="absolute inset-16 rounded-full border border-gray-500 dark:border-gray-400 opacity-40" />
-                    <div className="absolute inset-24 rounded-full border border-gray-600 dark:border-gray-300 opacity-50" />
+                {/* Layer de fade lateral */}
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-transparent to-black/40"></div>
 
-                    {/* Center Element */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-600 dark:to-gray-400 opacity-60" />
-                    </div>
-
-                    {/* Floating Elements */}
-                    <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-500 opacity-40 animate-pulse" />
-                    <div
-                    className="absolute top-3/4 right-1/4 w-6 h-6 rounded-full bg-gray-500 dark:bg-gray-400 opacity-30 animate-pulse"
-                    style={{ animationDelay: "1s" }}
-                    />
-                    <div
-                    className="absolute bottom-1/4 left-1/3 w-3 h-3 rounded-full bg-gray-600 dark:bg-gray-300 opacity-50 animate-pulse"
-                    style={{ animationDelay: "2s" }}
-                    />
-                </div>
-                </div>
-
-                {/* Subtle Brand Text */}
-                <div className="absolute bottom-8 left-8 right-8">
-                <div className="text-center">
-                    <h2 className="text-2xl font-extralight text-gray-600 dark:text-gray-300 tracking-wide">
-                    BEM-VINDO DE VOLTA
-                    </h2>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-light">
-                    Conecte-se ao Mundo Automotivo
-                    </p>
-                </div>
+                {/* Branding */}
+                <div className="absolute z-20 bottom-12 left-0 right-0 text-center px-4">
+                <h2 className="text-4xl uppercase  font-light tracking-wider text-white drop-shadow-md">
+                    Prestige<span className="font-bold  px-2">Motors</span>
+                </h2>
+                <p className="mt-2 text-base text-gray-200 font-light drop-shadow-sm">
+                    Sua jornada para o veículo dos sonhos começa aqui
+                </p>
                 </div>
             </div>
+        </div>
+
         </motion.div>
     )
 }

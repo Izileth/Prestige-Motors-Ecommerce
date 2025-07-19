@@ -103,11 +103,30 @@ export function FileUpload({
   });
 
   const handleRemove = (preview: string) => {
+    const indexToRemove = previews.findIndex((p) => p === preview);
+    
+    if (indexToRemove === -1) return;
+
+    // Remove do array de previews
+    const newPreviews = previews.filter((_, index) => index !== indexToRemove);
+    setPreviews(newPreviews);
+
+    // Remove do array de files usando o mesmo índice
+    const newFiles = files.filter((_, index) => index !== indexToRemove);
+    setFiles(newFiles);
+
+    // Revoga a URL para liberar memória
+    URL.revokeObjectURL(preview);
+
+    // Chama callback se existir
     if (onRemove) {
       onRemove(preview);
     }
-    setPreviews(previews.filter((p) => p !== preview));
-    setFiles(files.filter((f) => URL.createObjectURL(f) !== preview));
+
+    // Atualiza o onChange com os novos arquivos
+    if (onChange) {
+      onChange(newFiles);
+    }
   };
 
   // Calculate remaining files

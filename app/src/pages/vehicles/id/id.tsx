@@ -62,12 +62,23 @@ const VehicleDetailsPage = () => {
 
     let isMounted = true;
 
+    // Busca os dados do veículo
     const loadData = async () => {
       try {
         await fetchVehicleById(id);
-        if (isMounted) await fetchUserFavorites();
       } catch (error) {
         if (isMounted) console.error("Failed to load vehicle data:", error);
+        return; // Para aqui se falhar ao buscar o veículo
+      }
+      
+      // Só tenta buscar favoritos se tiver usuário
+      if (isMounted && user) {
+        try {
+          await fetchUserFavorites();
+        } catch (error) {
+          console.error("Failed to load favorites:", error);
+          // Não impede a página de funcionar
+        }
       }
     };
 

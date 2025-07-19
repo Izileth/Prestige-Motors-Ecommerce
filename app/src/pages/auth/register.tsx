@@ -19,7 +19,7 @@ import { useAuth } from "~/src/hooks/useAuth";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { formatDateForAPI } from "~/src/utils/format";
 export default function RegisterPage() {
     const { register, status, error } = useAuth();
     const router = useNavigate();
@@ -86,47 +86,48 @@ export default function RegisterPage() {
         }));
         }
     };
+    
 
     const handleRegister = async () => {
         // Validações básicas
         if (!formData.nome.trim()) {
-        setFormError("Nome é obrigatório");
-        return;
+            setFormError("Nome é obrigatório");
+            return;
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        setFormError("Por favor, insira um email válido");
-        return;
+            setFormError("Por favor, insira um email válido");
+            return;
         }
 
         if (formData.senha.length < 6) {
-        setFormError("A senha deve ter pelo menos 6 caracteres");
-        return;
+            setFormError("A senha deve ter pelo menos 6 caracteres");
+            return;
         }
 
         if (formData.cpf && formData.cpf.replace(/\D/g, "").length !== 11) {
-        setFormError("CPF deve ter 11 dígitos");
-        return;
+            setFormError("CPF deve ter 11 dígitos");
+            return;
         }
 
         try {
-        await register({
+            await register({
             nome: formData.nome.trim(),
             email: formData.email.trim().toLowerCase(),
             senha: formData.senha,
             telefone: formData.telefone?.replace(/\D/g, ""),
             cpf: formData.cpf?.replace(/\D/g, ""),
-            dataNascimento: formData.dataNascimento
-            ? new Date(formData.dataNascimento).toISOString()
-            : undefined,
-        });
+            dataNascimento: formData.dataNascimento 
+                ? formatDateForAPI(formData.dataNascimento) // 🔧 PADRONIZADO
+                : undefined,
+            });
 
-        router("/login?registered=true");
+            router("/login?registered=true");
         } catch (err) {
-        console.error("Erro no registro:", err);
+            console.error("Erro no registro:", err);
+            // Handle error...
         }
     };
-
     // Formatar CPF
     const formatCPF = (value: string) => {
         if (!value) return value;
@@ -198,58 +199,26 @@ export default function RegisterPage() {
         className="flex min-h-screen w-full max-w-full flex-col items-center justify-center bg-transparent dark:bg-zinc-50 px-10 py-8"
         >
         <div className="flex min-h-screen w-full max-w-full flex-col lg:flex-row bg-transparent dark:bg-zinc-50 ">
-            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-0 to-zinc-0 dark:from-transparent dark:to-zinc-50">
-                    {/* Decorative elements */}
-                    <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full border border-gray-300 dark:border-gray-700 opacity-20" />
-                    <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full border border-gray-300 dark:border-gray-700 opacity-30" />
+            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-cover bg-center bg-no-repeat bg-[url('https://i.pinimg.com/1200x/e2/75/db/e275dbf9475bbb5dd3cb2bece8594f1e.jpg')] dark:bg-[url('https://i.pinimg.com/1200x/63/3b/47/633b47a95ebe98379c7c1f59c4a73ac9.jpg')]">
+                {/* Layer de fade em cima e embaixo */}
+                <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/70"></div>
 
-                    {/* Animated lines */}
-                    <div className="absolute inset-0 overflow-hidden">
-                    {[...Array(5)].map((_, i) => (
-                        <div
-                        key={i}
-                        className="absolute h-px bg-gradient-to-r from-transparent via-gray-400 dark:via-gray-600 to-transparent opacity-30"
-                        style={{
-                            top: `${20 + i * 15}%`,
-                            left: 0,
-                            right: 0,
-                            animation: `slideRight ${3 + i * 0.5}s infinite linear`,
-                        }}
-                        />
-                    ))}
-                    </div>
-                </div>
-
-                {/* Vehicle Silhouette */}
-                <div className="absolute inset-0 flex items-center justify-center p-12">
-                    <div className="relative w-full max-w-lg h-64">
-                    {/* Car silhouette */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-full relative">
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <Car
-                            className="w-48 h-48 text-gray-300 dark:text-gray-700"
-                            strokeWidth={1}
-                            />
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                {/* Layer de fade lateral (opcional) */}
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-transparent to-black/40"></div>
 
                 {/* Branding */}
-                <div className="absolute bottom-12 left-0 right-0 text-center">
-                    <h2 className="text-3xl font-extralight tracking-widest text-gray-700 dark:text-gray-300">
-                    Prestige<span className="font-medium">Motors</span>
+                <div className="absolute z-20 bottom-12 left-0 right-0 text-center px-4">
+                    <h2 className="text-4xl uppercase font-light tracking-wider text-white drop-shadow-md">
+                    Prestige<span className="font-bold px-2 ">Motors</span>
                     </h2>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-light">
+                    <p className="mt-2 text-base text-gray-200 font-light drop-shadow-sm">
                     Sua jornada para o veículo dos sonhos começa aqui
                     </p>
                 </div>
             </div>
 
-            <div className="w-full max-w-2xl space-y-8 lg:px-14">
+
+            <div className="w-full max-w-2xl space-y-4 lg:px-14">
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -308,9 +277,9 @@ export default function RegisterPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="mt-8 items-center flex-col  space-y-6"
+                className=" items-center flex-col  space-y-6"
             >
-                <div className="space-y-5">
+                <div className="space-y-4">
                 {/* Campo de nome */}
                 <motion.div
                     className="relative"
