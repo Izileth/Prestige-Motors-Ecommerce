@@ -1,47 +1,91 @@
 import api from "./api";
-import type { Negotiation, NegotiationMessage } from "../types/negociation";
+import type { 
+    Negotiation, 
+    NegotiationMessage, 
+    NegotiationHistory,
+    CreateNegotiationPayload,
+    AddMessagePayload,
+    RespondNegotiationPayload
+} from "../types/negociation";
 
-export const negociationsService = {
-    async createNegotiation(vehicleId: string, message: string): Promise<Negotiation> {
-        const response = await api.post(`/vehicles/${vehicleId}/negotiations`, { message });
+
+export const negotiationService = {
+    /**
+     * Cria uma nova negociação
+     */
+    async create(payload: CreateNegotiationPayload): Promise<Negotiation> {
+        const response = await api.post('/negotiations', payload);
         return response.data;
     },
 
-    async getNegotiationById(negotiationId: string): Promise<Negotiation> {
+    /**
+     * Lista todas as negociações do usuário logado
+     */
+    async getAll(status?: string): Promise<Negotiation[]> {
+        const params = status ? { status } : {};
+        const response = await api.get('/negotiations', { params });
+        return response.data;
+    },
+
+    /**
+     * Obtém os detalhes de uma negociação específica
+     */
+    async getById(negotiationId: string): Promise<Negotiation> {
         const response = await api.get(`/negotiations/${negotiationId}`);
         return response.data;
     },
 
-    async getUserNegotiations(): Promise<Negotiation[]> {
-        const response = await api.get('/negotiations/me');
-        return response.data.data || [];
-    },
-
-    async sendNegotiationMessage(negotiationId: string, message: string): Promise<NegotiationMessage> {
-        const response = await api.post(`/negotiations/${negotiationId}/messages`, { message });
+    /**
+     * Adiciona uma mensagem à negociação
+     */
+    async addMessage(
+        negotiationId: string, 
+        payload: AddMessagePayload
+    ): Promise<NegotiationMessage> {
+        const response = await api.post(
+            `/negotiations/${negotiationId}/messages`, 
+            payload
+        );
         return response.data;
     },
 
-    async getNegotiationMessages(negotiationId: string): Promise<NegotiationMessage[]> {
+    /**
+     * Responde à negociação (aceitar, recusar ou fazer contraproposta)
+     */
+    async respond(
+        negotiationId: string, 
+        payload: RespondNegotiationPayload
+    ): Promise<Negotiation> {
+        const response = await api.put(
+            `/negotiations/${negotiationId}/respond`, 
+            payload
+        );
+        return response.data;
+    },
+
+    /**
+     * Cancela uma negociação
+     */
+    async cancel(negotiationId: string): Promise<Negotiation> {
+        const response = await api.delete(`/negotiations/${negotiationId}`);
+        return response.data;
+    },
+
+    /**
+     * Obtém o histórico de uma negociação
+     */
+    async getHistory(negotiationId: string): Promise<NegotiationHistory[]> {
+        const response = await api.get(`/negotiations/${negotiationId}/history`);
+        return response.data;
+    },
+
+    /**
+     * Lista as mensagens de uma negociação
+     */
+    async getMessages(negotiationId: string): Promise<NegotiationMessage[]> {
         const response = await api.get(`/negotiations/${negotiationId}/messages`);
-        return response.data.data || [];
-    },
-
-    async acceptNegotiation(negotiationId: string): Promise<Negotiation> {
-        const response = await api.put(`/negotiations/${negotiationId}/accept`);
         return response.data;
-    },
+    }
+};
 
-    async rejectNegotiation(negotiationId: string): Promise<Negotiation> {
-        const response = await api.put(`/negotiations/${negotiationId}/reject`);
-        return response.data;
-    },
-
-    async counterNegotiation(negotiationId: string, newPrice: number): Promise<Negotiation> {
-        const response = await api.put(`/negotiations/${negotiationId}/counter`, { newPrice });
-        return response.data;
-    },
-
-}
-
-export default negociationsService
+export default negotiationService;

@@ -1,6 +1,6 @@
 import api from './api';
 
-import type { Vehicle, VehicleGlobalStats, VehicleCreateInput, VehicleUserStats,VehicleSearchParams, VehicleAddress, AddressUpdatePayload,  AddressRemovePayload, VehicleWithAddress, AddressCreatePayload } from '../types/vehicle';
+import type { Vehicle, VehicleCreateInput,VehicleSearchParams, VehicleAddress, AddressUpdatePayload,  AddressRemovePayload, VehicleWithAddress, AddressCreatePayload } from '../types/vehicle';
 
 import type { Review, ReviewStats, ReviewUpdateInput, ReviewCreateInput } from '../types/reviews';
 

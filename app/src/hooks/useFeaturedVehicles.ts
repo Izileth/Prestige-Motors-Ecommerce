@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useState, useCallback, useRef,  } from 'react';
 import useVehicle from './useVehicle';
 import type { Vehicle } from '../types/vehicle';
 import { CACHE_EXPIRY_MS } from '~/src/lib/cache';

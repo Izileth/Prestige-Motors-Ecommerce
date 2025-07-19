@@ -1,5 +1,5 @@
 import type { Review, ReviewStats } from "./reviews";
-
+import type { Negotiation } from "./negociation";
 // Vehicle Interface
 export interface Vehicle {
     id: string;
@@ -49,6 +49,10 @@ export interface Vehicle {
     
     avaliacoes: Review[];
     reviewStats: ReviewStats;
+
+     
+    aceitaNegociacao ?: boolean
+    negociacoes ?: Negotiation[]
 }
 
 export interface VehicleImage {

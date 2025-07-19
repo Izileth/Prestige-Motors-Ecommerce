@@ -1,58 +1,67 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import useNegotiation from "~/src/hooks/useNegociation";
 import { motion, AnimatePresence } from "framer-motion";
-import useVehicle from "~/src/hooks/useVehicle";
 import { useAuth } from "~/src/hooks/useAuth";
 import {
     NegotiationsSidebar,
     FavoritesTab,
     NegotiationsTab,
 } from "~/src/components/pages/negotiations";
+import { useNegotiationStore } from "~/src/store/slices/negociation";
+import { useVehicleStore } from "~/src/store/slices/vehicle";
+import { toast } from "sonner"; // ou seu sistema de notificação preferido
 
 const NegotiationsPage = () => {
     const { user } = useAuth();
-    const { fetchUserFavorites, favorites, loading, removeFavorite } = useVehicle();
-    const { clearNegotiations, createNegotiation } = useNegotiation();
-    const [activeTab, setActiveTab] = useState<"favorites" | "negotiations">(
-        "favorites"
-    );
-    const [message, setMessage] = useState("");
+    const navigate = useNavigate();
+    
+    // Stores
+    const {
+        favorites,
+        loading: favoritesLoading,
+        fetchUserFavorites,
+        removeFavorite
+    } = useVehicleStore();
+    
+    const {
+        createNegotiation,
+        clearError: clearNegotiationError,
+        isLoading: negotiationLoading,
+        error: negotiationError
+    } = useNegotiationStore();
 
-    // Estados necessários para as animações
-    const [isMessageSending, setIsMessageSending] = useState(false);
-    const [messageSent, setMessageSent] = useState(false);
+    // Estados da UI
+    const [activeTab, setActiveTab] = useState<"favorites" | "negotiations">("favorites");
     const [expandedVehicle, setExpandedVehicle] = useState<string | null>(null);
-    const [hoveredButton, setHoveredButton] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const navigate = useNavigate();
-
+    // Carrega favoritos quando o usuário está disponível
     useEffect(() => {
         if (user) {
-            fetchUserFavorites();
+        fetchUserFavorites();
         }
-    }, [user]); // Remove fetchUserFavorites from dependency array
+    }, [user, fetchUserFavorites]);
 
-    const handleStartNegotiation = async (vehicleId: string) => {
-        try {
-            // Commented out as per original code
-            // await createNegotiation(vehicleId, message);
-            alert("Negociação iniciada com sucesso!");
-            setMessage("");
-            setExpandedVehicle(null);
-        } catch (error) {
-            console.error("Erro ao iniciar negociação:", error);
+    // Tratamento de erros
+    useEffect(() => {
+        if (negotiationError) {
+        toast.error(negotiationError);
+        clearNegotiationError();
         }
-    };
+    }, [negotiationError, clearNegotiationError]);
 
     const handleRemoveFavorite = async (vehicleId: string) => {
         try {
-            await removeFavorite(vehicleId);
-            fetchUserFavorites();
+        await removeFavorite(vehicleId);
+        toast.success("Veículo removido dos favoritos");
+        
+        // Se o veículo removido estava expandido, fecha o formulário
+        if (expandedVehicle === vehicleId) {
+            setExpandedVehicle(null);
+        }
         } catch (error) {
-            console.error("Erro ao remover favorito:", error);
+        toast.error("Erro ao remover veículo dos favoritos");
+        console.error("Erro ao remover favorito:", error);
         }
     };
 
@@ -61,103 +70,89 @@ const NegotiationsPage = () => {
     };
 
     const toggleExpandVehicle = (vehicleId: string) => {
-        if (expandedVehicle === vehicleId) {
-            setExpandedVehicle(null);
-        } else {
-            setExpandedVehicle(vehicleId);
-            setMessage("");
-        }
+        setExpandedVehicle(expandedVehicle === vehicleId ? null : vehicleId);
     };
 
-    const handleSendMessage = async (vehicleId: string) => {
-        if (!message.trim()) return;
-
-        setIsMessageSending(true);
+    const handleStartNegotiation = async (vehicleId: string, message: string) => {
+        if (!user) {
+        toast.error("Você precisa estar logado para negociar");
+        return;
+        }
 
         try {
-            // Simula o envio da mensagem (substitua pela sua lógica de API)
-            await new Promise((resolve) => setTimeout(resolve, 1500)); // Simula delay da API
+        await createNegotiation({
+            vehicleId,
+            precoOfertado: 0, // Pode ser ajustado para pegar o preço do veículo ou permitir input
+            comentario: message || "Tenho interesse neste veículo"
+        });
 
-            // Aqui você faria a chamada real para sua API
-            // await api.sendMessage({ vehicleId, message, userId: currentUser.id });
-
-            setIsMessageSending(false);
-            setMessageSent(true);
-
-            // Limpa a mensagem após o envio
-            setMessage("");
-
-            // Remove a confirmação após 3 segundos
-            setTimeout(() => {
-                setMessageSent(false);
-            }, 3000);
+        toast.success("Negociação iniciada com sucesso!");
+        setExpandedVehicle(null);
+        
+        // Atualiza a lista de favoritos para refletir possíveis mudanças
+        fetchUserFavorites();
         } catch (error) {
-            setIsMessageSending(false);
-            console.error("Erro ao enviar mensagem:", error);
-            // Aqui você pode adicionar um toast de erro
+        console.error("Erro ao iniciar negociação:", error);
+        // O erro já é tratado pelo useEffect de erro do store
         }
     };
 
-    // Scroll to message input when expanded
+    // Scroll para o formulário quando expandido
     useEffect(() => {
         if (expandedVehicle && messagesEndRef.current) {
-            setTimeout(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            }, 300);
+        setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
         }
     }, [expandedVehicle]);
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-950 py-16">
-            <div className="container mx-auto px-4">
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-3xl font-extralight tracking-tight text-gray-900 dark:text-gray-100 mb-2"
-                >
-                    MINHA CONTA
-                </motion.h1>
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: "40px" }}
-                    transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="h-px bg-black dark:bg-white mb-12"
-                />
+        <div className="container mx-auto px-4">
+            <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-3xl font-extralight tracking-tight text-gray-900 dark:text-gray-100 mb-2"
+            >
+            MINHA CONTA
+            </motion.h1>
+            <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "40px" }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="h-px bg-black dark:bg-white mb-12"
+            />
 
-                <div className="flex flex-col lg:flex-row gap-12">
-                    <NegotiationsSidebar
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
-                        favoritesCount={favorites.length}
-                        handleProfile={handleProfile}
+            <div className="flex flex-col lg:flex-row gap-12">
+            <NegotiationsSidebar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                favoritesCount={favorites.length}
+                handleProfile={handleProfile}
+            />
+
+            <div className="flex-1">
+                <AnimatePresence mode="wait">
+                {activeTab === "favorites" ? (
+                    <FavoritesTab
+                        loading={favoritesLoading}
+                        favorites={favorites}
+                        expandedVehicle={expandedVehicle}
+                        toggleExpandVehicle={toggleExpandVehicle}
+                        handleRemoveFavorite={handleRemoveFavorite}
+                        handleStartNegotiation={handleStartNegotiation}
+                        isMessageSending={negotiationLoading}
+                        messagesEndRef={messagesEndRef}
                     />
-
-                    <div className="flex-1">
-                        <AnimatePresence mode="wait">
-                            {activeTab === "favorites" ? (
-                                <FavoritesTab
-                                    loading={loading}
-                                    favorites={favorites}
-                                    expandedVehicle={expandedVehicle}
-                                    toggleExpandVehicle={toggleExpandVehicle}
-                                    handleRemoveFavorite={handleRemoveFavorite}
-                                    message={message}
-                                    setMessage={setMessage}
-                                    isMessageSending={isMessageSending}
-                                    messageSent={messageSent}
-                                    handleSendMessage={handleSendMessage}
-                                    hoveredButton={hoveredButton}
-                                    setHoveredButton={setHoveredButton}
-                                    messagesEndRef={messagesEndRef}
-                                />
-                            ) : (
-                                <NegotiationsTab />
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
+                ) : (
+                    <NegotiationsTab />
+                )}
+                </AnimatePresence>
+                
             </div>
+            </div>
+        </div>
         </div>
     );
 };

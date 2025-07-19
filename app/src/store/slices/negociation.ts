@@ -1,77 +1,187 @@
-
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import negociationsService from '~/src/services/negociation';
-import type { Negotiation } from '~/src/types/negociation';
+import { devtools } from 'zustand/middleware';
+import { negotiationService } from '~/src/services/negociation';
 
-interface NegotiationState {
-  negotiations: Negotiation[];
-  loading: boolean;
-  error: string | null;
-  success: boolean;
-  
-  // Ações
-  createNegotiation: (vehicleId: string, message: string) => Promise<Negotiation>;
-  fetchUserNegotiations: () => Promise<void>;
-  clearNegotiations: () => void;
-  
-  // Para integração com Redux
-  setNegotiationsFromRedux: (negotiations: Negotiation[]) => void;
+import type { NegotiationStatus, NegotiationHistory, NegotiationMessage, Negotiation, CreateNegotiationPayload, AddMessagePayload, RespondNegotiationPayload } from '~/src/types/negociation';
+
+interface NegotiationStore {
+    // Estado
+    negotiations: Negotiation[];
+    currentNegotiation: Negotiation | null;
+    messages: NegotiationMessage[];
+    history: NegotiationHistory[];
+    isLoading: boolean;
+    error: string | null;
+    
+    // Ações
+    createNegotiation: (payload: CreateNegotiationPayload) => Promise<Negotiation>;
+    fetchNegotiations: (status?: NegotiationStatus) => Promise<void>;
+    fetchNegotiationById: (id: string) => Promise<void>;
+    addMessage: (negotiationId: string, payload: AddMessagePayload) => Promise<void>;
+    respondToNegotiation: (negotiationId: string, payload: RespondNegotiationPayload) => Promise<void>;
+    cancelNegotiation: (id: string) => Promise<void>;
+    fetchMessages: (negotiationId: string) => Promise<void>;
+    fetchHistory: (negotiationId: string) => Promise<void>;
+    resetCurrentNegotiation: () => void;
+    clearError: () => void;
 }
 
-export const useNegotiationStore = create<NegotiationState>()(
-    persist(
+export const useNegotiationStore = create<NegotiationStore>()(
+    devtools(
         (set, get) => ({
+        // Estado inicial
         negotiations: [],
-        loading: false,
+        currentNegotiation: null,
+        messages: [],
+        history: [],
+        isLoading: false,
         error: null,
-        success: false,
 
-        createNegotiation: async (vehicleId, message) => {
-            set({ loading: true, error: null, success: false });
+        // Ações
+        createNegotiation: async (payload) => {
+            set({ isLoading: true, error: null });
             try {
-            const negotiation = await negociationsService.createNegotiation(vehicleId, message);
+            const newNegotiation = await negotiationService.create(payload);
             set(state => ({
-                negotiations: [negotiation, ...state.negotiations],
-                loading: false,
-                success: true
+                negotiations: [newNegotiation, ...state.negotiations],
+                isLoading: false
             }));
-            return negotiation;
+            return newNegotiation;
             } catch (error) {
             set({ 
-                loading: false, 
-                error: error instanceof Error ? error.message : 'Failed to create negotiation' 
+                error: error instanceof Error ? error.message : 'Erro ao criar negociação',
+                isLoading: false
             });
             throw error;
             }
         },
 
-        fetchUserNegotiations: async () => {
-            set({ loading: true, error: null });
+        fetchNegotiations: async (status) => {
+            set({ isLoading: true, error: null });
             try {
-            const negotiations = await negociationsService.getUserNegotiations();
-            set({ negotiations, loading: false });
+            const negotiations = await negotiationService.getAll(status);
+            set({ negotiations, isLoading: false });
             } catch (error) {
             set({ 
-                loading: false, 
-                error: error instanceof Error ? error.message : 'Failed to fetch negotiations' 
+                error: error instanceof Error ? error.message : 'Erro ao buscar negociações',
+                isLoading: false
             });
             }
         },
 
-        clearNegotiations: () => {
-            set({ negotiations: [], error: null });
+        fetchNegotiationById: async (id) => {
+            set({ isLoading: true, error: null });
+            try {
+            const negotiation = await negotiationService.getById(id);
+            set({ 
+                currentNegotiation: negotiation,
+                isLoading: false 
+            });
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao buscar negociação',
+                isLoading: false
+            });
+            }
         },
 
-        setNegotiationsFromRedux: (negotiations) => {
-            set({ negotiations });
+        addMessage: async (negotiationId, payload) => {
+            set({ isLoading: true, error: null });
+            try {
+            const newMessage = await negotiationService.addMessage(negotiationId, payload);
+            set(state => ({
+                messages: [...state.messages, newMessage],
+                currentNegotiation: state.currentNegotiation ? {
+                ...state.currentNegotiation,
+                updatedAt: new Date()
+                } : null,
+                isLoading: false
+            }));
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao enviar mensagem',
+                isLoading: false
+            });
+            }
+        },
+
+        respondToNegotiation: async (negotiationId, payload) => {
+            set({ isLoading: true, error: null });
+            try {
+            const updatedNegotiation = await negotiationService.respond(negotiationId, payload);
+            
+            set(state => ({
+                negotiations: state.negotiations.map(n => 
+                n.id === negotiationId ? updatedNegotiation : n
+                ),
+                currentNegotiation: updatedNegotiation,
+                isLoading: false
+            }));
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao responder negociação',
+                isLoading: false
+            });
+            }
+        },
+
+        cancelNegotiation: async (id) => {
+            set({ isLoading: true, error: null });
+            try {
+            const updatedNegotiation = await negotiationService.cancel(id);
+            set(state => ({
+                negotiations: state.negotiations.map(n => 
+                n.id === id ? updatedNegotiation : n
+                ),
+                currentNegotiation: updatedNegotiation,
+                isLoading: false
+            }));
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao cancelar negociação',
+                isLoading: false
+            });
+            }
+        },
+
+        fetchMessages: async (negotiationId) => {
+            set({ isLoading: true, error: null });
+            try {
+            const messages = await negotiationService.getMessages(negotiationId);
+            set({ messages, isLoading: false });
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao buscar mensagens',
+                isLoading: false
+            });
+            }
+        },
+
+        fetchHistory: async (negotiationId) => {
+            set({ isLoading: true, error: null });
+            try {
+            const history = await negotiationService.getHistory(negotiationId);
+            set({ history, isLoading: false });
+            } catch (error) {
+            set({ 
+                error: error instanceof Error ? error.message : 'Erro ao buscar histórico',
+                isLoading: false
+            });
+            }
+        },
+
+        resetCurrentNegotiation: () => {
+            set({ 
+            currentNegotiation: null,
+            messages: [],
+            history: []
+            });
+        },
+
+        clearError: () => {
+            set({ error: null });
         }
         }),
-        {
-        name: 'negotiation-storage',
-        partialize: (state) => ({
-            negotiations: state.negotiations
-        }),
-        }
+        { name: 'NegotiationStore' }
     )
 );
