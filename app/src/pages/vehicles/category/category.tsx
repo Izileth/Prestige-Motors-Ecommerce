@@ -1,101 +1,112 @@
-import { useEffect, useState, useRef } from "react"
-import { useLocation } from "react-router"
-import { AnimatePresence, motion } from "framer-motion"
-import { CategoryGrid } from "~/src/components/template/grid/grid"
-import { VehicleFilters } from "~/src/components/template/filter/filter"
-import { VehicleCard} from "~/src/components/template/card/card"
-import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/card"
-import useVehicle from "~/src/hooks/useVehicle"
-import { Button } from "~/src/components/ui/button"
-import { Filter, X, ChevronUp, ArrowRight, Search } from "lucide-react"
-import { usePersistentFilters } from "~/src/hooks/usePersistFilters"
-import type { Vehicle, VehicleSearchParams } from "~/src/types/vehicle"
-import { useNavigate } from 'react-router';
-import { Badge } from "~/src/components/ui/badge"
+import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router";
+import { AnimatePresence, motion } from "framer-motion";
+import { CategoryGrid } from "~/src/components/template/grid/grid";
+import { VehicleFilters } from "~/src/components/template/filter/filter";
+import { VehicleCard } from "~/src/components/template/card/card";
+import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/card";
+import useVehicle from "~/src/hooks/useVehicle";
+import { Button } from "~/src/components/ui/button";
+import { Filter, X, ChevronUp, ArrowRight, Search } from "lucide-react";
+import { usePersistentFilters } from "~/src/hooks/usePersistFilters";
+import type { Vehicle, VehicleSearchParams } from "~/src/types/vehicle";
+import { useNavigate } from "react-router";
+import { Badge } from "~/src/components/ui/badge";
 
-import { ExpecionalCars } from "~/src/data/carousel"
-import { Carousel } from "~/src/components/template/carousel/carousel"
-
+import { ExpecionalCars } from "~/src/data/carousel";
+import { Carousel } from "~/src/components/template/carousel/carousel";
 
 export const VehiclesByCategoryPage = () => {
-  const location = useLocation()
-  const [filters, setFilters] = usePersistentFilters<VehicleSearchParams>({})
-  const [showFilters, setShowFilters] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const resultsRef = useRef<HTMLDivElement>(null)
+  const location = useLocation();
+  const [filters, setFilters] = usePersistentFilters<VehicleSearchParams>({});
+  const [showFilters, setShowFilters] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { vehicles, loading, error, fetchVehicles, addFavorite, removeFavorite, fetchUserFavorites, favorites } = useVehicle()
-  const navigate = useNavigate()
+  const {
+    vehicles,
+    loading,
+    error,
+    fetchVehicles,
+    addFavorite,
+    removeFavorite,
+    fetchUserFavorites,
+    favorites,
+  } = useVehicle();
+  const navigate = useNavigate();
 
   const handleVehicles = () => {
-    navigate('/vehicles')
-  }
+    navigate("/vehicles");
+  };
 
   // Update search when filters change (with debounce)
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchVehicles(filters)
-    }, 300)
+      fetchVehicles(filters);
+    }, 300);
 
-    return () => clearTimeout(timer)
-  }, [filters])
+    return () => clearTimeout(timer);
+  }, [filters]);
 
   // Clear localStorage if not coming from category grid
   useEffect(() => {
     if (!location.state?.fromCategoryGrid) {
-      localStorage.removeItem("vehicleFilters")
+      localStorage.removeItem("vehicleFilters");
     }
-  }, [location.key])
+  }, [location.key]);
 
   // Track scroll position for header styling
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
+      setScrolled(window.scrollY > 50);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const handleFilterChange = (field: keyof VehicleSearchParams, value: string | number | boolean | undefined) => {
+  const handleFilterChange = (
+    field: keyof VehicleSearchParams,
+    value: string | number | boolean | undefined
+  ) => {
     setFilters((prev) => ({
       ...prev,
       [field]: value === "All" ? undefined : value,
-    }))
+    }));
 
     // Scroll to results after filter change
     setTimeout(() => {
       if (resultsRef.current) {
-        resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
+        resultsRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
-    }, 100)
-  }
-
+    }, 100);
+  };
 
   const resetFilters = () => {
-    fetchVehicles()
-    setShowFilters(false)
-  }
-
+    fetchVehicles();
+    setShowFilters(false);
+  };
 
   const toggleFavorite = async (vehicle: Vehicle) => {
     if (favorites.some((v) => v.id === vehicle.id)) {
-      await removeFavorite(vehicle.id)
+      await removeFavorite(vehicle.id);
     } else {
-      await addFavorite(vehicle.id)
+      await addFavorite(vehicle.id);
     }
-    fetchUserFavorites()
-  }
+    fetchUserFavorites();
+  };
 
   const activeFiltersCount = Object.keys(filters).filter(
-    (key) => filters[key as keyof VehicleSearchParams] !== undefined,
-  ).length
+    (key) => filters[key as keyof VehicleSearchParams] !== undefined
+  ).length;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-
-      <Carousel items={ExpecionalCars}  className="max-w-full w-full"/>
-      {/* Show category grid only if no category filter is active */}
+      <Carousel items={ExpecionalCars} className="max-w-full w-full" />
+   
       {!filters.categoria && <CategoryGrid />}
 
       <div
@@ -114,12 +125,17 @@ export const VehiclesByCategoryPage = () => {
             >
               <h1 className="text-2xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
                 {filters.categoria
-                  ? `VEÍCULOS DA CATEGORIA DE ${getCategoryName(filters.categoria).toUpperCase()}`
+                  ? `VEÍCULOS DA CATEGORIA DE ${getCategoryName(
+                      filters.categoria
+                    ).toUpperCase()}`
                   : "TODOS OS VEÍCULOS"}
               </h1>
               {vehicles.length > 0 && !loading && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {vehicles.length} {vehicles.length === 1 ? "resultado encontrado" : "resultados encontrados"}
+                  {vehicles.length}{" "}
+                  {vehicles.length === 1
+                    ? "resultado encontrado"
+                    : "resultados encontrados"}
                 </p>
               )}
             </motion.div>
@@ -179,7 +195,11 @@ export const VehiclesByCategoryPage = () => {
                 transition={{ duration: 0.3 }}
                 className="border-none shadow-none border-gray-100 dark:border-gray-800 rounded-none bg-white dark:bg-gray-900  mt-4"
               >
-                <VehicleFilters searchParams={filters} onFilterChange={handleFilterChange} onReset={resetFilters} />
+                <VehicleFilters
+                  searchParams={filters}
+                  onFilterChange={handleFilterChange}
+                  onReset={resetFilters}
+                />
 
                 <div className="flex justify-end mt-6 shadow-none border-none">
                   <Button
@@ -200,69 +220,70 @@ export const VehiclesByCategoryPage = () => {
         {/* Vehicle listing */}
         <div className="py-8 px-4">
           {error ? (
-              <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
-                      >
-                        <div className="flex flex-col items-center gap-6">
-                          {/* Ilustração SVG */}
-                          <motion.div
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-gray-400 dark:text-gray-600"
-                          >
-                            <svg
-                              width="120"
-                              height="120"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                              <line x1="12" y1="9" x2="12" y2="13" />
-                              <line x1="12" y1="17" x2="12.01" y2="17" />
-                            </svg>
-                          </motion.div>
-            
-                          <div className="space-y-3">
-                            <h3 className="text-xl font-light text-gray-800 dark:text-gray-200">
-                              Falha ao carregar veículos
-                            </h3>
-                            <p className="text-gray-500 dark:text-gray-400 font-light">
-                              Não foi possível carregar os veículos no momento. Por favor, tente novamente.
-                            </p>
-                          </div>
-            
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.97 }}
-                            className="px-6 py-2 text-sm bg-transparent text-gray-800 dark:text-gray-200 font-light rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
-                            onClick={() => fetchVehicles(filters)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="animate-spin"
-                            >
-                              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                            </svg>
-                            Tentar novamente
-                          </motion.button>
-                        </div>
-                      </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
+            >
+              <div className="flex flex-col items-center gap-6">
+                {/* Ilustração SVG */}
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-gray-400 dark:text-gray-600"
+                >
+                  <svg
+                    width="120"
+                    height="120"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </motion.div>
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-light text-gray-800 dark:text-gray-200">
+                    Falha ao carregar veículos
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 font-light">
+                    Não foi possível carregar os veículos no momento. Por favor,
+                    tente novamente.
+                  </p>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-6 py-2 text-sm bg-transparent text-gray-800 dark:text-gray-200 font-light rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
+                  onClick={() => fetchVehicles(filters)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="animate-spin"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  Tentar novamente
+                </motion.button>
+              </div>
+            </motion.div>
           ) : loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[...Array(6)].map((_, i) => (
@@ -289,7 +310,11 @@ export const VehiclesByCategoryPage = () => {
                   key={vehicle.id}
                   variants={{
                     hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.4 },
+                    },
                   }}
                 >
                   <VehicleCard
@@ -310,9 +335,12 @@ export const VehiclesByCategoryPage = () => {
                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto">
                   <Search className="w-6 h-6 text-gray-400 dark:text-gray-600" />
                 </div>
-                <h3 className="text-xl font-light text-gray-900 dark:text-gray-100">Nenhum veículo encontrado</h3>
+                <h3 className="text-xl font-light text-gray-900 dark:text-gray-100">
+                  Nenhum veículo encontrado
+                </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Não encontramos veículos que correspondam aos seus critérios de busca.
+                  Não encontramos veículos que correspondam aos seus critérios
+                  de busca.
                 </p>
                 <Button
                   variant="outline"
@@ -340,14 +368,17 @@ export const VehiclesByCategoryPage = () => {
               onClick={handleVehicles}
             >
               <span>Ver mais veículos</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform duration-300"
+              />
             </Button>
           </motion.div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Helper for category names
 const getCategoryName = (id: string) => {
@@ -359,6 +390,6 @@ const getCategoryName = (id: string) => {
     ELECTRIC: "Elétricos",
     CLASSIC: "Clássicos",
     RETRO_SUPER: "Retro Super",
-  }
-  return map[id] || id
-}
+  };
+  return map[id] || id;
+};

@@ -1,6 +1,6 @@
 import { Carousel } from "~/src/components/template/carousel/carousel"
 import { FeaturedCars } from "~/src/data/carousel"
-import { VehiclesDestactsListing } from "~/src/components/template/destacts/destacts"
+import { VehiclesDestactsListing } from "~/src/components/pages/loby/destacts"
 
 export default function DestactsPage(){
     return(

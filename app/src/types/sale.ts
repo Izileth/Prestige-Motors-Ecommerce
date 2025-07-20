@@ -1,4 +1,4 @@
-export type SaleStatus = 'PENDENTE' | 'CONCLUIDA' | 'CANCELADA' | 'EM_NEGOCIACAO' | 'FATURADA';
+export type SaleStatus = 'CONCLUIDA';
 export interface Sale {
     id: string;
     vehicleId: string;
@@ -9,7 +9,7 @@ export interface Sale {
     parcelas?: number;
     observacoes?: string;
     dataVenda: string;
-    status: 'PENDENTE' | 'CONCLUIDA' | 'CANCELADA';
+    status: SaleStatus;
     vehicle?: {
         marca: string;
         modelo: string;

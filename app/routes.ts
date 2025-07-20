@@ -4,6 +4,14 @@ export default [
     index("routes/index.tsx"),
     
     route("about", "routes/about/us/us.tsx"),
+
+    route("about/bmw", "routes/about/brands/bmw.tsx"),
+    route("about/porshe", "routes/about/brands/porshe.tsx"),
+    route("about/ferrari", "routes/about/brands/ferrari.tsx"),
+    route("about/lamborghini", "routes/about/brands/lamborgnhi.tsx"),
+    route("about/toyota", "routes/about/brands/toyota.tsx"),
+    route("about/amg", "routes/about/brands/amg.tsx"),
+
     route("history", "routes/about/mission/mission.tsx"),
     route("support", "routes/about/support/support.tsx"),
 

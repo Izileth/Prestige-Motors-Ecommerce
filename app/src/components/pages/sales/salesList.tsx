@@ -98,7 +98,7 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
                                 Comprador:
                             </span>
                             <span className="font-light text-right truncate max-w-[60%]">
-                                {sale.comprador?.nome || "N/A"}
+                                {sale.comprador?.nome || "Oculto"}
                             </span>
                             </div>
                             <div className="flex items-center justify-between">
@@ -134,13 +134,7 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
             )}
             </CardContent>
         </Card>
-
-        {/* Copyright Notice */}
-        <div className="mt-6 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-            © {currentYear} Sales Management System. All rights reserved.
-            </p>
-        </div>
+   
         </div>
     )
 }

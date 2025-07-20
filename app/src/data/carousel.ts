@@ -83,13 +83,13 @@ export const PrincipalCars = [
 export const ExpecionalCars = [
     {
         id: 1,
-        image: "https://images.classic.com/vehicles/12d43979c621c3629d7343e9823b2aa5.jpeg?w=1200&h=676&fit=crop",
+        image: "https://d2blhp03rkvfi4.cloudfront.net/cache/width_916/car/car-445728/photo/2020-lamborghini-sian-3490000-1694643913.webp",
         title: "Supercars",
         description: "Prepare-se para ser levado ao limite. Supercarros que aceleram corações e impressionam em qualquer cenário.",
     },
     {
         id: 2,
-        image: "https://images.classic.com/vehicles/d918b95be70c6dd35cf619f0a6380adb8d8e95d5.jpg?w=1200&h=676&fit=crop",
+        image: "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-471041/photo/2022-lamborghini-countach-0-857798937.webp",
         title: "Hypercars",
         description: "O auge da engenharia automotiva. Hypercars que redefinem velocidade, tecnologia e luxo em cada detalhe.",
     },

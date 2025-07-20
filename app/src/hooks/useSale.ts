@@ -7,46 +7,46 @@ const useSale = () => {
     const dispatch = useAppDispatch();
     const saleState = useAppSelector((state) => state.sales);
     
-    // Estados de loading mais específicos e precisos
+    // ✅ Agora usando os loadingStates específicos do Redux
     const loadingStates = useMemo(() => ({
-        creating: saleState.loading && saleState.currentSale === null,
-        updating: saleState.loading && saleState.currentSale !== null,
-        fetchingStats: saleState.loading && saleState.stats.global === null,
-        fetchingUserStats: saleState.loading && saleState.stats.user === null,
-        fetchingTransactions: saleState.loading && 
-            saleState.transactions.asBuyer.length === 0 && 
-            saleState.transactions.asSeller.length === 0,
-        fetchingPurchases: saleState.loading && saleState.purchases.length === 0,
-        fetchingSellerSales: saleState.loading && saleState.sellerSales.length === 0,
-        fetchingVehicleSales: saleState.loading && saleState.vehicleSales.length === 0,
-        fetchingSale: saleState.loading && saleState.currentSale === null,
-        general: saleState.loading
-    }), [saleState]);
+        ...saleState.loadingStates,
+        // Manter compatibilidade com o código anterior
+        general: Object.values(saleState.loadingStates).some(loading => loading)
+    }), [saleState.loadingStates]);
 
     // Operações CRUD
     const createSale = async (data: SaleData) => {
         try {
-            return await dispatch(saleActions.createSale(data)).unwrap();
+            console.log('🚀 Creating sale:', data);
+            const result = await dispatch(saleActions.createSale(data)).unwrap();
+            console.log('✅ Sale created:', result);
+            return result;
         } catch (error) {
-            console.error("Failed to create sale:", error);
+            console.error("❌ Failed to create sale:", error);
             throw error;
         }
     };
 
     const fetchSaleById = async (id: string) => {
         try {
-            return await dispatch(saleActions.fetchSaleById(id)).unwrap();
+            console.log('🔍 Fetching sale:', id);
+            const result = await dispatch(saleActions.fetchSaleById(id)).unwrap();
+            console.log('✅ Sale fetched:', result);
+            return result;
         } catch (error) {
-            console.error("Failed to fetch sale:", error);
+            console.error("❌ Failed to fetch sale:", error);
             throw error;
         }
     };
 
     const updateSale = async (id: string, data: UpdateSaleData) => {
         try {
-            return await dispatch(saleActions.updateSale({ id, data })).unwrap();
+            console.log('🔄 Updating sale:', id, data);
+            const result = await dispatch(saleActions.updateSale({ id, data })).unwrap();
+            console.log('✅ Sale updated:', result);
+            return result;
         } catch (error) {
-            console.error("Failed to update sale:", error);
+            console.error("❌ Failed to update sale:", error);
             throw error;
         }
     };
@@ -54,36 +54,40 @@ const useSale = () => {
     // Históricos
     const fetchPurchasesByUser = async (userId: string) => {
         try {
+            console.log('🛒 Fetching purchases for user:', userId);
             return await dispatch(saleActions.fetchPurchasesByUser(userId)).unwrap();
         } catch (error) {
-            console.error("Failed to fetch purchases:", error);
+            console.error("❌ Failed to fetch purchases:", error);
             throw error;
         }
     };
 
     const fetchSalesBySeller = async (userId: string) => {
         try {
+            console.log('💼 Fetching sales by seller:', userId);
             return await dispatch(saleActions.fetchSalesBySeller(userId)).unwrap();
         } catch (error) {
-            console.error("Failed to fetch seller sales:", error);
+            console.error("❌ Failed to fetch seller sales:", error);
             throw error;
         }
     };
 
     const fetchSalesByVehicle = async (vehicleId: string) => {
         try {
+            console.log('🚗 Fetching sales by vehicle:', vehicleId);
             return await dispatch(saleActions.fetchSalesByVehicle(vehicleId)).unwrap();
         } catch (error) {
-            console.error("Failed to fetch vehicle sales:", error);
+            console.error("❌ Failed to fetch vehicle sales:", error);
             throw error;
         }
     };
 
     const getUserTransactions = async (userId: string) => {
         try {
+            console.log('📊 Fetching transactions for user:', userId);
             return await dispatch(saleActions.fetchUserTransactions(userId)).unwrap();
         } catch (error) {
-            console.error('Failed to fetch transactions:', error);
+            console.error('❌ Failed to fetch transactions:', error);
             throw error;
         }
     };
@@ -91,30 +95,52 @@ const useSale = () => {
     // Estatísticas
     const fetchGlobalSalesStats = async () => {
         try {
+            console.log('🌍 Fetching global stats');
             return await dispatch(saleActions.fetchGlobalSalesStats()).unwrap();
         } catch (error) {
-            console.error("Failed to fetch global stats:", error);
+            console.error("❌ Failed to fetch global stats:", error);
             throw error;
         }
     };
 
     const fetchUserSalesStats = async (userId: string) => {
         try {
+            console.log('👤 Fetching user stats:', userId);
             return await dispatch(saleActions.fetchUserSalesStats(userId)).unwrap();
         } catch (error) {
-            console.error("Failed to fetch user stats:", error);
+            console.error("❌ Failed to fetch user stats:", error);
             throw error;
         }
     };
 
     // Utilitários
-    const clearStats = () => dispatch(saleActions.clearStats());
-    const resetSaleState = () => dispatch(saleActions.resetSaleState());
-    const setCurrentSale = (sale: Sale | null) => dispatch(saleActions.setCurrentSale(sale));
-    const clearError = () => dispatch(saleActions.clearError());
-    const clearSuccess = () => dispatch(saleActions.clearSuccess());
+    const clearStats = () => {
+        console.log('🧹 Clearing stats');
+        dispatch(saleActions.clearStats());
+    };
+    
+    const resetSaleState = () => {
+        console.log('🔄 Resetting sale state');
+        dispatch(saleActions.resetSaleState());
+    };
+    
+    const setCurrentSale = (sale: Sale | null) => {
+        console.log('🎯 Setting current sale:', sale?.id);
+        dispatch(saleActions.setCurrentSale(sale));
+    };
+    
+    const clearError = () => {
+        console.log('❌🧹 Clearing error');
+        dispatch(saleActions.clearError());
+    };
+    
+    const clearSuccess = () => {
+        console.log('✅🧹 Clearing success');
+        dispatch(saleActions.clearSuccess());
+    };
 
     const clearAll = () => {
+        console.log('🧹 Clearing all state');
         dispatch(saleActions.clearStats());
         dispatch(saleActions.resetSaleState());
     };

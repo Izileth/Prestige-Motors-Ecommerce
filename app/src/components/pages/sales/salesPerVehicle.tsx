@@ -47,11 +47,6 @@ const VehicleSales: React.FC<VehicleSalesProps> = ({ vehicleId }) => {
         </CardContent>
       </Card>
 
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-          © {currentYear} Vehicle Sales History. All rights reserved.
-        </p>
-      </div>
     </div>
   );
 };

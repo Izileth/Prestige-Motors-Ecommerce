@@ -16,36 +16,36 @@ export const VehicleBrands: Brand[] = [
         id: 1,
         name: "AMG",
         logo:  Brand_AMG,
-        link: "/marca/fiat"
+        link: "/about/amg"
     },
     {
         id: 2,
         name: "Toyota",
         logo: Brand_Toyota,
-        link: "/marca/volkswagen"
+        link: "/about/toyota"
     },
     {
         id: 3,
         name: "Porshe",
         logo: Brand_Porshe,
-        link: "/marca/chevrolet"
+        link: "/about/porshe"
     },
     {
         id: 4,
         name: "Ferrari",
         logo: Brand_Ferrari,
-        link: "/marca/ford"
+        link: "/about/ferrari"
     },
     {
         id: 5,
         name: "Lamborginhi",
         logo: Brand_Lamborginhi,
-        link: "/marca/toyota"
+        link: "/about/lamborghini"
     },
     {
         id: 6,
         name: "BMW",
         logo: Brand_BMW,
-        link: "/marca/honda"
+        link: "/about/bmw"
     }
 ]

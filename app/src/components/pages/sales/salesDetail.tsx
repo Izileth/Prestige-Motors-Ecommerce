@@ -5,32 +5,45 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "~/src/comp
 import { Button } from "~/src/components/ui/button"
 import { Separator } from "~/src/components/ui/separator"
 import { Loader2, Car, User, DollarSign, Tag, Info, XCircle, CheckCircle2, Clock } from "lucide-react"
+import { useEffect } from "react"
 
 interface SaleDetailProps {
     sale: Sale
 }
 
 const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
-    const { updateSale, loadingStates } = useSale()
+    const { updateSale, loadingStates, currentSale, fetchSaleById } = useSale()
+
+    // Use currentSale from Redux if available, fallback to prop
+    const displaySale = currentSale || sale
 
     const handleStatusChange = async (newStatus: string) => {
         try {
-        await updateSale(sale.id, { status: newStatus })
+            // Atualizar no Redux
+            const updatedSale = await updateSale(sale.id, { status: newStatus })
+            
+            // Opcional: Refetch para garantir sincronização
+            if (updatedSale) {
+                await fetchSaleById(sale.id)
+            }
+            
+            console.log("Status atualizado com sucesso:", newStatus)
         } catch (error) {
-        console.error("Erro ao atualizar status:", error)
+            console.error("Erro ao atualizar status:", error)
         }
     }
 
+    // Sincronizar currentSale quando o componente monta
+    useEffect(() => {
+        if (sale && (!currentSale || currentSale.id !== sale.id)) {
+            fetchSaleById(sale.id)
+        }
+    }, [sale.id])
+
     const getStatusBadgeClasses = (status: string) => {
         switch (status) {
-        case "PENDENTE":
-            return "bg-gray-50 text-gray-600 border-gray-200"
-        case "EM_NEGOCIACAO":
-            return "bg-gray-50 text-gray-600 border-gray-200"
         case "CONCLUIDA":
-            return "bg-gray-50 text-gray-600 border-gray-200"
-        case "CANCELADA":
-            return "bg-gray-50 text-gray-600 border-gray-200"
+            return "bg-green-50 text-green-600 border-green-200"
         default:
             return "bg-gray-50 text-gray-600 border-gray-200"
         }
@@ -38,14 +51,8 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-        case "PENDENTE":
-            return <Clock className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
-        case "EM_NEGOCIACAO":
-            return <Info className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
         case "CONCLUIDA":
             return <CheckCircle2 className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
-        case "CANCELADA":
-            return <XCircle className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
         default:
             return null
         }
@@ -61,13 +68,15 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
                 <Tag className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
                 </div>
-                <CardTitle className="text-gray-900 font-medium text-xl tracking-tight">Detalhes da Venda</CardTitle>
+                <CardTitle className="text-gray-900 font-medium text-xl tracking-tight">
+                    Detalhes da Venda #{displaySale.id.slice(-8)}
+                </CardTitle>
             </div>
             <div
-                className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${getStatusBadgeClasses(sale.status)}`}
+                className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${getStatusBadgeClasses(displaySale.status)}`}
             >
-                {getStatusIcon(sale.status)}
-                {sale.status.replace(/_/g, " ")}
+                {getStatusIcon(displaySale.status)}
+                {displaySale.status.replace(/_/g, " ")}
             </div>
             </CardHeader>
 
@@ -79,11 +88,11 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 Veículo
                 </h3>
                 <Separator className="bg-gray-100" />
-                {sale.vehicle?.imagemPrincipal ? (
+                {displaySale.vehicle?.imagemPrincipal ? (
                 <div className="relative w-full h-48 rounded-md overflow-hidden border border-gray-200 bg-gray-50">
                     <img
-                    src={sale.vehicle.imagemPrincipal || "/placeholder.svg"}
-                    alt={`${sale.vehicle.marca} ${sale.vehicle.modelo}`}
+                    src={displaySale.vehicle.imagemPrincipal || "/placeholder.svg"}
+                    alt={`${displaySale.vehicle.marca} ${displaySale.vehicle.modelo}`}
                     className="transition-transform duration-300 hover:scale-105 h-full w-full object-cover"
                     />
                 </div>
@@ -95,15 +104,15 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 <dl className="space-y-2 text-sm text-gray-700">
                 <div>
                     <dt className="font-semibold text-gray-800">Marca:</dt>
-                    <dd className="font-light">{sale.vehicle?.marca || "N/A"}</dd>
+                    <dd className="font-light">{displaySale.vehicle?.marca || "N/A"}</dd>
                 </div>
                 <div>
                     <dt className="font-semibold text-gray-800">Modelo:</dt>
-                    <dd className="font-light">{sale.vehicle?.modelo || "N/A"}</dd>
+                    <dd className="font-light">{displaySale.vehicle?.modelo || "N/A"}</dd>
                 </div>
                 <div>
                     <dt className="font-semibold text-gray-800">Ano:</dt>
-                    <dd className="font-light">{sale.vehicle?.anoFabricacao || "N/A"}</dd>
+                    <dd className="font-light">{displaySale.vehicle?.anoFabricacao || "N/A"}</dd>
                 </div>
                 </dl>
             </div>
@@ -122,11 +131,11 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                     <dl className="space-y-1 text-sm text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{sale.comprador?.nome || "Não informado"}</dd>
+                        <dd className="font-light">{displaySale.comprador?.nome || "Oculto"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light text-sm">{sale.comprador?.email || "Não informado"}</dd>
+                        <dd className="font-light text-sm">{displaySale.comprador?.email || "Oculto"}</dd>
                     </div>
                     </dl>
                 </div>
@@ -136,11 +145,11 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                     <dl className="space-y-1 text-xs text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{sale.vendedor?.nome || "Não informado"}</dd>
+                        <dd className="font-light">{displaySale.vendedor?.nome || "Oculto"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light">{sale.vendedor?.email || "Não informado"}</dd>
+                        <dd className="font-light">{displaySale.vendedor?.email || "Oculto"}</dd>
                     </div>
                     </dl>
                 </div>
@@ -157,28 +166,28 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 <dl className="space-y-2 text-sm text-gray-700">
                 <div>
                     <dt className="font-semibold text-gray-800">Preço:</dt>
-                    <dd className="font-light">R$ {sale.precoVenda?.toLocaleString("pt-BR") || "N/A"}</dd>
+                    <dd className="font-light">R$ {displaySale.precoVenda?.toLocaleString("pt-BR") || "N/A"}</dd>
                 </div>
                 <div>
                     <dt className="font-semibold text-gray-800">Forma de Pagamento:</dt>
-                    <dd className="font-light">{sale.formaPagamento || "N/A"}</dd>
+                    <dd className="font-light">{displaySale.formaPagamento || "N/A"}</dd>
                 </div>
-                {sale.parcelas && (
+                {displaySale.parcelas && (
                     <div>
                     <dt className="font-semibold text-gray-800">Parcelas:</dt>
-                    <dd className="font-light">{sale.parcelas}x</dd>
+                    <dd className="font-light">{displaySale.parcelas}x</dd>
                     </div>
                 )}
                 <div>
                     <dt className="font-semibold text-gray-800">Data:</dt>
                     <dd className="font-light">
-                    {sale.dataVenda ? new Date(sale.dataVenda).toLocaleDateString("pt-BR") : "N/A"}
+                    {displaySale.dataVenda ? new Date(displaySale.dataVenda).toLocaleDateString("pt-BR") : "N/A"}
                     </dd>
                 </div>
-                {sale.observacoes && (
+                {displaySale.observacoes && (
                     <div>
                     <dt className="font-semibold text-gray-800">Observações:</dt>
-                    <dd className="font-light">{sale.observacoes}</dd>
+                    <dd className="font-light">{displaySale.observacoes}</dd>
                     </div>
                 )}
                 </dl>
@@ -193,21 +202,21 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                 </h3>
                 <Separator className="bg-gray-100" />
                 <div className="flex flex-wrap gap-3">
-                {["PENDENTE", "EM_NEGOCIACAO", "CONCLUIDA", "CANCELADA"].map((status) => (
+                {["CONCLUIDA"].map((status) => (
                     <Button
                     key={status}
                     onClick={() => handleStatusChange(status)}
-                    disabled={loadingStates.updating || sale.status === status}
+                    disabled={loadingStates.updating || displaySale.status === status}
                     className={`
                         ${
-                        sale.status === status
+                        displaySale.status === status
                             ? "bg-gray-900 text-white hover:bg-gray-800"
                             : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                         }
                         transition-all duration-200 font-medium tracking-tight px-4 py-2.5
                     `}
                     >
-                    {loadingStates.updating && sale.status !== status ? (
+                    {loadingStates.updating ? (
                         <Loader2 className="h-4 w-4 animate-spin mr-2" strokeWidth={1.5} />
                     ) : (
                         getStatusIcon(status)
@@ -223,7 +232,7 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
         {/* Copyright Notice */}
         <div className="mt-6 pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-            © {currentYear} Vehicle Sales Management. All rights reserved.
+            © {currentYear} Prestige Motors | Todos os Direitos Reservados
             </p>
         </div>
         </div>

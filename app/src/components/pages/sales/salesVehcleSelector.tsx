@@ -11,7 +11,6 @@ import { Button } from '~/src/components/ui/button';
 import { Check, ChevronsUpDown, Car } from 'lucide-react';
 import { cn } from '~/src/lib/cn';
 import useVehicle from '~/src/hooks/useVehicle';
-import type { Vehicle } from '~/src/types/vehicle';
 
 interface VehicleSelectorProps {
     selectedVehicle: string;
@@ -129,6 +128,6 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({
     );
 });
 
-VehicleSelector.displayName = 'VehicleSelector'; // Para facilitar debugging
+VehicleSelector.displayName = 'VehicleSelector'; 
 
 export default VehicleSelector;
