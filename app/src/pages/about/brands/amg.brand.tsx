@@ -2,14 +2,13 @@
 export default function AmgPage() {
     return (
         <div className="min-h-screen bg-gray-900 text-gray-50 font-sans">
-    
 
         {/* Hero Section */}
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
             <img
-                src="/placeholder.svg?height=1080&width=1920"
+                src="https://i.pinimg.com/1200x/19/b9/bc/19b9bcc2c38115ab8a288cc134352d98.jpg"
                 alt="Mercedes-AMG car interior"
-                className="absolute inset-0 z-0 opacity-70 grayscale"
+                className="absolute inset-0 z-0 opacity-70 grayscale w-full h-full object-cover object-center bg-fixed"
             />
             <div className="relative z-10 text-center px-4">
             <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter drop-shadow-lg">Driving Performance</h2>
@@ -37,48 +36,48 @@ export default function AmgPage() {
         </section>
 
         {/* Milestones Section */}
-        <section className="py-16 px-4 md:px-6 lg:py-24 bg-gray-900 text-gray-50">
+        <section className="py-16 px-4 md:px-6 lg:py-24 bg-zinc-950 text-gray-50">
             <div className="max-w-5xl mx-auto">
             <h3 className="text-4xl font-bold tracking-tight text-center mb-12">Defining Moments</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">1971: The Red Pig</h4>
                 <p className="text-gray-300">
                     The iconic 300 SEL 6.3 &quot;Red Pig&quot; secured a class victory and second overall at the 24 Hours of
                     Spa, marking AMG&apos;s first major racing success and putting them on the global map.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">1986: The Hammer</h4>
                 <p className="text-gray-300">
                     The AMG Hammer, based on the W124 E-Class, became a legend with its 5.6-liter V8 engine, delivering over
                     360 hp and setting new benchmarks for performance sedans.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">1990: Cooperation Agreement</h4>
                 <p className="text-gray-300">
                     AMG signed a cooperation agreement with Daimler-Benz AG, leading to AMG products being sold through
                     Mercedes-Benz dealerships and expanding their reach significantly.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">1999: Majority Stake Acquired</h4>
                 <p className="text-gray-300">
                     DaimlerChrysler AG acquired a majority stake in AMG, integrating the performance brand even closer into
                     the Mercedes-Benz family.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">2005: Full Integration</h4>
                 <p className="text-gray-300">
                     AMG became a wholly-owned subsidiary of Daimler AG, solidifying its position as the high-performance arm
                     of Mercedes-Benz.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
                 <h4 className="text-2xl font-semibold mb-3">2009: SLS AMG</h4>
-                <p className="text-gray-300">
+                <p className="text-gray-300">    
                     The introduction of the Mercedes-Benz SLS AMG marked the first car developed entirely by AMG, showcasing
                     their full engineering capabilities.
                 </p>

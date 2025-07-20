@@ -1,7 +1,6 @@
 import type React from "react";
 import { motion } from "framer-motion";
 import { Car, ArrowRight } from "lucide-react";
-import { Button } from "~/src/components/ui/button";
 import { Badge } from "~/src/components/ui/badge";
 import { useVehicleRecommendations } from "~/src/hooks/useRadomVehicles";
 import { VehicleCard } from "~/src/components/template/card/card";
@@ -66,7 +65,7 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+            className="text-3xl font-semibold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
           >
             Recomendações para você
           </motion.h2>
@@ -110,14 +109,12 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
             <VehicleCard
               vehicle={vehicle}
               index={index}
-              // Se você quiser manter alguma funcionalidade específica de favoritos
-              // onToggleFavorite={(vehicle) => console.log('Toggle favorite', vehicle)}
             />
           </div>
         ))}
       </motion.div>
 
-      {/* Call to action */}
+      {/* Call to action 
       {recommendations.length >= 6 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -135,6 +132,8 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
           </Button>
         </motion.div>
       )}
+      */}
+
     </motion.div>
   );
 };

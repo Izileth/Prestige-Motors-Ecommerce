@@ -21,6 +21,7 @@ import { useNavigate } from "react-router";
 
 import { useIsMobile } from "~/src/hooks/use-mobile";
 interface PurchaseHistoryProps {
+  purchases: Sale[];
   userId: string;
   initialPurchases?: Sale[]; // Opcional para SSR ou pré-carregamento
 }

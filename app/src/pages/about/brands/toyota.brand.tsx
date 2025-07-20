@@ -6,11 +6,11 @@ export default function ToyotaPage() {
         {/* Hero Section */}
         <section className="relative h-[65vh] md:h-[85vh] flex items-center justify-center overflow-hidden bg-gray-800">
             <img
-            src="/placeholder.svg?height=1080&width=1920"
+            src="https://i.pinimg.com/1200x/5a/3e/08/5a3e080456e964ca42afc6a8fe849b8e.jpg"
             alt="Modern Toyota car on a road"
-            className="absolute inset-0 z-0 opacity-60 grayscale transition-opacity duration-500 ease-in-out hover:opacity-75"
+            className="absolute inset-0 z-0 opacity-60 grayscale transition-opacity duration-500 ease-in-out hover:opacity-75 w-full h-full object-cover object-center"
             />
-            <div className="relative z-10 text-center px-4 py-8 bg-gray-900 bg-opacity-70 rounded-lg shadow-2xl backdrop-blur-sm">
+            <div className="relative z-10 text-center px-4 py-8 bg-transparent bg-opacity-70 rounded-lg shadow-2xl backdrop-blur-sm">
             <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-tight text-gray-50 drop-shadow-lg">
                 Toyota: Driving Innovation
             </h2>
@@ -39,46 +39,46 @@ export default function ToyotaPage() {
         </section>
 
         {/* Milestones Section */}
-        <section className="py-16 px-4 md:px-6 lg:py-24 bg-gray-900 text-gray-50">
+        <section className="py-16 px-4 md:px-6 lg:py-24 bg-zinc-950 text-gray-50">
             <div className="max-w-5xl mx-auto">
             <h3 className="text-4xl font-bold tracking-tight text-center mb-12 text-gray-50">Pivotal Moments</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-900 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">1937: Company Establishment</h4>
                 <p className="text-gray-300">
                     Toyota Motor Corporation is officially established, separating from Toyoda Automatic Loom Works to focus
                     solely on automobile manufacturing.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">1957: First US Export</h4>
                 <p className="text-gray-300">
                     The Toyota Crown becomes the first Japanese car to be exported to the United States, marking
                     Toyota&apos;s entry into the international market.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">1966: Corolla Launch</h4>
                 <p className="text-gray-300">
                     The introduction of the Toyota Corolla, which would go on to become the world&apos;s best-selling car
                     model, revolutionizing affordable and reliable transportation.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">1997: Prius Hybrid</h4>
                 <p className="text-gray-300">
                     Toyota launches the Prius, the world&apos;s first mass-produced hybrid vehicle, pioneering a new era of
                     environmentally conscious automotive technology.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">2000s: Global Expansion</h4>
                 <p className="text-gray-300">
                     Toyota solidifies its position as a global automotive powerhouse, expanding manufacturing and sales
                     operations across continents.
                 </p>
                 </div>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <h4 className="text-2xl font-semibold mb-3 text-gray-50">2014: Mirai Fuel Cell</h4>
                 <p className="text-gray-300">
                     Introduction of the Toyota Mirai, one of the world&apos;s first production fuel cell electric vehicles,

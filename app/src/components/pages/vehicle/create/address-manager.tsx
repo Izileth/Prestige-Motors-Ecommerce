@@ -1,9 +1,6 @@
-import type React from "react"
-
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Button } from "~/src/components/ui/button"
 import { Input } from "~/src/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "~/src/components/ui/card"
@@ -12,36 +9,8 @@ import { Loader2, MapPin, CheckCircle2, Trash2, Building2, AlertCircle } from "l
 import { toast } from "sonner"
 import { useVehicleAddress } from "~/src/hooks/useVehiclesAddress"
 import { useNavigate } from "react-router"
-
-// Schema de validação
-const addressSchema = z.object({
-  cep: z.string()
-    .min(8, "CEP deve ter 8 dígitos")
-    .max(8, "CEP deve ter 8 dígitos")
-    .regex(/^\d{8}$/, "CEP deve conter apenas números"),
-  logradouro: z.string()
-    .min(1, "Logradouro é obrigatório")
-    .max(255, "Logradouro muito longo"),
-  numero: z.string()
-    .min(1, "Número é obrigatório")
-    .max(20, "Número muito longo"),
-  complemento: z.string().max(100, "Complemento muito longo").optional(),
-  bairro: z.string()
-    .min(1, "Bairro é obrigatório")
-    .max(100, "Bairro muito longo"),
-  cidade: z.string()
-    .min(1, "Cidade é obrigatória")
-    .max(100, "Cidade muito longa"),
-  estado: z.string()
-    .min(2, "Estado deve ter 2 caracteres")
-    .max(2, "Estado deve ter 2 caracteres")
-    .regex(/^[A-Z]{2}$/, "Estado deve conter apenas letras maiúsculas"),
-  pais: z.string()
-    .min(1, "País é obrigatório")
-    .max(100, "País muito longo"),
-})
-
-type AddressFormData = z.infer<typeof addressSchema>
+import { addressSchema } from "~/src/schemas/schema"
+import type { AddressFormData } from "~/src/schemas/schema"
 
 interface VehicleAddressManagerProps {
   vehicleId: string

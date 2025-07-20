@@ -56,7 +56,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
           <Card className="mt-4 border-0 shadow-none bg-transparent dark:bg-gray-900">
             <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">Descrição</CardHeader>
             <CardContent>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed shadow-none ">
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed shadow-none text-justify">
                 {vehicle.descricao || "Nenhuma descrição fornecida."}
               </p>
             </CardContent>

@@ -10,6 +10,7 @@ import type { Vehicle } from "~/src/types/vehicle";
 import type { Sale } from "~/src/types/sale";
 import type { Address } from "~/src/types/address";
 import type { UserStats } from "~/src/types/user";
+
 interface ProfileTabContentProps {
   activeTab: string;
   currentUser: User | null;
@@ -108,7 +109,7 @@ const ProfileTabContent: React.FC<ProfileTabContentProps> = ({
         <FavoriteVehicles favorites={favorites} />
       </TabsContent>
       <TabsContent value="compras">
-        <PurchaseHistory purchases={purchases} />
+        <PurchaseHistory purchases={purchases} userId={currentUser?.id || ""} />
       </TabsContent>
       <TabsContent value="enderecos">
         <AddressManager

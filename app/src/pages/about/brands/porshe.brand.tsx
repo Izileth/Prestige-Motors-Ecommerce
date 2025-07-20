@@ -1,23 +1,23 @@
 
 export default function PorshePage() {
     return (
-        <div className="min-h-screen bg-gray-900 text-gray-50 font-sans antialiased">
+        <div className="min-h-screen bg-zinc-900 text-gray-50 font-sans antialiased">
    
         {/* Hero Section */}
-        <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-800 to-gray-900">
+        <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-900 to-zinc-950">
             <img
-            src="/placeholder.svg?height=1080&width=1920"
+            src="https://i.pinimg.com/1200x/44/c9/83/44c98379e836c6751c3846f87ad28ea7.jpg"
             alt="Iconic Porsche 911 on a winding mountain road"
-            className="absolute inset-0 z-0 opacity-50 grayscale transition-all duration-700 ease-in-out hover:opacity-70 hover:scale-105"
+            className="absolute inset-0 z-0 opacity-50 grayscale transition-all duration-700 ease-in-out hover:opacity-70 hover:scale-105 w-full h-full object-cover object-center "
             />
-            <div className="relative z-10 text-center px-4 py-12 bg-gray-900/80 rounded-2xl shadow-2xl backdrop-blur-md border border-gray-700/50 transform transition-all duration-500 hover:scale-105">
+            <div className="relative z-10 text-center px-4 py-12 bg-transparent rounded-2xl shadow-2xl backdrop-blur-md   transform transition-all duration-500 hover:scale-105">
             <h2 className="text-5xl md:text-8xl font-extrabold tracking-tighter leading-tight text-gray-50 drop-shadow-2xl mb-4">
                 Porsche
             </h2>
             <p className="text-xl md:text-2xl font-light text-gray-200 tracking-wide">
                 Engineering Excellence Since 1931
             </p>
-            <div className="mt-6 w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
+            <div className="mt-6 w-24 h-1 bg-gradient-to-r from-zinc-400 to-zinc-800 mx-auto rounded-full"></div>
             </div>
         </section>
 
@@ -53,15 +53,15 @@ export default function PorshePage() {
         </section>
 
         {/* Milestones Section */}
-        <section className="py-20 px-4 md:px-6 lg:py-32 bg-gray-900 text-gray-50 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"></div>
+        <section className="py-20 px-4 md:px-6 lg:py-32 bg-zinc-950 text-gray-50 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900"></div>
             <div className="max-w-6xl mx-auto relative z-10">
             <h3 className="text-5xl font-bold tracking-tight text-center mb-16 text-gray-50 relative">
                 Legendary Milestones
                 <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gray-400 rounded-full"></div>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     1948: The 356
                 </h4>
@@ -70,7 +70,7 @@ export default function PorshePage() {
                     reputation for exceptional handling and performance.
                 </p>
                 </div>
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     1963: The 911 Icon
                 </h4>
@@ -79,7 +79,7 @@ export default function PorshePage() {
                     synonymous with the Porsche brand for decades.
                 </p>
                 </div>
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     1970: Le Mans Victory
                 </h4>
@@ -88,7 +88,7 @@ export default function PorshePage() {
                     legendary racing heritage that continues today.
                 </p>
                 </div>
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     1975: The Turbo Era
                 </h4>
@@ -97,7 +97,7 @@ export default function PorshePage() {
                     performance benchmarks for the industry.
                 </p>
                 </div>
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     2002: Cayenne SUV
                 </h4>
@@ -106,7 +106,7 @@ export default function PorshePage() {
                     performance DNA and engineering excellence.
                 </p>
                 </div>
-                <div className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-2xl shadow-xl border border-gray-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
+                <div className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-2xl shadow-xl border border-zinc-600/50 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-gray-500">
                 <h4 className="text-2xl font-semibold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                     2019: Taycan Electric
                 </h4>

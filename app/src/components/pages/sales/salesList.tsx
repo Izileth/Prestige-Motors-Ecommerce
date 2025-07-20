@@ -28,9 +28,7 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
             return "bg-gray-50 text-gray-600 border-gray-200"
         }
     }
-
-    const currentYear = new Date().getFullYear()
-
+    
     return (
         <div className="w-full max-w-full mx-auto p-4">
         <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200">

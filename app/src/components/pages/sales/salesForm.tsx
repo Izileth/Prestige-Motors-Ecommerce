@@ -17,27 +17,7 @@ import { Separator } from "~/src/components/ui/separator"
 import { Alert, AlertDescription } from "~/src/components/ui/alert"
 import type { SaleData } from "~/src/types/sale"
 import { VehicleCategory } from "~/src/types/enuns"
-
-const formSchema = z.object({
-    vehicleId: z.string().min(1, "Selecione um veículo"),
-    compradorId: z.string().min(1, "Selecione um comprador"),
-    precoVenda: z.number().min(1, "O preço deve ser maior que zero"),
-    formaPagamento: z.enum(["À Vista", "Cartão de Crédito", "Financiamento", "Boleto", "PIX"], {
-        error: "Selecione uma forma de pagamento",
-    }),
-    parcelas: z.number().min(1).max(36).optional(),
-    categoria: z.nativeEnum(VehicleCategory),
-    observacoes: z.string().optional(),
-}).refine((data) => {
-    // Se não for à vista, parcelas é obrigatório
-    if (data.formaPagamento !== "À Vista" && !data.parcelas) {
-        return false;
-    }
-    return true;
-}, {
-    message: "Número de parcelas é obrigatório para esta forma de pagamento",
-    path: ["parcelas"],
-});
+import { formSchema } from "~/src/schemas/schema"
 
 const CreateSaleForm = () => {
     const { createSale, loadingStates } = useSale()

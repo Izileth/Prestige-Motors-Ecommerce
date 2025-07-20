@@ -26,16 +26,16 @@ export default function FearriPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-50 font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-zinc900 text-gray-50 font-sans antialiased overflow-x-hidden">
 
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-800 via-gray-900 to-black">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-800 via-zinc-900 to-black">
         <motion.div style={{ y: scrollY * 0.5 }} className="absolute inset-0 z-0">
           <img
-            src="/placeholder.svg?height=1080&width=1920&text=Ferrari+supercar+on+racing+track"
+            src="https://i.pinimg.com/736x/aa/26/1d/aa261d416a379b4f91d7acc50b00cf37.jpg"
             alt="Ferrari supercar on racing track"
-            className="opacity-40 grayscale"
+            className="opacity-40 grayscale w-full h-full object-cover object-center"
           />
         </motion.div>
 
@@ -49,7 +49,7 @@ export default function FearriPage() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-gray-700/50"
+            className="bg-transparent backdrop-blur-lg rounded-3xl p-12 shadow-2xl "
           >
             <motion.h2
               initial={{ opacity: 0, scale: 0.5 }}
@@ -133,8 +133,8 @@ export default function FearriPage() {
       </section>
 
       {/* Milestones Section */}
-      <section className="py-24 px-4 md:px-6 lg:py-32 bg-gray-900 text-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900" />
+      <section className="py-24 px-4 md:px-6 lg:py-32 bg-zinc-900 text-gray-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900" />
 
         <motion.div
           initial="initial"
@@ -204,7 +204,7 @@ export default function FearriPage() {
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 }}
                 transition={{ duration: 0.3 }}
-                className="group bg-gradient-to-br from-gray-800 to-gray-700 p-8 rounded-3xl shadow-2xl border border-gray-600/50 cursor-pointer"
+                className="group bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-3xl shadow-2xl border border-zinc-800/50 cursor-pointer"
               >
                 <motion.h4 className="text-3xl font-bold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
                   {milestone.year}: {milestone.title}
