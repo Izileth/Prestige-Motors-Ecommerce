@@ -20,7 +20,7 @@ import VehicleInfo from "~/src/components/pages/vehicle/id/VehicleInfo";
 import VehicleDetails from "~/src/components/pages/vehicle/id/VehicleDetails";
 import VehicleSidebar from "~/src/components/pages/vehicle/id/VehicleSidebar";
 import VehicleReviews from "~/src/components/pages/vehicle/id/VehicleReviews";
-
+import VehicleRecommendationsGrid from "~/src/components/pages/vehicle/id/VehicleRadomGrid";
 
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -62,16 +62,11 @@ const VehicleDetailsPage = () => {
 
     let isMounted = true;
 
-
-    // No useEffect do componente
-
-
     const loadData = async () => {
       try {
         await fetchVehicleById(id);
-        // Chama sempre, mas o hook decide internamente se executa ou não
         if (isMounted) {
-          await fetchUserFavorites(); // O hook vai verificar isAuthenticated
+          await fetchUserFavorites();
         }
       } catch (error) {
         if (isMounted) console.error("Failed to load vehicle data:", error);
@@ -229,6 +224,11 @@ const VehicleDetailsPage = () => {
     }
   };
 
+  // Handler para clicar em uma recomendação
+  const handleRecommendationClick = (vehicle: any) => {
+    navigate(`/vehicles/${vehicle.id}`);
+  };
+
   if (loading) return <VehicleDetailsSkeleton />;
 
   if (vehicleError) {
@@ -339,6 +339,15 @@ const VehicleDetailsPage = () => {
             />
           </div>
           <VehicleSidebar vehicle={currentVehicle} />
+        </div>
+
+        {/* Grid de Recomendações */}
+        <div className="mt-12 mb-8">
+          <VehicleRecommendationsGrid 
+            currentVehicle={currentVehicle}
+            onVehicleClick={handleRecommendationClick}
+            className="max-w-full"
+          />
         </div>
       </div>
     </div>
