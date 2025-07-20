@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "~/src/components/ui/card";
 import { Badge } from "~/src/components/ui/badge";
 import { Button } from "~/src/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import type { Negotiation } from "~/src/types/negociation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
