@@ -59,15 +59,18 @@ const useVehicle = () => {
   }, [fetchVehicles]);
 
   // Modificado para lidar com usuários não autenticados
+
   const fetchUserFavoritesSafe = useCallback(async () => {
     if (!isAuthenticated) {
-      return []; // Retorna array vazio se não autenticado
+      // Não faz nada se não autenticado
+      return;
     }
     try {
       return await fetchUserFavorites();
     } catch (error) {
       console.error("Error fetching favorites:", error);
-      return []; // Retorna array vazio em caso de erro
+      // Não propaga o erro para não quebrar o componente
+      return;
     }
   }, [fetchUserFavorites, isAuthenticated]);
 

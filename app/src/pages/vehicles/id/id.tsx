@@ -25,7 +25,7 @@ import VehicleReviews from "~/src/components/pages/vehicle/id/VehicleReviews";
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const {
     currentVehicle,
@@ -62,23 +62,19 @@ const VehicleDetailsPage = () => {
 
     let isMounted = true;
 
-    // Busca os dados do veículo
+
+    // No useEffect do componente
+
+
     const loadData = async () => {
       try {
         await fetchVehicleById(id);
+        // Chama sempre, mas o hook decide internamente se executa ou não
+        if (isMounted) {
+          await fetchUserFavorites(); // O hook vai verificar isAuthenticated
+        }
       } catch (error) {
         if (isMounted) console.error("Failed to load vehicle data:", error);
-        return; // Para aqui se falhar ao buscar o veículo
-      }
-      
-      // Só tenta buscar favoritos se tiver usuário
-      if (isMounted && user) {
-        try {
-          await fetchUserFavorites();
-        } catch (error) {
-          console.error("Failed to load favorites:", error);
-          // Não impede a página de funcionar
-        }
       }
     };
 
@@ -242,7 +238,7 @@ const VehicleDetailsPage = () => {
           <div className="flex justify-between items-start">
             <div>
               <AlertTitle>
-                {vehicleError.type === 'auth' ? 'Ação requerida' : 'Erro'}
+                {vehicleError.type && 'auth'}
               </AlertTitle>
               <AlertDescription>
                 {vehicleError.message}
@@ -274,7 +270,7 @@ const VehicleDetailsPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+        <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8  text-center">
           <div className="text-red-500 mb-4 text-lg">Erro ao carregar o veículo</div>
           <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
           <div className="flex justify-center gap-4">

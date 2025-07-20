@@ -9,7 +9,7 @@ import {
 } from "~/src/components/pages/negotiations";
 import { useNegotiationStore } from "~/src/store/slices/negociation";
 import { useVehicleStore } from "~/src/store/slices/vehicle";
-import { toast } from "sonner"; // ou seu sistema de notificação preferido
+import { toast } from "sonner"; 
 
 const NegotiationsPage = () => {
     const { user } = useAuth();

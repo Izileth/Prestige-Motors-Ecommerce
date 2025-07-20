@@ -195,7 +195,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                 {vehicle.vendedor && (
                 <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                     <MapPin size={14} className="opacity-70" />
-                    <span>{vehicle.vendedor.id || "Localização"}</span>
+                    <span>{vehicle.localizacao?.cidade || "Localização"}</span>
                 </div>
                 )}
             </div>
