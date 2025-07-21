@@ -23,7 +23,7 @@ export interface SaleTransaction {
     parcelas?: number;
     observacoes?: string;
     categoria: string;
-    status: "PENDENTE" | "CONCLUIDA" | "CANCELADA";
+    status: "CONCLUIDA" ;
     categoriaVeiculo: string | null;
     dataVenda: string;
     dataCriacao: string;

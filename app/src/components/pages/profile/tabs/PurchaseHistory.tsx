@@ -23,7 +23,7 @@ import { useIsMobile } from "~/src/hooks/use-mobile";
 interface PurchaseHistoryProps {
   purchases: Sale[];
   userId: string;
-  initialPurchases?: Sale[]; // Opcional para SSR ou pré-carregamento
+  initialPurchases?: Sale[]; 
 }
 
 const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurchases = [] }) => {
@@ -208,7 +208,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
                       variant="ghost"
                       size="sm"
                       className="mt-3 w-full"
-                      onClick={() => (window.location.href = `/compras/${sale.id}`)}
+                      onClick={() => router(`/sale/details/${sale.id}`)}
                     >
                       Ver Detalhes
                     </Button>
@@ -304,7 +304,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => (router(`/sale/dashboard`))}
+                          onClick={() => router(`/sale/details/${sale.id}`)}
                           className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100"
                         >
                           Detalhes

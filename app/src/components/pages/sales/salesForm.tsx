@@ -19,6 +19,8 @@ import type { SaleData } from "~/src/types/sale"
 import { VehicleCategory } from "~/src/types/enuns"
 import { formSchema } from "~/src/schemas/schema"
 
+import { useNavigate } from "react-router"
+
 const CreateSaleForm = () => {
     const { createSale, loadingStates } = useSale()
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -40,6 +42,9 @@ const CreateSaleForm = () => {
     const selectedVehicle = form.watch("vehicleId")
     const selectedBuyer = form.watch("compradorId")
 
+
+    const navigate = useNavigate()
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true)
         
@@ -54,8 +59,8 @@ const CreateSaleForm = () => {
                 observacoes: values.observacoes || undefined,
                 categoria: values.categoria // Adiciona a categoria
             }
-
-            await createSale(saleData)
+        
+            const createdSale = await createSale(saleData);
             
             // Reset do formulário após sucesso
             form.reset({
@@ -69,6 +74,10 @@ const CreateSaleForm = () => {
             })
             
             toast.success("Venda criada com sucesso!")
+
+            if (createdSale && createdSale.id) {
+                navigate(`/sale/details/${createdSale.id}`);
+            }
         } catch (error) {
             console.error("Erro ao criar venda:", error)
             toast.error("Erro ao criar venda. Tente novamente.")

@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/src/components/ui/ca
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/src/components/ui/tabs";
 import { Loader2, LayoutDashboard, BarChart2, ListOrdered, PlusCircle } from "lucide-react";
 import DashboardSkeleton from "~/src/components/layout/skeleton/dashboard";
+
+
 const SalesDashboard = () => {
     const {
         currentSale,
@@ -220,7 +222,9 @@ const SalesDashboard = () => {
                                                 <TabsContent value="purchases" className="mt-0 p-4">
                                                     <SalesList
                                                         sales={transactions.asBuyer}
+                                                        
                                                         onSelectSale={setCurrentSale}
+                                                        
                                                         title="Minhas Compras"
                                                     />
                                                 </TabsContent>

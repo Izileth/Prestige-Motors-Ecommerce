@@ -194,7 +194,7 @@ export const VehicleCard = ({
                                 className="border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                                 asChild
                             >
-                                <Link to={`/vehicles/update/${vehicle.id}`}>
+                                <Link to={`/vehicles/edit/${vehicle.id}`}>
                                     <Edit className="h-4 w-4" />
                                 </Link>
                             </Button>

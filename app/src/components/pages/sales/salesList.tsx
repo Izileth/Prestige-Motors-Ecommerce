@@ -7,22 +7,15 @@ import { Car, User, DollarSign, CalendarDays, Tag, Search } from "lucide-react"
 
 
 interface SalesListProps {
-  sales: Sale[]
-  onSelectSale: (sale: Sale) => void
-  title?: string
+    sales: Sale[]
+    onSelectSale: (sale: Sale) => void
+    title?: string
 }
 
-   
 const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => {
     const getStatusBadgeClasses = (status: string) => {
         switch (status) {
-        case "PENDENTE":
-            return "bg-gray-50 text-gray-600 border-gray-200"
-        case "EM_NEGOCIACAO":
-            return "bg-gray-50 text-gray-600 border-gray-200"
         case "CONCLUIDA":
-            return "bg-gray-50 text-gray-600 border-gray-200"
-        case "CANCELADA":
             return "bg-gray-50 text-gray-600 border-gray-200"
         default:
             return "bg-gray-50 text-gray-600 border-gray-200"

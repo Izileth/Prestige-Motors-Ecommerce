@@ -44,6 +44,8 @@ export default [
     route("vehicles/negociations", "routes/vehicle/negociation/negociation.tsx"),
 
     route("sale/dashboard", "routes/sale/dashboard.tsx"),
+    route("sale/details/:saleId", "routes/sale/id.tsx"),
+
 
 
 ] satisfies RouteConfig;

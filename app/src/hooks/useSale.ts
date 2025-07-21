@@ -7,7 +7,7 @@ const useSale = () => {
     const dispatch = useAppDispatch();
     const saleState = useAppSelector((state) => state.sales);
     
-    // ✅ Agora usando os loadingStates específicos do Redux
+
     const loadingStates = useMemo(() => ({
         ...saleState.loadingStates,
         // Manter compatibilidade com o código anterior

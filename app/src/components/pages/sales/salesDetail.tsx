@@ -14,7 +14,7 @@ interface SaleDetailProps {
 const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
     const { updateSale, loadingStates, currentSale, fetchSaleById } = useSale()
 
-    // Use currentSale from Redux if available, fallback to prop
+   
     const displaySale = currentSale || sale
 
     const handleStatusChange = async (newStatus: string) => {

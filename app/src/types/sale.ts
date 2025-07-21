@@ -14,6 +14,7 @@ export interface Sale {
         marca: string;
         modelo: string;
         anoFabricacao: number;
+        imagens: VehicleSaleImages[];
         imagemPrincipal?: string | null;
     };
     comprador?: {
@@ -26,6 +27,15 @@ export interface Sale {
         email: string;
     };
 }
+
+export interface VehicleSaleImages {
+    id: string;
+    url: string;
+    isMain: boolean;
+    ordem: number;
+    vehicleId: string;
+}
+
 export interface SaleData {
     vehicleId: string;
     compradorId: string;
