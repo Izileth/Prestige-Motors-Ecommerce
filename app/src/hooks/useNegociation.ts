@@ -17,6 +17,8 @@ export const useNegotiations = (options?: {
         withHistory = false
     } = options || {};
 
+    
+
     // Obtém estados e ações do store
     const {
         negotiations,
@@ -38,6 +40,14 @@ export const useNegotiations = (options?: {
         if (!status) return negotiations;
         return negotiations.filter(n => n.status === status);
     }, [negotiations, status]);
+     
+    const availableMessages = useMemo(() => {
+        if (negotiationId && currentNegotiation?.mensagens) {
+            return currentNegotiation.mensagens;
+        }
+        return messages;
+    }, [negotiationId, currentNegotiation?.mensagens, messages]);
+
 
     // Carrega negociações automaticamente quando necessário
     useEffect(() => {
@@ -80,7 +90,7 @@ export const useNegotiations = (options?: {
         // Estados
         negotiations: filteredNegotiations,
         currentNegotiation,
-        messages,
+        messages: availableMessages,
         history,
         isLoading,
         error,

@@ -32,6 +32,7 @@ export const negotiationService = {
      */
     async getById(negotiationId: string): Promise<Negotiation> {
         const response = await api.get(`/negotiations/${negotiationId}`);
+        console.log( 'Negociação Encontrada!', response.data);
         return response.data;
     },
 

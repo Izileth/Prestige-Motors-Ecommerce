@@ -68,20 +68,25 @@ export const useNegotiationStore = create<NegotiationStore>()(
             });
             }
         },
-
+    
         fetchNegotiationById: async (id) => {
             set({ isLoading: true, error: null });
             try {
-            const negotiation = await negotiationService.getById(id);
-            set({ 
-                currentNegotiation: negotiation,
-                isLoading: false 
-            });
+                const negotiation = await negotiationService.getById(id);
+                
+                // FIX: Extrair mensagens da negociação e armazená-las no estado messages
+                const negotiationMessages = negotiation.mensagens || [];
+                
+                set({ 
+                    currentNegotiation: negotiation,
+                    messages: negotiationMessages, 
+                    isLoading: false 
+                });
             } catch (error) {
-            set({ 
-                error: error instanceof Error ? error.message : 'Erro ao buscar negociação',
-                isLoading: false
-            });
+                set({ 
+                    error: error instanceof Error ? error.message : 'Erro ao buscar negociação',
+                    isLoading: false
+                });
             }
         },
 

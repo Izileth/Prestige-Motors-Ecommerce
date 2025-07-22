@@ -43,13 +43,10 @@ export interface Negotiation {
 
 export interface NegotiationMessage {
     id: string;
-    negociacaoId: string;
     autorId: string;
     conteudo: string;
     tipo: MessageType;
-    createdAt: Date;
-    updatedAt: Date;
-    
+    createdAt: string; // Backend retorna string, não Date
     // Relacionamentos
     autor?: Pick<User, 'id' | 'nome' | 'avatar'>;
 }
