@@ -41,7 +41,8 @@ export default [
     
     route("vehicles/category", "routes/vehicle/category/category.tsx"),
     
-    route("vehicles/negociations", "routes/vehicle/negociation/negociation.tsx"),
+    route("vehicles/negotiations", "routes/vehicle/negociation/negociation.tsx"),
+    route("vehicles/negotiations/:id", "routes/vehicle/negociation/id.tsx"),
 
     route("sale/dashboard", "routes/sale/dashboard.tsx"),
     route("sale/details/:saleId", "routes/sale/id.tsx"),

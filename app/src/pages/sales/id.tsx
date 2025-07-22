@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import useSale from '~/src/hooks/useSale';
 import { 
     Card, 
@@ -20,7 +20,7 @@ import {
     CheckCircle2,
     ArrowLeft
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 

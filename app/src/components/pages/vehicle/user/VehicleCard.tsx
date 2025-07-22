@@ -8,7 +8,7 @@ import { Heart, Zap, ShieldCheck, Gauge, Calendar, Edit, Trash2, Loader2 } from 
 import { formatPrice } from "~/src/lib/price";
 import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle"; // Ajuste o caminho conforme sua estrutura
-
+import { useNavigate } from "react-router";
 // Interface para as props do VehicleCard
 interface VehicleCardProps {
     vehicle: Vehicle;
@@ -64,6 +64,8 @@ export const VehicleCard = ({
     setConfirmDelete, 
     isDeleting 
 }: VehicleCardProps) => {
+
+    const navigate = useNavigate();
     return (
         <motion.div
             key={vehicle.id}
@@ -73,7 +75,7 @@ export const VehicleCard = ({
             onMouseEnter={() => setHoveredVehicle(vehicle.id)}
             onMouseLeave={() => setHoveredVehicle(null)}
         >
-            <Card className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300 h-full">
+            <Card onClick={() => navigate(`/vehicles/${vehicle.id}`)} className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300 h-full">
                 <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
                     {vehicle.imagens?.length > 0 ? (
                         <img

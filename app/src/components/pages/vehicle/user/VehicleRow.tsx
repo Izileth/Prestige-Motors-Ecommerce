@@ -7,7 +7,7 @@ import { Heart, Zap, ShieldCheck, Gauge, Calendar, Edit, Trash2, Eye, Loader2 } 
 import { formatPrice } from "~/src/lib/price";
 import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle"; // Ajuste o caminho conforme sua estrutura
-
+import { useNavigate } from "react-router";
 
 interface VehicleRowProps {
     vehicle: Vehicle;
@@ -30,9 +30,11 @@ export const VehicleRow = ({
     setConfirmDelete, 
     isDeleting 
 }: VehicleRowProps) => {
+
+    const navigate = useNavigate();
     return (
         <>
-            <TableCell onMouseEnter={() => setHoveredVehicle(vehicle.id)} onMouseLeave={() => setHoveredVehicle(null)}>
+            <TableCell onClick={() => navigate(`/vehicles/${vehicle.id}`)} onMouseEnter={() => setHoveredVehicle(vehicle.id)} onMouseLeave={() => setHoveredVehicle(null)}>
                 <div className="flex items-center gap-4">
                     <div className="relative">
                         {vehicle.imagens?.length > 0 ? (

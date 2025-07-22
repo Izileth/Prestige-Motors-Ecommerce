@@ -89,12 +89,12 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
 
     return (
         <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.05 * index }}
-        className="w-full h-full"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 * index }}
+            className="w-full h-full"
         >
-        <Card className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
+        <Card onClick={() => navigate(`/vehicles/${vehicle.id}`)} className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
             <div className="relative overflow-hidden group">
             {vehicle.imagens && vehicle.imagens.length > 0 ? (
                 <div className="overflow-hidden">
@@ -265,6 +265,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             <Button
                 variant="default"
                 className="w-full rounded-md shadow-none bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
+                size="lg"
                 onClick={() => navigate(`/vehicles/${vehicle.id}`)}
             >
                 Ver detalhes

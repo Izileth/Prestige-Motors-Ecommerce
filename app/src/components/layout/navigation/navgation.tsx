@@ -17,7 +17,7 @@ import { Badge } from "~/src/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "~/src/components/ui/avatar";
 import { Menu, ChevronRight, MessageSquare, ChevronDown, ChevronsRight } from "lucide-react";
 
-// Import auth hook
+
 import { useAuth } from "~/src/hooks/useAuth";
 
 // Menu item interface
@@ -154,7 +154,7 @@ const Navigation: React.FC<NavigationProps> = ({
       </Link>
 
       <NavigationMenu className="mx-6">
-        <NavigationMenuList className="gap-10">
+        <NavigationMenuList className="gap-8">
           {menuItems.map((item, index) =>
             item.submenu ? (
               <NavigationMenuItem key={index}>
@@ -166,8 +166,8 @@ const Navigation: React.FC<NavigationProps> = ({
                 >
                   {item.name}
                 </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[180px] gap-1 p-4 border-t border-border">
+                <NavigationMenuContent className=" data-[side=top]:animate-slideDown data-[side=right]:animate-slideLeft data-[side=left]:animate-slideRight data-[side=bottom]:animate-slideUp ">
+                  <ul className="grid w-[200px] gap-2 px-0 border-t border-border">
                     {item.submenu.map((subItem, subIndex) => (
                       <li key={subIndex}>
                         <NavigationMenuLink asChild>
@@ -206,10 +206,10 @@ const Navigation: React.FC<NavigationProps> = ({
       <div className="flex items-center gap-8">
         {isAuthenticated ? (
           <NavigationMenu>
-            <NavigationMenuList>
+            <NavigationMenuList className="px-8">
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent hover:bg-transparent p-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-0">
                     <Avatar className="h-7 w-7 border border-border">
                       <AvatarImage
                         src={user?.avatar || ""}
@@ -287,7 +287,7 @@ const Navigation: React.FC<NavigationProps> = ({
           </div>
         )}
         {showNegotiations && (
-          <Link to="/vehicles/negociations" className="relative group">
+          <Link to="/vehicles/negotiations" className="relative group">
             <MessageSquare className="h-5 w-5 stroke-1" />
             {negotiationCount > 0 && (
               <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-extralight bg-foreground text-background rounded-full">

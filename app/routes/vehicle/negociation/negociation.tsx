@@ -7,7 +7,7 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export default function Negociation() {
+export default function Negotiation() {
     return (
         <NegotiationsPage/>
     );

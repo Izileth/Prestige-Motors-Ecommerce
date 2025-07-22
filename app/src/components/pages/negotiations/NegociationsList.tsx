@@ -1,11 +1,12 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "~/src/components/ui/card";
-import { Badge } from "~/src/components/ui/badge";
 import { Button } from "~/src/components/ui/button";
 import { Link } from "react-router";
 import type { Negotiation } from "~/src/types/negociation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { NegotiationStatusBadge } from "./NegociationStatusBadge";
+
+import { useNavigate } from "react-router";
 
 interface NegotiationListProps {
     negotiations: Negotiation[];
@@ -18,6 +19,9 @@ export const NegotiationList = ({
     onStatusFilter,
     currentStatusFilter 
     }: NegotiationListProps) => {
+        
+    const navigate = useNavigate();
+
     return (
         <div className="space-y-4">
         {/* Filtros de Status */}
@@ -54,7 +58,7 @@ export const NegotiationList = ({
             <div className="grid gap-4">
             {negotiations.map((negotiation) => (
                 <Link 
-                to={`/negotiations/${negotiation.id}`} 
+                to={`/vehicles/negotiations/${negotiation.id}`} 
                 key={negotiation.id}
                 className="hover:opacity-90 transition-opacity"
                 >
@@ -100,7 +104,12 @@ export const NegotiationList = ({
                     </div>
                     </CardContent>
                     <CardFooter>
-                    <Button variant="outline" size="sm" className="ml-auto">
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-auto"
+                        onClick={() => navigate(`/vehicles/negotiations/${negotiation.id}`)}
+                    >
                         Ver detalhes
                     </Button>
                     </CardFooter>

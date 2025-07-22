@@ -23,8 +23,8 @@ export const negotiationService = {
      */
     async getAll(status?: string): Promise<Negotiation[]> {
         const params = status ? { status } : {};
-        const response = await api.get('/negotiations', { params });
-        return response.data;
+        const response = await api.get('/negotiations/user', { params });
+        return response.data.data;
     },
 
     /**

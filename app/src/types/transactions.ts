@@ -1,8 +1,11 @@
+import type { VehicleSaleImages } from "./sale";
+
 export interface VehicleTransaction {
     id: string;
     marca: string;
     modelo: string;
     anoFabricacao: number;
+    imagens: VehicleSaleImages[]; 
     imagemPrincipal: string | null;
 }
 
