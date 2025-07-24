@@ -14,6 +14,7 @@ import {
     Info
 } from "lucide-react";
 import { Alert, AlertDescription } from "~/src/components/ui/alert";
+import { useCurrentPrice } from "~/src/hooks/useCurrentPrices";
 
 interface NegotiationActionsProps {
     negotiationId: string;
@@ -42,6 +43,7 @@ export const NegotiationActions = ({
     const [activeAction, setActiveAction] = useState<"accept" | "reject" | "counter" | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+  
 
     // Reset do preço quando a oferta atual muda
     useEffect(() => {
@@ -113,6 +115,8 @@ export const NegotiationActions = ({
         handleAction(() => onReject(rejectReason), 'reject');
     };
 
+    
+
     const isDisabled = disabled || isLoading || actionLoading;
 
     return (
@@ -121,7 +125,7 @@ export const NegotiationActions = ({
             <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Ações da Negociação</h3>
             <div className="text-sm text-muted-foreground">
-                Oferta: R$ {currentPrice.toLocaleString('pt-BR')}
+                Oferta Inicial - R$ {currentPrice.toLocaleString('pt-BR')}
             </div>
             </div>
         </CardHeader>

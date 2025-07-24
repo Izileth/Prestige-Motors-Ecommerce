@@ -49,7 +49,7 @@ const FavoriteVehicles: React.FC<FavoriteVehiclesProps> = ({ favorites }) => {
           >
             {favorites.map((vehicle, index) => (
               <motion.div key={vehicle.id} variants={fadeIn} custom={index}>
-                <Card className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
+                <Card onClick={() => navigate(`/vehicles/${vehicle.id}`)}  className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
                   <div className="relative overflow-hidden group">
                     {vehicle.imagens && vehicle.imagens.length > 0 ? (
                       <div className="overflow-hidden">

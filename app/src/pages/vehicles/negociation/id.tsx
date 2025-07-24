@@ -83,7 +83,29 @@ export const NegotiationDetailsPage = () => {
         setIsProcessing(false)
         }
     }
-       
+    const handleSendOffer = async (price: number, messageType: 'OFERTA' | 'CONTRA_OFERTA') => {
+        if (!id) return
+
+        if (messageType === 'CONTRA_OFERTA') {
+            await handleCounter(price);
+        } else {
+            // Para OFERTA simples
+            setIsProcessing(true)
+            try {
+                await addMessage(id, {
+                    conteudo: `R$ ${price.toLocaleString("pt-BR")}`,
+                    tipo: messageType,
+                })
+                toast(`Oferta de R$ ${price.toLocaleString("pt-BR")} enviada.`)
+                fetchMessages(id)
+            } catch (error) {
+                toast("Não foi possível enviar a oferta. Tente novamente.")
+            } finally {
+                setIsProcessing(false)
+            }
+        }
+    }
+    
     const messagesToDisplay = currentNegotiation?.mensagens || messages || [];
 
     const handleCounter = async (newPrice: number) => {
@@ -91,21 +113,29 @@ export const NegotiationDetailsPage = () => {
 
         setIsProcessing(true)
         try {
-        const payload: RespondNegotiationPayload = {
-            action: "COUNTER",
-            precoNegociado: newPrice,
-        }
+            const payload: RespondNegotiationPayload = {
+                action: "COUNTER",
+                precoNegociado: newPrice,
+            }
 
-        await respondToNegotiation(id, payload)
-        toast(`Nova oferta de R$ ${newPrice.toLocaleString("pt-BR")} enviada.`)
-        // Reload data
-        fetchNegotiationById(id)
-        fetchMessages(id)
-        fetchHistory(id)
+            await respondToNegotiation(id, payload)
+            
+            // Adicionar mensagem também
+            await addMessage(id, {
+                conteudo: `R$ ${newPrice.toLocaleString("pt-BR")}`,
+                tipo: 'CONTRA_OFERTA',
+            })
+
+            toast(`Nova oferta de R$ ${newPrice.toLocaleString("pt-BR")} enviada.`)
+            
+            // Reload data
+            fetchNegotiationById(id)
+            fetchMessages(id)
+            fetchHistory(id)
         } catch (error) {
-        toast("Não foi possível enviar a contraproposta. Tente novamente.")
+            toast("Não foi possível enviar a contraproposta. Tente novamente.")
         } finally {
-        setIsProcessing(false)
+            setIsProcessing(false)
         }
     }
 
@@ -140,7 +170,7 @@ export const NegotiationDetailsPage = () => {
 
         toast("Negociação cancelada com sucesso.")
         // Redirect to negotiations list
-        navigate("/negotiations")
+        navigate("/vehicles/negotiations")
         } catch (error) {
         toast("Não foi possível cancelar a negociação. Tente novamente.")
         } finally {
@@ -148,7 +178,22 @@ export const NegotiationDetailsPage = () => {
         }
     }
 
-    const currentYear = new Date().getFullYear()
+    const getCurrentOfferPrice = () => {
+        const offerMessages = messages
+            .filter(msg => msg.tipo === 'OFERTA' || msg.tipo === 'CONTRA_OFERTA')
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        
+        if (offerMessages.length > 0) {
+            const latestOffer = offerMessages[0];
+            const priceMatch = latestOffer.conteudo.match(/R\$\s*([\d.,]+)/);
+            if (priceMatch) {
+                return parseFloat(priceMatch[1].replace(/\./g, '').replace(',', '.'));
+            }
+        }
+        
+        return currentNegotiation?.precoOfertado;
+    };
+
 
     if (isLoading) {
         return (
@@ -189,7 +234,7 @@ export const NegotiationDetailsPage = () => {
                 </p>
             </div>
             <Button
-                onClick={() => navigate("/negotiations")}
+                onClick={() => navigate("/vehicles/negotiations")}
                 variant="outline"
                 className="border-gray-300 text-gray-700 hover:bg-gray-100"
             >
@@ -207,22 +252,25 @@ export const NegotiationDetailsPage = () => {
     const canTakeAction = (isSeller || isBuyer) && isActive && !isProcessing
 
     return (
-        <div className="max-w-6xl mx-auto p-4 space-y-6 bg-gray-50 min-h-screen">
+        <div className="max-w-full mx-auto p-4 space-y-6 bg-gray-50 min-h-screen md:px-8 ">
         {/* Header with navigation */}
-        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-            <div className="flex items-center space-x-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap items-start sm:items-center justify-between border-b border-gray-200 pb-4">
+        <div className="flex flex-col xs:flex-row gap-3 xs:items-center w-full sm:w-auto">
             <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/")}
-                className="border-gray-300 text-gray-700 hover:bg-gray-100"
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/vehicles/negotiations")}
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 w-full xs:w-auto justify-center xs:justify-start"
             >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
             </Button>
             <NegotiationHeader negotiation={currentNegotiation} />
-            </div>
+        </div>
+        
+        <div className="w-full sm:w-auto flex justify-start sm:justify-end">
             <NegotiationStatusBadge status={currentNegotiation.status} />
+        </div>
         </div>
 
         {/* Processing indicator */}
@@ -243,8 +291,8 @@ export const NegotiationDetailsPage = () => {
 
             {/* Message List */}
             <div className="bg-white rounded-md border border-gray-200">
-                <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="py-2 px-2">
+                <div className="flex items-center justify-between mb-4 px-2">
                     <h3 className="text-lg font-semibold text-gray-900">Conversa</h3>
                     <span className="text-sm text-gray-600">
                     {messages.length} mensagem{messages.length !== 1 ? "s" : ""}
@@ -256,6 +304,9 @@ export const NegotiationDetailsPage = () => {
                     negotiationId={currentNegotiation.id}
                     canSendMessage={isActive}
                     isNegotiationActive={isActive} // FIX: Adicionar esta prop que estava faltando
+                    canSendOffer={canTakeAction} // NOVA PROP
+                    currentPrice={currentNegotiation.precoOfertado} // NOVA PROP
+                     onSendOffer={handleSendOffer} // NOVA PROP
                 />
                 </div>
             </div>
@@ -333,7 +384,9 @@ export const NegotiationDetailsPage = () => {
                 <div className="flex justify-between">
                     <span className="text-gray-600">Oferta atual:</span>
                     <span className="font-medium text-gray-800">
-                    R$ {currentNegotiation.precoOfertado.toLocaleString("pt-BR")}
+                        <span className="font-medium text-gray-800">
+                        R$ {getCurrentOfferPrice()?.toLocaleString("pt-BR")}
+                    </span>
                     </span>
                 </div>
                 {currentNegotiation.precoNegociado && (
@@ -366,9 +419,6 @@ export const NegotiationDetailsPage = () => {
                 <NegotiationTimeline history={history} />
             </div>
             </div>
-        </div>
-        <div className="text-center text-sm text-gray-500 mt-8">
-            &copy; {currentYear} Your Company. All rights reserved.
         </div>
         </div>
     )

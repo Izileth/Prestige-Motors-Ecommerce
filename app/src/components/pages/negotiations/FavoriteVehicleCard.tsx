@@ -130,11 +130,11 @@ export const FavoriteVehicleCard = ({
 
                 <div className="mt-auto pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <p className="font-light text-xl text-gray-900 dark:text-gray-100">
+                    <p className="font-semibold text-xl text-gray-900 dark:text-gray-100">
                     {formatPrice(vehicle.precoPromocional || vehicle.preco)}
                     </p>
                     {vehicle.aceitaNegociacao && (
-                    <p className="text-sm text-green-600 dark:text-green-400 py-2">
+                    <p className="text-sm text-zinc-950 dark:text-zinc-800 py-2">
                         Disponivel para Negociação
                     </p>
                     )}

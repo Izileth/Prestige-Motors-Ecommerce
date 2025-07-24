@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/src/components/ui/avatar"
 import { Menu, ChevronRight, MessageSquare, ChevronDown, ChevronsRight } from "lucide-react";
 
 
+import { useNegotiationsCount } from "~/src/hooks/useNegotiationsCount";
 import { useAuth } from "~/src/hooks/useAuth";
 
 // Menu item interface
@@ -90,6 +91,12 @@ const Navigation: React.FC<NavigationProps> = ({
 
   // Use the auth hook to access authentication state and functions
   const { user, isAuthenticated, logout } = useAuth();
+  // Hook para buscar a contagem de negociações
+      
+  const negotiationsCounts = useNegotiationsCount();
+  
+  const negotiationsCount = negotiationsCounts.active; // Usando negociações ativas
+
 
   // Detect if mobile device
   useEffect(() => {
@@ -289,14 +296,16 @@ const Navigation: React.FC<NavigationProps> = ({
         {showNegotiations && (
           <Link to="/vehicles/negotiations" className="relative group">
             <MessageSquare className="h-5 w-5 stroke-1" />
-            {negotiationCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-extralight bg-foreground text-background rounded-full">
-                {negotiationCount}
+            {negotiationsCount > 0 && (
+              <Badge 
+              className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-extralight bg-foreground text-background rounded-full"
+              >
+                {negotiationsCount}
               </Badge>
-            )}
-            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Negociações
-            </span>
+              )}
+              <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Negociações
+              </span>
           </Link>
         )}
       </div>
@@ -331,11 +340,13 @@ const Navigation: React.FC<NavigationProps> = ({
         {showNegotiations && (
           <Link to="/vehicles/negociations" className="relative">
             <MessageSquare className="h-5 w-5 stroke-1" />
-            {negotiationCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-extralight bg-foreground text-background rounded-full">
-                {negotiationCount}
+            {negotiationsCount > 0 && (
+              <Badge 
+              className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-extralight bg-foreground text-background rounded-full"
+              >
+                {negotiationsCount}
               </Badge>
-            )}
+              )}
           </Link>
         )}
 
@@ -419,7 +430,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       Conta
                     </Link>
                     <Link
-                      to="/orders"
+                      to="/vehicles/negociations"
                       className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Negociações

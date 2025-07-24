@@ -108,7 +108,7 @@ export const FavoritesTab = ({
                 action={
                 <Button
                     asChild
-                    className="mt-4 bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 rounded-none px-8 py-6 h-auto font-light"
+                    className="mt-4 bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 rounded-none px-8 py-2 h-auto font-light"
                 >
                     <Link to="/vehicles">
                     <Search className="mr-2 h-4 w-4" />

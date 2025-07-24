@@ -1,13 +1,14 @@
-
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import { Badge } from "~/src/components/ui/badge";
 import { Heart, MessageSquare } from "lucide-react";
+import { useNegotiationsCount } from "~/src/hooks/useNegotiationsCount"; // Importe o hook
 
 const tabVariants = {
     inactive: { opacity: 0.7, x: 0 },
     active: { opacity: 1, x: 0 },
 };
+
 type ActiveTab = "favorites" | "negotiations";
 
 // Interface para as props do componente
@@ -15,11 +16,25 @@ interface NegotiationsSidebarProps {
     activeTab: ActiveTab;
     setActiveTab: (tab: ActiveTab) => void;
     favoritesCount: number;
+    // Removemos negotiationsCount das props já que vamos buscar do hook
     handleProfile: () => void;
 }
 
+export const NegotiationsSidebar = ({ 
+    activeTab, 
+    setActiveTab, 
+    favoritesCount, 
+    handleProfile 
+}: NegotiationsSidebarProps) => {
+    // Hook para buscar a contagem de negociações
+    const negotiationsCounts = useNegotiationsCount();
+    
+    // Você pode escolher qual contagem usar:
+    // negotiationsCounts.total - todas as negociações
+    // negotiationsCounts.active - apenas ativas (ABERTA + CONTRA_OFERTA)
+    // negotiationsCounts.pending - apenas pendentes (ABERTA)
+    const negotiationsCount = negotiationsCounts.active; // Usando negociações ativas
 
-export const NegotiationsSidebar = ({ activeTab, setActiveTab, favoritesCount, handleProfile }: NegotiationsSidebarProps) => {
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -87,6 +102,17 @@ export const NegotiationsSidebar = ({ activeTab, setActiveTab, favoritesCount, h
                         >
                             <MessageSquare className="mr-3 h-4 w-4" />
                             Negociações
+                            {negotiationsCount > 0 && (
+                                <Badge
+                                    className={`ml-auto ${
+                                        activeTab === "negotiations" // BUG CORRIGIDO: era "favorites" antes
+                                            ? "bg-black text-white dark:bg-white dark:text-black"
+                                            : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                                    } rounded-full text-xs font-light`}
+                                >
+                                    {negotiationsCount}
+                                </Badge>
+                            )}
                         </Button>
                         {activeTab === "negotiations" && (
                             <motion.div

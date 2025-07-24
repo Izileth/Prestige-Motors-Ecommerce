@@ -27,6 +27,10 @@ interface MessageListProps {
     negotiationId: string;
     canSendMessage?: boolean;
     isNegotiationActive?: boolean;
+
+    canSendOffer?: boolean
+    currentPrice?: number
+    onSendOffer?: (price: number, messageType: "CONTRA_OFERTA" | "OFERTA") => Promise<void>
 }
 
 interface MessageBubbleProps {
@@ -51,7 +55,7 @@ const getMessageTypeIcon = (type: MessageType) => {
 }
 
 const getMessageTypeColor = (type: MessageType) => {
-  // All types will use a consistent monochromatic badge style
+  
   return "bg-gray-200 text-gray-800 border-gray-300"
 }
 
@@ -59,7 +63,7 @@ const getMessageTypeColor = (type: MessageType) => {
 const MessageBubble = ({ message, isOwn, showAvatar = true, isLast = false }: MessageBubbleProps) => {
     const formatTime = (dateInput: string | Date) => {
         const now = new Date();
-        // FIX: Garantir que a data seja convertida corretamente
+        
         const messageDate = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
         
         // FIX: Verificar se a data é válida
@@ -148,6 +152,7 @@ const MessageBubble = ({ message, isOwn, showAvatar = true, isLast = false }: Me
             <div className="text-sm leading-relaxed whitespace-pre-wrap ">{message.conteudo}</div>
             </div>
         </div>
+
         </motion.div>
     )
 };
@@ -157,10 +162,15 @@ export const MessageList = ({
     currentUserId, 
     negotiationId,
     canSendMessage = true,
-    isNegotiationActive = true 
+    isNegotiationActive = true,
+    canSendOffer = false,
+    currentPrice = 0,
+    onSendOffer
 }: MessageListProps) => {
     const [newMessage, setNewMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
+    const [messageType, setMessageType] = useState<'TEXTO' | 'OFERTA' | 'CONTRA_OFERTA'>('TEXTO'); // NOVO
+    const [offerPrice, setOfferPrice] = useState<string>(''); // NOVO
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { addMessage } = useNegotiationStore();
 
@@ -177,19 +187,29 @@ export const MessageList = ({
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+   
     const handleSendMessage = async () => {
-        if (!newMessage.trim() || isSending || !canSendMessage) return;
+        // Validações baseadas no tipo
+        if (messageType === 'TEXTO' && (!newMessage.trim() || isSending || !canSendMessage)) return;
+        if ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && (!offerPrice.trim() || isSending || !canSendOffer)) return;
 
         setIsSending(true);
         try {
-            const payload: AddMessagePayload = {
-                conteudo: newMessage.trim(),
-                tipo: 'TEXTO'
-            };
-
-            await addMessage(negotiationId, payload);
-            setNewMessage('');
+            if (messageType === 'TEXTO') {
+                const payload: AddMessagePayload = {
+                    conteudo: newMessage.trim(),
+                    tipo: 'TEXTO'
+                };
+                await addMessage(negotiationId, payload);
+                setNewMessage('');
+            } else if ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && onSendOffer) {
+                const price = parseFloat(offerPrice.replace(/[^\d,]/g, '').replace(',', '.'));
+                await onSendOffer(price, messageType);
+                setOfferPrice('');
+            }
             
+            // Reset para texto após envio
+            setMessageType('TEXTO');
             toast('Mensagem enviada com sucesso.');
         } catch (error) {
             console.error('Erro ao enviar mensagem:', error);
@@ -198,6 +218,7 @@ export const MessageList = ({
             setIsSending(false);
         }
     };
+    
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -264,7 +285,7 @@ export const MessageList = ({
                 <div key={date} className="space-y-4">
                     {/* Date separator */}
                     <div className="flex items-center justify-center my-6">
-                    <div className="bg-gray-100 px-3 py-1 rounded-full text-xs text-gray-600 border border-gray-200">
+                    <div className="bg-gray-100 px-2 py-2 rounded-full text-xs text-gray-600 border border-gray-200">
                         {date}
                     </div>
                     </div>
@@ -290,42 +311,133 @@ export const MessageList = ({
             )}
             <div ref={messagesEndRef} />
         </div>
-
+     
         {/* Message Input */}
         {canSendMessage && isNegotiationActive && (
             <Card className="p-4 bg-gray-50 border-t border-gray-200 rounded-none">
-            <div className="flex gap-3">
-                <div className="flex-1">
-                <Textarea
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    placeholder="Digite sua mensagem... (Enter para enviar, Shift+Enter para nova linha)"
-                    className="min-h-[60px] resize-none border border-gray-300 focus:ring-1 focus:ring-gray-500 text-gray-800"
-                    disabled={isSending}
-                />
+                {/* Seletor de tipo de mensagem */}
+                {canSendOffer && (
+                    <div className="mb-3">
+                        <div className="flex  flex-wrap  gap-2">
+                            <Button
+                                type="button"
+                                variant={messageType === 'TEXTO' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => {
+                                    setMessageType('TEXTO');
+                                    setOfferPrice('');
+                                }}
+                                className={messageType === 'TEXTO' ? 'bg-gray-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
+                            >
+                                <MessageSquare className="h-4 w-4 mr-1" />
+                                Texto
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={messageType === 'OFERTA' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => {
+                                    setMessageType('OFERTA');
+                                    setNewMessage('');
+                                }}
+                                className={messageType === 'OFERTA' ? 'bg-gray-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
+                            >
+                                <DollarSign className="h-4 w-4 mr-1" />
+                                Oferta
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={messageType === 'CONTRA_OFERTA' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => {
+                                    setMessageType('CONTRA_OFERTA');
+                                    setNewMessage('');
+                                }}
+                                className={messageType === 'CONTRA_OFERTA' ? 'bg-gray-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
+                            >
+                                <TrendingUp className="h-4 w-4 mr-1" />
+                                Contraproposta
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="flex gap-3">
+                    <div className="flex-1">
+                        {messageType === 'TEXTO' ? (
+                            <Textarea
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                placeholder="Digite sua mensagem... (Enter para enviar, Shift+Enter para nova linha)"
+                                className="min-h-[60px] resize-none border border-gray-300 focus:ring-1 focus:ring-gray-500 text-gray-800"
+                                disabled={isSending}
+                            />
+                        ) : (
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-md border border-gray-300">
+                                    {messageType === 'OFERTA' ? (
+                                        <DollarSign className="h-4 w-4 text-gray-600" />
+                                    ) : (
+                                        <TrendingUp className="h-4 w-4 text-gray-600" />
+                                    )}
+                                    <span className="text-sm text-gray-700 font-medium">
+                                        {messageType === 'OFERTA' ? 'Nova Oferta' : 'Contraproposta'}
+                                    </span>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={offerPrice}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/[^\d.,]/g, '');
+                                        setOfferPrice(value);
+                                    }}
+                                    placeholder="Digite o valor (ex: 50000,00)"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-gray-500 text-gray-800"
+                                    disabled={isSending}
+                                />
+                                {currentPrice > 0 && (
+                                    <div className="text-xs text-gray-600">
+                                        Valor atual: R$ {currentPrice.toLocaleString("pt-BR")}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col justify-end">
+                        <Button
+                            onClick={handleSendMessage}
+                            disabled={
+                                (messageType === 'TEXTO' && !newMessage.trim()) ||
+                                ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && !offerPrice.trim()) ||
+                                isSending
+                            }
+                            size="lg"
+                            className="h-[60px] px-6 bg-gray-800 text-white hover:bg-gray-700"
+                        >
+                            {isSending ? <Clock className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                        </Button>
+                    </div>
                 </div>
-                <div className="flex flex-col justify-end">
-                <Button
-                    onClick={handleSendMessage}
-                    disabled={!newMessage.trim() || isSending}
-                    size="lg"
-                    className="h-[60px] px-6 bg-gray-800 text-white hover:bg-gray-700"
-                >
-                    {isSending ? <Clock className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </Button>
+                
+                {/* Character counter and status */}
+                <div className="flex items-center justify-between mt-2 text-xs text-gray-600">
+                    <span>
+                        {messageType === 'TEXTO' 
+                            ? `${newMessage.length}/500 caracteres`
+                            : offerPrice 
+                                ? `Valor: R$ ${parseFloat(offerPrice.replace(/[^\d,]/g, '').replace(',', '.') || '0').toLocaleString("pt-BR")}`
+                                : 'Digite um valor'
+                        }
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse" />
+                        Online
+                    </span>
                 </div>
-            </div>
-            {/* Character counter and status */}
-            <div className="flex items-center justify-between mt-2 text-xs text-gray-600">
-                <span>{newMessage.length}/500 caracteres</span>
-                <span className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse" />
-                Online
-                </span>
-            </div>
             </Card>
         )}
+
         {/* Inactive state message */}
         {canSendMessage && !isNegotiationActive && (
             <Card className="p-4 bg-gray-100 border border-gray-200 rounded-none">
