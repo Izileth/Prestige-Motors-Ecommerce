@@ -1,42 +1,68 @@
-# Welcome to React Router!
+# Prestige Motors E-commerce
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Bem-vindo ao Prestige Motors, um moderno template para a construção de aplicações React full-stack usando React Router.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Estrutura de Pastas
+
+A estrutura de pastas deste projeto foi projetada para ser escalável, modular e fácil de manter. Abaixo, uma descrição detalhada de cada diretório principal:
+
+- **`/app`**: Contém o núcleo da sua aplicação React.
+  - **`/app/routes`**: Define as rotas da aplicação, com cada arquivo correspondendo a uma rota específica.
+  - **`/app/src`**: O coração do código-fonte da sua aplicação.
+    - **`/app/src/assets`**: Armazena ativos estáticos como imagens, fontes e ícones.
+    - **`/app/src/components`**: Componentes React reutilizáveis.
+      - **`/common`**: Componentes genéricos que podem ser usados em várias partes da aplicação (ex: `Button`, `Input`).
+      - **`/layout`**: Componentes de layout principais (ex: `NavigationBar`, `FooterBar`).
+      - **`/pages`**: Componentes específicos de cada página, que consomem os componentes `common` e `layout`.
+    - **`/app/src/data`**: Mock data ou dados estáticos para desenvolvimento e testes.
+    - **`/app/src/hooks`**: Hooks React customizados para lógica reutilizável.
+    - **`/app/src/lib`**: Funções utilitárias e bibliotecas auxiliares.
+    - **`/app/src/pages`**: Páginas principais da aplicação, que consomem os componentes em `components/pages`.
+    - **`/app/src/schemas`**: Schemas de validação (ex: Zod, Yup) para formulários e dados.
+    - **`/app/src/services`**: Lógica de comunicação com APIs externas.
+    - **`/app/src/store`**: Configuração de estado global (ex: Redux, Zustand).
+    - **`/app/src/types`**: Definições de tipos TypeScript para o projeto.
+    - **`/app/src/utils`**: Funções utilitárias diversas.
+
+- **`/public`**: Arquivos estáticos que não são processados pelo Webpack, como `favicon.ico` e `robots.txt`.
+
+- **`/build`**: Contém os arquivos de produção gerados após o build da aplicação.
+  - **`/build/client`**: Ativos estáticos para o cliente.
+  - **`/build/server`**: Código para o servidor.
 
 ## Features
 
-- 🚀 Server-side rendering
+- 🚀 Renderização no lado do servidor
 - ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- 📦 Bundling e otimização de ativos
+- 🔄 Carregamento de dados e mutações
+- 🔒 TypeScript por padrão
+- 🎉 TailwindCSS para estilização
+- 📖 [Documentação do React Router](https://reactrouter.com/)
 
-## Getting Started
+## Primeiros Passos
 
-### Installation
+### Instalação
 
-Install the dependencies:
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-### Development
+### Desenvolvimento
 
-Start the development server with HMR:
+Inicie o servidor de desenvolvimento com HMR:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Sua aplicação estará disponível em `http://localhost:5173`.
 
-## Building for Production
+## Build para Produção
 
-Create a production build:
+Crie uma build de produção:
 
 ```bash
 npm run build
@@ -44,18 +70,18 @@ npm run build
 
 ## Deployment
 
-### Docker Deployment
+### Docker
 
-To build and run using Docker:
+Para construir e rodar com Docker:
 
 ```bash
 docker build -t my-app .
 
-# Run the container
+# Rode o container
 docker run -p 3000:3000 my-app
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+A aplicação containerizada pode ser deployada em qualquer plataforma que suporte Docker, incluindo:
 
 - AWS ECS
 - Google Cloud Run
@@ -66,22 +92,22 @@ The containerized application can be deployed to any platform that supports Dock
 
 ### DIY Deployment
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+Se você está familiarizado com o deploy de aplicações Node, o servidor de aplicação integrado está pronto para produção.
 
-Make sure to deploy the output of `npm run build`
+Certifique-se de fazer o deploy do output de `npm run build`:
 
 ```
 ├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
+├── package-lock.json (ou pnpm-lock.yaml, ou bun.lockb)
 ├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+│   ├── client/    # Ativos estáticos
+│   └── server/    # Código do servidor
 ```
 
-## Styling
+## Estilização
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+Este template vem com [Tailwind CSS](https://tailwindcss.com/) pré-configurado. Você pode usar qualquer framework CSS de sua preferência.
 
 ---
 
-Built with ❤️ using React Router.
+Construído com ❤️ usando React Router.
