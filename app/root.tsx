@@ -8,14 +8,16 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+
 import "./app.css";
+
 import { Provider } from "react-redux";
 import { createStore } from "~/src/store/global";
-import Navigation from "~/src/components/layout/NavigationBar";
+
+import Navigation from "./src/components/layout/NavigationBar";
 import { Baseboard } from "~/src/components/layout/BottonBanner";
 import { Banner } from "~/src/components/layout/TopBanner";
-import Footer from "./src/components/layout/footer";
-
+import Footer from "~/src/components/layout/footer";
 import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
@@ -74,7 +76,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  // Cria uma nova instância do store para cada renderização no servidor
+  
   const store = createStore();
   
   return (
