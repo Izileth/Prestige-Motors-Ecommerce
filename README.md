@@ -4,31 +4,46 @@ Bem-vindo ao Prestige Motors, um moderno template para a construção de aplica�
 
 ## Estrutura de Pastas
 
-A estrutura de pastas deste projeto foi projetada para ser escalável, modular e fácil de manter. Abaixo, uma descrição detalhada de cada diretório principal:
+A estrutura de pastas do projeto foi organizada para promover modularidade, escalabilidade e clareza.
 
-- **`/app`**: Contém o núcleo da sua aplicação React.
-  - **`/app/routes`**: Define as rotas da aplicação, com cada arquivo correspondendo a uma rota específica.
-  - **`/app/src`**: O coração do código-fonte da sua aplicação.
-    - **`/app/src/assets`**: Armazena ativos estáticos como imagens, fontes e ícones.
-    - **`/app/src/components`**: Componentes React reutilizáveis.
-      - **`/common`**: Componentes genéricos que podem ser usados em várias partes da aplicação (ex: `Button`, `Input`).
-      - **`/layout`**: Componentes de layout principais (ex: `NavigationBar`, `FooterBar`).
-      - **`/pages`**: Componentes específicos de cada página, que consomem os componentes `common` e `layout`.
-    - **`/app/src/data`**: Mock data ou dados estáticos para desenvolvimento e testes.
-    - **`/app/src/hooks`**: Hooks React customizados para lógica reutilizável.
-    - **`/app/src/lib`**: Funções utilitárias e bibliotecas auxiliares.
-    - **`/app/src/pages`**: Páginas principais da aplicação, que consomem os componentes em `components/pages`.
-    - **`/app/src/schemas`**: Schemas de validação (ex: Zod, Yup) para formulários e dados.
-    - **`/app/src/services`**: Lógica de comunicação com APIs externas.
-    - **`/app/src/store`**: Configuração de estado global (ex: Redux, Zustand).
-    - **`/app/src/types`**: Definições de tipos TypeScript para o projeto.
-    - **`/app/src/utils`**: Funções utilitárias diversas.
+| Pasta          | Descrição                                                                              |
+| :------------- | :------------------------------------------------------------------------------------- |
+| **`/app`**     | Contém o núcleo da aplicação React, incluindo rotas e o código-fonte principal.        |
+| **`/build`**   | Armazena os arquivos de produção gerados após o processo de build.                     |
+| **`/public`**  | Contém arquivos estáticos que são servidos diretamente, como `favicon.ico` ou `robots.txt`. |
+| **`.git`**     | Diretório do Git para controle de versão.                                              |
+| **`node_modules`** | Armazena as dependências do projeto.                                                   |
 
-- **`/public`**: Arquivos estáticos que não são processados pelo Webpack, como `favicon.ico` e `robots.txt`.
+---
 
-- **`/build`**: Contém os arquivos de produção gerados após o build da aplicação.
-  - **`/build/client`**: Ativos estáticos para o cliente.
-  - **`/build/server`**: Código para o servidor.
+### Diretório `/app`
+
+O diretório `app` é o coração da aplicação.
+
+| Subpasta    | Descrição                                                                                                    |
+| :---------- | :------------------------------------------------------------------------------------------------------------- |
+| **`/routes`** | Define as rotas da aplicação. Cada arquivo ou pasta aqui corresponde a uma URL, seguindo a convenção do React Router. |
+| **`/src`**    | Contém todo o código-fonte da aplicação, organizado de forma modular.                                          |
+
+---
+
+### Diretório `/app/src`
+
+Este diretório contém a lógica e os componentes da interface do usuário.
+
+| Subpasta        | Descrição                                                                 | Conteúdo Principal                            |
+| :-------------- | :------------------------------------------------------------------------ | :-------------------------------------------- |
+| **`/assets`**     | Ativos estáticos como imagens, fontes e ícones.                           | `*.png`, `*.jpg`, `*.svg`                      |
+| **`/components`** | Componentes React reutilizáveis, divididos por função.                    | `common/`, `layout/`, `pages/`, `ui/`         |
+| **`/data`**       | Dados estáticos ou mockados para desenvolvimento e testes.                | `brands.ts`, `carousel.ts`                    |
+| **`/hooks`**      | Hooks React customizados que encapsulam lógica de estado e efeitos.       | `useAuth.ts`, `useVehicle.ts`                 |
+| **`/lib`**        | Funções utilitárias e bibliotecas auxiliares.                             | `cn.ts` (classnames), `price.ts`              |
+| **`/pages`**      | Componentes que representam páginas completas da aplicação.               | `home/`, `vehicles/`, `profile/`               |
+| **`/schemas`**    | Schemas de validação de dados (usando Zod, Yup, etc.).                    | `schema.ts`                                   |
+| **`/services`**   | Lógica para interagir com APIs externas e serviços de backend.            | `api.ts`, `auth.ts`, `vehicle.ts`             |
+| **`/store`**      | Configuração de gerenciamento de estado global (Redux, Zustand, etc.).    | `global.ts`, `slices/`                        |
+| **`/types`**      | Definições de tipos e interfaces TypeScript para o projeto.               | `vehicle.ts`, `user.ts`, `response.ts`        |
+| **`/utils`**      | Funções utilitárias genéricas.                                            | `format.ts`, `storage.ts`                     |
 
 ## Features
 
