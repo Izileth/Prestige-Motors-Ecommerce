@@ -17,7 +17,7 @@ import { createStore } from "~/src/store/global";
 import Navigation from "./src/components/layout/NavigationBar";
 import { Baseboard } from "~/src/components/layout/BottonBanner";
 import { Banner } from "~/src/components/layout/TopBanner";
-import Footer from "~/src/components/layout/footer";
+import Footer from "./src/components/layout/FooterBar";
 import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
