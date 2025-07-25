@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
 import { VehicleFilters } from "~/src/components/common/VehicleFilter";
-import { VehicleCard } from "~/src/components/common/Vehiclecard";
+import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 import useVehicle from "~/src/hooks/useVehicle";
 import { Button } from "~/src/components/ui/button";

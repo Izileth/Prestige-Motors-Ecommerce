@@ -107,14 +107,20 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-900">
+      <div className="text-center">
+        <h1 className="text-9xl font-thin text-gray-800 dark:text-gray-200 mb-4">404</h1>
+        <p className="text-2xl text-gray-600 dark:text-gray-400 mb-4">Not Found!</p>
+        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+          Esta página não está disponível.
+        </p>
+        <a
+          href="/"
+          className="text-gray-800 dark:text-gray-200 underline hover:no-underline"
+        >
+          Retornar 
+        </a>
+      </div>
     </main>
   );
 }

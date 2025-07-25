@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 
 import { VehicleFilters } from "~/src/components/common/VehicleFilter";
 import VehicleStatistics from "~/src/components/common/VehicleStatistics";
-import { VehicleCard } from "~/src/components/common/Vehiclecard";
+import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 
 // Icons

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFeaturedVehicles } from "~/src/hooks/useFeaturedVehicles";
-import { VehicleCard } from "../../common/Vehiclecard";
+import { VehicleCard } from "../../common/VehiclesCard";
 import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";

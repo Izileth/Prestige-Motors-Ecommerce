@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Car, ArrowRight } from "lucide-react";
 import { Badge } from "~/src/components/ui/badge";
 import { useVehicleRecommendations } from "~/src/hooks/useRadomVehicles";
-import { VehicleCard } from "~/src/components/common/Vehiclecard";
+import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import type { Vehicle } from "~/src/types/vehicle";
 
 interface VehicleRecommendationsGridProps {
