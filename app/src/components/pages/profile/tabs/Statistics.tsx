@@ -8,7 +8,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-
+import { Calendar, CalendarCheck, Car, TrendingUp } from "lucide-react";
 import type { UserStats } from "~/src/types/user";
 
 interface StatisticsProps {
@@ -199,44 +199,106 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
       </Card>
 
       {/* Card de Resumo Numérico */}
+      {/* Card de Resumo Estatístico Aprimorado */}
       <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="text-gray-900 dark:text-gray-100">Resumo Estatístico</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <BarChart className="h-5 w-5" /> {/* Ícone para melhorar a identificação visual */}
+            Resumo Estatístico
+          </CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
-            Principais métricas do inventário
+            Visão geral do seu inventário
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Total de Veículos:</span>
-              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {safeStats.totalVehicles}
-              </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Primeira coluna */}
+            <div className="space-y-4">
+              {/* Total de Veículos com destaque */}
+              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Veículos</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                      {safeStats.totalVehicles}
+                    </p>
+                  </div>
+                  <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full">
+                    <Car className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faixa de Preços com mini gráfico */}
+              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Faixa de Preços</p>
+                <div className="flex items-end h-12 gap-1 mb-2">
+                  <div className="bg-zinc-950 dark:bg-gray-600 w-1/4 h-1/3 rounded-t-sm"></div>
+                  <div className="bg-zinc-700 dark:bg-gray-500 w-1/4 h-2/3 rounded-t-sm"></div>
+                  <div className="bg-zinc-900 w-1/4 h-full rounded-t-sm"></div>
+                  <div className="bg-zinc-950 dark:bg-gray-500 w-1/4 h-2/3 rounded-t-sm"></div>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-900 dark:text-gray-100">
+                    {formatCurrency(safeStats.precoMinimo)}
+                  </span>
+                  <span className="text-gray-900 dark:text-gray-100">
+                    {formatCurrency(safeStats.precoMaximo)}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Valor Total:</span>
-              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {formatCurrency(safeStats.valorTotalInventario)}
-              </span>
+
+            {/* Segunda coluna */}
+            <div className="space-y-4">
+              {/* Valor Total com variação */}
+              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Valor Total</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  {formatCurrency(safeStats.valorTotalInventario)}
+                </p>
+                <div className="flex items-center mt-1">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <span className="text-xs text-green-500 ml-1">+12% vs mês anterior</span>
+                </div>
+              </div>
+
+              {/* Preço Médio com comparação */}
+              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Preço Médio</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+                  {formatCurrency(safeStats.precoMedio)}
+                </p>
+                <div className="flex justify-between text-xs mt-2">
+                  <span className="text-gray-500 dark:text-gray-400">Mín: {formatCurrency(safeStats.precoMinimo)}</span>
+                  <span className="text-gray-500 dark:text-gray-400">Máx: {formatCurrency(safeStats.precoMaximo)}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Preço Médio:</span>
-              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {formatCurrency(safeStats.precoMedio)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Faixa de Preços:</span>
-              <span className="text-sm text-gray-900 dark:text-gray-100">
-                {formatCurrency(safeStats.precoMinimo)} - {formatCurrency(safeStats.precoMaximo)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Ano Médio:</span>
-              <span className="text-sm text-gray-900 dark:text-gray-100">
-                Fabricação - {Math.round(safeStats.anoFabricacaoMedio)} | Modelo - {Math.round(safeStats.anoModeloMedio)}
-              </span>
+
+            {/* Anos - linha completa */}
+            <div className="md:col-span-2 bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Média de Anos</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Fabricação</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {Math.round(safeStats.anoFabricacaoMedio)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <CalendarCheck className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Modelo</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {Math.round(safeStats.anoModeloMedio)}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>

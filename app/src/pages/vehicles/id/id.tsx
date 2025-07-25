@@ -193,34 +193,74 @@ const VehicleDetailsPage = () => {
       });
     }
   };
+ 
 
   const handleShare = async () => {
-    if (!currentVehicle) return;
+      if (!currentVehicle) return;
 
-    const shareUrl = window.location.href;
-    const shareTitle = `${currentVehicle.marca} ${currentVehicle.modelo} (${currentVehicle.anoFabricacao}/${currentVehicle.anoModelo})`;
-    const shareText = `Confira este ${currentVehicle.marca} ${currentVehicle.modelo}!`;
+      // Construir informações básicas
+      const shareUrl = window.location.href;
+      const shareTitle = `${currentVehicle.marca} ${currentVehicle.modelo} (${currentVehicle.anoFabricacao}/${currentVehicle.anoModelo})`;
+      
+      // Construir texto mais detalhado
+      const shareText = `Confira este ${currentVehicle.marca} ${currentVehicle.modelo}!
+      
+    Detalhes:
+    - Ano: ${currentVehicle.anoFabricacao}/${currentVehicle.anoModelo}
+    - Cor: ${currentVehicle.cor || 'Não especificada'}
+    - Preço: ${currentVehicle.preco ? `R$ ${currentVehicle.preco.toLocaleString('pt-BR')}` : 'Sob consulta'}
+    - KM: ${currentVehicle.quilometragem ? `${currentVehicle.quilometragem.toLocaleString('pt-BR')} km` : 'Não informada'}
+    ${currentVehicle.descricao ? `\nDescrição: ${currentVehicle.descricao}` : ''}`;
 
-    const shareData = {
-      title: shareTitle,
-      text: shareText,
-      url: shareUrl,
-    };
+      // Preparar dados para compartilhamento
+      const shareData = {
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl,
+        files: [] as File[],
+      };
 
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error) {
-        console.error("Erro ao compartilhar:", error);
+      // Se o veículo tiver imagens, podemos tentar incluí-las
+      if (currentVehicle.imagens && currentVehicle.imagens.length > 0) {
+        try {
+          // Converta a URL da imagem para um blob se necessário
+          const imageUrl = currentVehicle.imagens[0].url;
+          const response = await fetch(imageUrl);
+          const blob = await response.blob();
+          
+          // Adiciona o arquivo ao shareData se for suportado
+          if (navigator.canShare && navigator.canShare({ files: [blob as File] })) {
+              const file = new File([blob], 'vehicle-image.jpg', {
+              type: blob.type,
+              lastModified: Date.now(), // Add a default lastModified value
+            });
+            shareData.files = [file];
+          }
+        } catch (error) {
+          console.error("Erro ao processar imagem:", error);
+        }
       }
-    } else {
-      try {
-        await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-        alert("Link copiado para a área de transferência!");
-      } catch (error) {
-        console.error("Falha ao copiar o link:", error);
-        prompt("Copie o link para compartilhar:", shareUrl);
+
+      // Tentar usar a API de compartilhamento
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (error) {
+          console.error("Erro ao compartilhar:", error);
+          fallbackShare(shareText, shareUrl);
+        }
+      } else {
+        fallbackShare(shareText, shareUrl);
       }
+  };
+
+  const fallbackShare = (text: string, url: string) => {
+    try {
+      navigator.clipboard.writeText(`${text}\n\n${url}`);
+      alert("As informações do veículo foram copiadas para a área de transferência!");
+    } catch (error) {
+      console.error("Falha ao copiar o link:", error);
+      prompt("Copie as informações para compartilhar:", `${text}\n\n${url}`);
     }
   };
 
