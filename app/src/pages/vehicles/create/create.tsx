@@ -17,7 +17,6 @@ import {
   BasicInfoForm,
   TechnicalDetailsForm,
   AdditionalOptionsForm,
-  LocationForm,
   PageHeader,
   ProgressBar
 } from "~/src/components/pages/vehicle/create"
@@ -163,13 +162,7 @@ const CreateVehiclePage = () => {
                     onBack={() => setActiveTab("technical")}
                   />
                 </TabsContent>
-
-                <TabsContent value="location">
-                  <LocationForm
-                    onNext={() => setActiveTab("additional")}
-                    onBack={() => setActiveTab("technical")}
-                  />
-                </TabsContent>
+     
               </Tabs>
             </form>
           </Form>

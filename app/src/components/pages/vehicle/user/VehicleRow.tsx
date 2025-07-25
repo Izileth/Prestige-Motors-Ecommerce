@@ -1,3 +1,4 @@
+import React from "react";
 import { TableCell } from "~/src/components/ui/table";
 import { Button } from "~/src/components/ui/button";
 import { Badge } from "~/src/components/ui/badge";
@@ -6,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Heart, Zap, ShieldCheck, Gauge, Calendar, Edit, Trash2, Eye, Loader2 } from "lucide-react";
 import { formatPrice } from "~/src/lib/price";
 import { Link } from "react-router";
-import type { Vehicle } from "~/src/types/vehicle"; // Ajuste o caminho conforme sua estrutura
+import type { Vehicle } from "~/src/types/vehicle";
 import { useNavigate } from "react-router";
+import { useState, useCallback } from "react";
 
 interface VehicleRowProps {
     vehicle: Vehicle;
@@ -15,9 +17,10 @@ interface VehicleRowProps {
     setHoveredVehicle: (vehicleId: string | null) => void;
     isFavorite: (vehicleId: string) => boolean;
     toggleFavorite: (vehicleId: string) => void;
-    handleStatusChange: (vehicleId: string, status: Vehicle['status']) => void;
+    handleStatusChange: (vehicleId: string, status: Vehicle['status']) => Promise<void>;
     setConfirmDelete: (vehicle: Vehicle) => void;
-    isDeleting: string | null; // ID do veículo que está sendo deletado
+    isDeleting: string | null;
+    isUpdatingStatus?: string | null; // Novo prop para loading do status
 }
 
 export const VehicleRow = ({ 
@@ -28,13 +31,42 @@ export const VehicleRow = ({
     toggleFavorite, 
     handleStatusChange, 
     setConfirmDelete, 
-    isDeleting 
+    isDeleting,
+    isUpdatingStatus
 }: VehicleRowProps) => {
-
     const navigate = useNavigate();
+    const [localStatus, setLocalStatus] = useState(vehicle.status);
+    
+
+    React.useEffect(() => {
+        setLocalStatus(vehicle.status);
+    }, [vehicle.status]);
+
+    const handleStatusChangeOptimistic = useCallback(async (newStatus: Vehicle['status']) => {
+        const previousStatus = localStatus;
+        
+    
+        setLocalStatus(newStatus);
+        
+        try {
+            await handleStatusChange(vehicle.id, newStatus);
+        } catch (error) {
+          
+            setLocalStatus(previousStatus);
+            console.error('Erro ao atualizar status:', error);
+        }
+    }, [vehicle.id, localStatus, handleStatusChange]);
+
+    const isCurrentlyUpdating = isUpdatingStatus === vehicle.id;
+
     return (
         <>
-            <TableCell onClick={() => navigate(`/vehicles/${vehicle.id}`)} onMouseEnter={() => setHoveredVehicle(vehicle.id)} onMouseLeave={() => setHoveredVehicle(null)}>
+            <TableCell 
+                onClick={() => navigate(`/vehicles/${vehicle.id}`)} 
+                onMouseEnter={() => setHoveredVehicle(vehicle.id)} 
+                onMouseLeave={() => setHoveredVehicle(null)}
+                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+            >
                 <div className="flex items-center gap-4">
                     <div className="relative">
                         {vehicle.imagens?.length > 0 ? (
@@ -78,23 +110,24 @@ export const VehicleRow = ({
                             </Tooltip>
                         </TooltipProvider>
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                         <p className="font-medium line-clamp-1 text-gray-900 dark:text-gray-100">
                             {vehicle.marca} {vehicle.modelo}
                         </p>
                         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500">
                             <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
+                                <Calendar className="h-3 w-3 flex-shrink-0" />
                                 {vehicle.anoFabricacao}/{vehicle.anoModelo}
                             </span>
                             <span className="flex items-center gap-1">
-                                <Gauge className="h-3 w-3" />
+                                <Gauge className="h-3 w-3 flex-shrink-0" />
                                 {vehicle.quilometragem?.toLocaleString("pt-BR")} km
                             </span>
                         </div>
                     </div>
                 </div>
             </TableCell>
+            
             <TableCell>
                 <div className="flex flex-wrap gap-2">
                     <Badge
@@ -120,6 +153,7 @@ export const VehicleRow = ({
                     )}
                 </div>
             </TableCell>
+            
             <TableCell className="text-right">
                 <div className="flex flex-col">
                     <span className="font-medium text-gray-900 dark:text-gray-100">
@@ -132,6 +166,7 @@ export const VehicleRow = ({
                     )}
                 </div>
             </TableCell>
+            
             <TableCell>
                 <div className="flex flex-col gap-2">
                     {vehicle.destaque && (
@@ -140,21 +175,30 @@ export const VehicleRow = ({
                             Destaque
                         </Badge>
                     )}
-                    <Select
-                        value={vehicle.status}
-                        onValueChange={(value) => handleStatusChange(vehicle.id, value as Vehicle['status'])}
-                    >
-                        <SelectTrigger className="w-[120px] border-gray-200 dark:border-gray-800 focus:ring-gray-900 dark:focus:ring-gray-400">
-                            <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="DISPONIVEL">Disponível</SelectItem>
-                            <SelectItem value="RESERVADO">Reservado</SelectItem>
-                            <SelectItem value="VENDIDO">Vendido</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className="relative">
+                        <Select
+                            value={localStatus}
+                            onValueChange={handleStatusChangeOptimistic}
+                            disabled={isCurrentlyUpdating}
+                        >
+                            <SelectTrigger className="w-[120px] border-gray-200 dark:border-gray-800 focus:ring-gray-900 dark:focus:ring-gray-400">
+                                <div className="flex items-center gap-2">
+                                    {isCurrentlyUpdating && (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                    )}
+                                    <SelectValue placeholder="Status" />
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="DISPONIVEL">Disponível</SelectItem>
+                                <SelectItem value="RESERVADO">Reservado</SelectItem>
+                                <SelectItem value="VENDIDO">Vendido</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </TableCell>
+            
             <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                     <TooltipProvider>
@@ -174,6 +218,7 @@ export const VehicleRow = ({
                             <TooltipContent>Ver veículo</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+                    
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -191,15 +236,19 @@ export const VehicleRow = ({
                             <TooltipContent>Editar veículo</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+                    
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    onClick={() => setConfirmDelete(vehicle)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setConfirmDelete(vehicle);
+                                    }}
                                     disabled={isDeleting === vehicle.id}
-                                    className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-800 dark:hover:bg-red-900/20 dark:text-red-400"
+                                    className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-800 dark:hover:bg-red-900/20 dark:text-red-400 disabled:opacity-50"
                                 >
                                     {isDeleting === vehicle.id ? (
                                         <Loader2 className="h-4 w-4 animate-spin" />

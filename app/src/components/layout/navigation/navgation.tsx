@@ -141,7 +141,7 @@ const Navigation: React.FC<NavigationProps> = ({
     { name: "Divulgar Veículo", href: "/vehicles/create" },
     { name: "Meus Veículos", href: "/vehicles/user" },
     { name: "Vendas & Negócios", href: "/sale/dashboard" },
-    { name: "Conversas", href: "/vehicles/negociations" },
+    { name: "Conversas", href: "/vehicles/negotiations" },
   ];
 
   // Use custom menu items if provided, otherwise use default
@@ -338,7 +338,7 @@ const Navigation: React.FC<NavigationProps> = ({
         )}
 
         {showNegotiations && (
-          <Link to="/vehicles/negociations" className="relative">
+          <Link to="/vehicles/negotiations" className="relative">
             <MessageSquare className="h-5 w-5 stroke-1" />
             {negotiationsCount > 0 && (
               <Badge 
@@ -430,7 +430,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       Conta
                     </Link>
                     <Link
-                      to="/vehicles/negociations"
+                      to="/vehicles/negotiations"
                       className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Negociações
