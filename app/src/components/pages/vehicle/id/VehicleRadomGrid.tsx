@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Car, ArrowRight } from "lucide-react";
 import { Badge } from "~/src/components/ui/badge";
 import { useVehicleRecommendations } from "~/src/hooks/useRadomVehicles";
-import { VehicleCard } from "~/src/components/template/card/card";
+import { VehicleCard } from "~/src/components/common/Vehiclecard";
 import type { Vehicle } from "~/src/types/vehicle";
 
 interface VehicleRecommendationsGridProps {
@@ -15,12 +15,13 @@ interface VehicleRecommendationsGridProps {
 const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
   currentVehicle,
   onVehicleClick,
-  className = ""
+  className = "",
 }) => {
-  const { recommendations, hasRecommendations, stats } = useVehicleRecommendations(currentVehicle, {
-    limit: 6,
-    minScore: 0.15
-  });
+  const { recommendations, hasRecommendations, stats } =
+    useVehicleRecommendations(currentVehicle, {
+      limit: 6,
+      minScore: 0.15,
+    });
 
   if (!hasRecommendations) {
     return (
@@ -46,9 +47,9 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   return (
@@ -61,7 +62,7 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
       {/* Header da seção */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
@@ -69,16 +70,17 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
           >
             Recomendações para você
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
             className="text-gray-600 dark:text-gray-400 mt-1"
           >
-            Baseado nas características de {currentVehicle?.marca} {currentVehicle?.modelo}
+            Baseado nas características de {currentVehicle?.marca}{" "}
+            {currentVehicle?.modelo}
           </motion.p>
         </div>
-        
+
         {/* Stats badge */}
         {stats && (
           <motion.div
@@ -86,8 +88,12 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6 }}
           >
-            <Badge variant="secondary" className="px-3 py-1.5 text-xs font-medium">
-              {recommendations.length} sugestões • {(stats.averageScore * 100).toFixed(0)}% compatibilidade
+            <Badge
+              variant="secondary"
+              className="px-3 py-1.5 text-xs font-medium"
+            >
+              {recommendations.length} sugestões •{" "}
+              {(stats.averageScore * 100).toFixed(0)}% compatibilidade
             </Badge>
           </motion.div>
         )}
@@ -106,10 +112,7 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
             onClick={() => onVehicleClick?.(vehicle)}
             className="cursor-pointer"
           >
-            <VehicleCard
-              vehicle={vehicle}
-              index={index}
-            />
+            <VehicleCard vehicle={vehicle} index={index} />
           </div>
         ))}
       </motion.div>
@@ -133,7 +136,6 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
         </motion.div>
       )}
       */}
-
     </motion.div>
   );
 };

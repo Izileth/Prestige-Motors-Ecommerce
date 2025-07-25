@@ -11,11 +11,10 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
 import { createStore } from "~/src/store/global";
-import Navigation from "~/src/components/layout/navigation/navgation";
-import { Baseboard } from "~/src/components/layout/baseboard/baseboard";
-import { Banner } from "~/src/components/layout/banner/banner";
-import Footer from "~/src/components/layout/footer/footer";
-
+import Navigation from "~/src/components/layout/NavigationBar";
+import { Baseboard } from "~/src/components/layout/BottonBanner";
+import { Banner } from "~/src/components/layout/TopBanner";
+import Footer from "./src/components/layout/footer";
 
 import { Toaster } from "sonner";
 

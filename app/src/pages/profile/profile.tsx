@@ -6,18 +6,23 @@ import useUserStore from "~/src/hooks/useUser";
 import useVehicle from "~/src/hooks/useVehicle";
 import useSale from "~/src/hooks/useSale";
 import { motion, AnimatePresence } from "framer-motion";
-import { getTotalVehicles } from '~/src/lib/sumstats';
-import DashboardSkeleton from "~/src/components/layout/skeleton/dashboard";
+import { getTotalVehicles } from "~/src/lib/sumstats";
+import DashboardSkeleton from "~/src/components/layout/skeleton/DashboardSkeleton";
 import ProfileHeader from "~/src/components/pages/profile/ProfileHeader";
 import StatsCards from "~/src/components/pages/profile/StatsCards";
 import ProfileTabs from "~/src/components/pages/profile/ProfileTabs";
 import ProfileTabContent from "~/src/components/pages/profile/ProfileTabContent";
 import { Button } from "~/src/components/ui/button";
-import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "~/src/components/ui/card";
+import {
+  Card,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "~/src/components/ui/card";
 import { Check, AlertCircle, X } from "lucide-react";
 import type { UserUpdateData } from "~/src/types/user";
 import type { Address } from "~/src/types/address";
-
 
 import type { UserVehicleStatsResponse } from "~/src/types/vehicle";
 
@@ -46,11 +51,8 @@ export default function DashboardPage() {
   } = useVehicle();
 
   const totalVehicles = getTotalVehicles(vehicleStats);
-  
-  const {
-    purchases,
-    fetchPurchasesByUser,
-  } = useSale();
+
+  const { purchases, fetchPurchasesByUser } = useSale();
 
   const [activeTab, setActiveTab] = useState("perfil");
   const [isEditing, setIsEditing] = useState(false);
@@ -105,7 +107,9 @@ export default function DashboardPage() {
         email: currentUser.email || "",
         telefone: currentUser.telefone || "",
         cpf: currentUser.cpf || "",
-        dataNascimento: currentUser.dataNascimento ? currentUser.dataNascimento.split("T")[0] : "",
+        dataNascimento: currentUser.dataNascimento
+          ? currentUser.dataNascimento.split("T")[0]
+          : "",
       });
     }
   }, [currentUser]);
@@ -120,7 +124,9 @@ export default function DashboardPage() {
     setPasswordData({ ...passwordData, [name]: value });
   };
 
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setAddressFormData({ ...addressFormData, [name]: value });
   };
@@ -131,18 +137,27 @@ export default function DashboardPage() {
     type: "success" | "error";
   }>({ show: false, message: "", type: "success" });
 
-  const [loading, setLoading] = useState({ profile: false, password: false, delete: false });
+  const [loading, setLoading] = useState({
+    profile: false,
+    password: false,
+    delete: false,
+  });
 
   const handleSaveProfile = async () => {
     if (user?.id) {
       setLoading((prev) => ({ ...prev, profile: true }));
       try {
         const updateData: UserUpdateData = {};
-        if (editFormData.nome && editFormData.nome.trim()) updateData.nome = editFormData.nome.trim();
-        if (editFormData.email && editFormData.email.trim()) updateData.email = editFormData.email.trim();
+        if (editFormData.nome && editFormData.nome.trim())
+          updateData.nome = editFormData.nome.trim();
+        if (editFormData.email && editFormData.email.trim())
+          updateData.email = editFormData.email.trim();
         if (editFormData.telefone) {
           const telefoneFormatado = editFormData.telefone.replace(/\D/g, "");
-          if (telefoneFormatado.length >= 10 && telefoneFormatado.length <= 11) {
+          if (
+            telefoneFormatado.length >= 10 &&
+            telefoneFormatado.length <= 11
+          ) {
             updateData.telefone = telefoneFormatado;
           } else if (telefoneFormatado === "") {
             updateData.telefone = null;
@@ -169,13 +184,24 @@ export default function DashboardPage() {
         } else if (editFormData.dataNascimento === null) {
           updateData.dataNascimento = null;
         }
-        if (Object.keys(updateData).length === 0) throw new Error("Nenhum dado para atualizar");
+        if (Object.keys(updateData).length === 0)
+          throw new Error("Nenhum dado para atualizar");
         await updateUserData(user.id, updateData);
         setIsEditing(false);
-        setNotification({ show: true, message: "Perfil atualizado com sucesso!", type: "success" });
+        setNotification({
+          show: true,
+          message: "Perfil atualizado com sucesso!",
+          type: "success",
+        });
         if (user?.id) getUserById(user.id);
       } catch (error) {
-        setNotification({ show: true, message: `Erro ao atualizar perfil: ${error instanceof Error ? error.message : "Tente novamente."}`, type: "error" });
+        setNotification({
+          show: true,
+          message: `Erro ao atualizar perfil: ${
+            error instanceof Error ? error.message : "Tente novamente."
+          }`,
+          type: "error",
+        });
       } finally {
         setLoading((prev) => ({ ...prev, profile: false }));
       }
@@ -188,15 +214,26 @@ export default function DashboardPage() {
       return;
     }
     if (!passwordData.senhaAtual || !passwordData.novaSenha) {
-      setNotification({ show: true, message: "Senhas atuais e novas são obrigatórias", type: "error" });
+      setNotification({
+        show: true,
+        message: "Senhas atuais e novas são obrigatórias",
+        type: "error",
+      });
       return;
     }
     setLoading((prev) => ({ ...prev, password: true }));
     try {
       if (!user?.id) throw new Error("ID do usuário não encontrado");
-      const updateData: UserUpdateData = { senhaAtual: passwordData.senhaAtual, senha: passwordData.novaSenha };
+      const updateData: UserUpdateData = {
+        senhaAtual: passwordData.senhaAtual,
+        senha: passwordData.novaSenha,
+      };
       await updateUserData(user.id, updateData);
-      setNotification({ show: true, message: "Senha alterada com sucesso!", type: "success" });
+      setNotification({
+        show: true,
+        message: "Senha alterada com sucesso!",
+        type: "success",
+      });
       setPasswordData({ senhaAtual: "", novaSenha: "", confirmarSenha: "" });
       setShowPasswordAlert(false);
     } catch (error) {
@@ -217,7 +254,16 @@ export default function DashboardPage() {
       } else {
         await createAddress(user.id, addressFormData);
       }
-      setAddressFormData({ cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "", pais: "Brasil" });
+      setAddressFormData({
+        cep: "",
+        logradouro: "",
+        numero: "",
+        complemento: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        pais: "Brasil",
+      });
       setEditAddressId(null);
       setShowAddressForm(false);
     }
@@ -266,7 +312,7 @@ export default function DashboardPage() {
     return <DashboardSkeleton />;
   }
 
-  const transformedUserStats = userStats as UserVehicleStatsResponse | null
+  const transformedUserStats = userStats as UserVehicleStatsResponse | null;
 
   if (!isAuthenticated || !user) {
     return (
@@ -279,7 +325,9 @@ export default function DashboardPage() {
         >
           <Card className="border-none shadow-none bg-white dark:bg-gray-900">
             <CardHeader>
-              <CardTitle className="text-center text-gray-900 dark:text-gray-100">Acesso Restrito</CardTitle>
+              <CardTitle className="text-center text-gray-900 dark:text-gray-100">
+                Acesso Restrito
+              </CardTitle>
               <CardDescription className="text-center text-gray-600 dark:text-gray-400">
                 Você precisa estar logado para acessar esta página.
               </CardDescription>
@@ -313,10 +361,16 @@ export default function DashboardPage() {
             }`}
           >
             <div className="flex items-center gap-2">
-              {notification.type === "success" ? <Check size={18} /> : <AlertCircle size={18} />}
+              {notification.type === "success" ? (
+                <Check size={18} />
+              ) : (
+                <AlertCircle size={18} />
+              )}
               <p>{notification.message}</p>
               <button
-                onClick={() => setNotification({ ...notification, show: false })}
+                onClick={() =>
+                  setNotification({ ...notification, show: false })
+                }
                 className="ml-2 text-white dark:text-black"
               >
                 <X size={18} />

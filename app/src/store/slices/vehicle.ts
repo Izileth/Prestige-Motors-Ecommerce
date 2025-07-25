@@ -1,24 +1,29 @@
-
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import vehicleService from '~/src/services/vehicle';
-import type { ReviewCreateInput, VehicleUpdateInput } from '~/src/types/inputs';
-import type { Vehicle, VehicleUserStats, VehicleCreateInput, VehicleSearchParams, VehicleGlobalStats } from '~/src/types/vehicle';
-import type { Review } from '~/src/types/reviews';
-import type { VehicleStatsData } from '~/src/components/template/statistics/statistcs';
-import type { UserStats } from '~/src/types/user';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import vehicleService from "~/src/services/vehicle";
+import type { ReviewCreateInput, VehicleUpdateInput } from "~/src/types/inputs";
+import type {
+  Vehicle,
+  VehicleUserStats,
+  VehicleCreateInput,
+  VehicleSearchParams,
+  VehicleGlobalStats,
+} from "~/src/types/vehicle";
+import type { Review } from "~/src/types/reviews";
+import type { VehicleStatsData } from "~/src/components/common/VehicleStatistics";
+import type { UserStats } from "~/src/types/user";
 interface VehicleState {
   // Estado (igual ao Redux)
   vehicles: Vehicle[];
   featuredVehicles: Vehicle[];
   favorites: Vehicle[];
-  
+
   userVehicles: Vehicle[];
   vendorVehicles: Vehicle[];
   currentVehicle: Vehicle | null;
   reviews: Review[];
   stats: VehicleStatsData | null;
-  userStats:UserStats| null;
+  userStats: UserStats | null;
   views: number;
   loading: boolean;
   error: string | null;
@@ -27,7 +32,7 @@ interface VehicleState {
   // Ações (todas as thunks + reducers)
   fetchVehicles: (params?: VehicleSearchParams) => Promise<void>;
   fetchVehicleById: (id: string) => Promise<void>;
-    
+
   createVehicle: (data: VehicleCreateInput) => Promise<Vehicle>;
   updateVehicle: (id: string, data: VehicleUpdateInput) => Promise<Vehicle>;
   deleteVehicle: (id: string) => Promise<void>;
@@ -46,7 +51,7 @@ interface VehicleState {
   fetchVehiclesByVendor: (vendorId: string) => Promise<void>;
   updateStatus: (id: string, status: string) => Promise<Vehicle>;
   uploadVehicleVideos: (vehicleId: string, file: File) => Promise<Vehicle>;
-  
+
   // Reducers
   resetVehicleState: () => void;
   setCurrentVehicle: (vehicle: Vehicle | null) => void;
@@ -77,9 +82,12 @@ export const useVehicleStore = create<VehicleState>()(
           const vehicles = await vehicleService.getVehicles(params);
           set({ vehicles, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch vehicles' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch vehicles",
           });
         }
       },
@@ -88,17 +96,20 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true });
         try {
           const vehicle = await vehicleService.getVehicleById(id);
-          set({ 
+          set({
             currentVehicle: {
               ...vehicle,
-              imagens: vehicle.imagens || []
+              imagens: vehicle.imagens || [],
             },
-            loading: false
+            loading: false,
           });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch vehicle' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch vehicle",
           });
         }
       },
@@ -107,16 +118,19 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null, success: false });
         try {
           const vehicle = await vehicleService.createVehicle(data);
-          set(state => ({
+          set((state) => ({
             vehicles: [...state.vehicles, vehicle],
             loading: false,
-            success: true
+            success: true,
           }));
           return vehicle;
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to create vehicle' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to create vehicle",
           });
           throw error;
         }
@@ -126,22 +140,28 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null, success: false });
         try {
           const updatedVehicle = await vehicleService.updateVehicle(id, data);
-          set(state => ({
-            vehicles: state.vehicles.map(v => 
+          set((state) => ({
+            vehicles: state.vehicles.map((v) =>
               v.id === id ? updatedVehicle : v
             ),
-            currentVehicle: state.currentVehicle?.id === id ? updatedVehicle : state.currentVehicle,
-            userVehicles: state.userVehicles.map(v =>
+            currentVehicle:
+              state.currentVehicle?.id === id
+                ? updatedVehicle
+                : state.currentVehicle,
+            userVehicles: state.userVehicles.map((v) =>
               v.id === id ? updatedVehicle : v
             ),
             loading: false,
-            success: true
+            success: true,
           }));
           return updatedVehicle;
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to update vehicle' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to update vehicle",
           });
           throw error;
         }
@@ -151,17 +171,21 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null, success: false });
         try {
           await vehicleService.deleteVehicle(id);
-          set(state => ({
-            vehicles: state.vehicles.filter(v => v.id !== id),
-            currentVehicle: state.currentVehicle?.id === id ? null : state.currentVehicle,
-            userVehicles: state.userVehicles.filter(v => v.id !== id),
+          set((state) => ({
+            vehicles: state.vehicles.filter((v) => v.id !== id),
+            currentVehicle:
+              state.currentVehicle?.id === id ? null : state.currentVehicle,
+            userVehicles: state.userVehicles.filter((v) => v.id !== id),
             loading: false,
-            success: true
+            success: true,
           }));
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to delete vehicle' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to delete vehicle",
           });
           throw error;
         }
@@ -173,9 +197,12 @@ export const useVehicleStore = create<VehicleState>()(
           const featuredVehicles = await vehicleService.getFeaturedVehicles();
           set({ featuredVehicles, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch featured vehicles' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch featured vehicles",
           });
         }
       },
@@ -186,9 +213,12 @@ export const useVehicleStore = create<VehicleState>()(
           const favorites = await vehicleService.getUserFavorites();
           set({ favorites, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch favorites' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch favorites",
           });
         }
       },
@@ -197,20 +227,22 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null });
         try {
           const vehicle = await vehicleService.addFavorite(vehicleId);
-          set(state => ({
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId ? { ...v, isFavorite: true } : v
             ),
-            currentVehicle: state.currentVehicle?.id === vehicleId 
-              ? { ...state.currentVehicle, isFavorite: true }
-              : state.currentVehicle,
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? { ...state.currentVehicle, isFavorite: true }
+                : state.currentVehicle,
             favorites: [...state.favorites, vehicle],
-            loading: false
+            loading: false,
           }));
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to add favorite' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error ? error.message : "Failed to add favorite",
           });
           throw error;
         }
@@ -220,20 +252,24 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null });
         try {
           await vehicleService.removeFavorite(vehicleId);
-          set(state => ({
-            favorites: state.favorites.filter(v => v.id !== vehicleId),
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            favorites: state.favorites.filter((v) => v.id !== vehicleId),
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId ? { ...v, isFavorite: false } : v
             ),
-            currentVehicle: state.currentVehicle?.id === vehicleId
-              ? { ...state.currentVehicle, isFavorite: false }
-              : state.currentVehicle,
-            loading: false
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? { ...state.currentVehicle, isFavorite: false }
+                : state.currentVehicle,
+            loading: false,
           }));
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to remove favorite' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to remove favorite",
           });
           throw error;
         }
@@ -245,33 +281,39 @@ export const useVehicleStore = create<VehicleState>()(
           const reviews = await vehicleService.getVehicleReviews(vehicleId);
           set({ reviews, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch reviews' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch reviews",
           });
         }
       },
-    
 
       uploadVehicleImages: async (vehicleId, files) => {
         set({ loading: true, error: null, success: false });
         try {
           const vehicle = await vehicleService.uploadImages(vehicleId, files);
-          set(state => ({
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId ? vehicle : v
             ),
-            currentVehicle: state.currentVehicle?.id === vehicleId 
-              ? vehicle 
-              : state.currentVehicle,
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? vehicle
+                : state.currentVehicle,
             loading: false,
-            success: true
+            success: true,
           }));
           return vehicle;
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to upload images' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to upload images",
           });
           throw error;
         }
@@ -281,27 +323,31 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null });
         try {
           await vehicleService.deleteVehicleImage(vehicleId, imageUrl);
-          set(state => ({
-            currentVehicle: state.currentVehicle?.id === vehicleId
-              ? {
-                  ...state.currentVehicle,
-                  imagens: state.currentVehicle.imagens?.filter(img => img.id !== imageUrl)
-                }
-              : state.currentVehicle,
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? {
+                    ...state.currentVehicle,
+                    imagens: state.currentVehicle.imagens?.filter(
+                      (img) => img.id !== imageUrl
+                    ),
+                  }
+                : state.currentVehicle,
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId
                 ? {
                     ...v,
-                    imagens: v.imagens?.filter(img => img.id !== imageUrl)
+                    imagens: v.imagens?.filter((img) => img.id !== imageUrl),
                   }
                 : v
             ),
-            loading: false
+            loading: false,
           }));
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to delete image' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error ? error.message : "Failed to delete image",
           });
           throw error;
         }
@@ -315,7 +361,8 @@ export const useVehicleStore = create<VehicleState>()(
         } catch (error) {
           set({
             loading: false,
-            error: error instanceof Error ? error.message : 'Failed to fetch stats'
+            error:
+              error instanceof Error ? error.message : "Failed to fetch stats",
           });
           throw error; // Lança o erro para ser capturado pelo chamador
         }
@@ -327,9 +374,12 @@ export const useVehicleStore = create<VehicleState>()(
           const userVehicles = await vehicleService.getUserVehicles();
           set({ userVehicles, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch user vehicles' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch user vehicles",
           });
         }
       },
@@ -340,9 +390,12 @@ export const useVehicleStore = create<VehicleState>()(
           const userStats = await vehicleService.getUserVehicleStats();
           set({ userStats, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch user vehicle stats' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch user vehicle stats",
           });
         }
       },
@@ -350,21 +403,23 @@ export const useVehicleStore = create<VehicleState>()(
       registerVehicleView: async (vehicleId) => {
         try {
           await vehicleService.registerVehicleView(vehicleId);
-          set(state => ({
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId
                 ? { ...v, visualizacoes: (v.visualizacoes || 0) + 1 }
                 : v
             ),
-            currentVehicle: state.currentVehicle?.id === vehicleId
-              ? {
-                  ...state.currentVehicle,
-                  visualizacoes: (state.currentVehicle.visualizacoes || 0) + 1
-                }
-              : state.currentVehicle
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? {
+                    ...state.currentVehicle,
+                    visualizacoes:
+                      (state.currentVehicle.visualizacoes || 0) + 1,
+                  }
+                : state.currentVehicle,
           }));
         } catch (error) {
-          console.error('Error registering view:', error);
+          console.error("Error registering view:", error);
         }
       },
 
@@ -374,9 +429,12 @@ export const useVehicleStore = create<VehicleState>()(
           const views = await vehicleService.getVehicleViews();
           set({ views, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch vehicle views' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch vehicle views",
           });
         }
       },
@@ -384,12 +442,17 @@ export const useVehicleStore = create<VehicleState>()(
       fetchVehiclesByVendor: async (vendorId) => {
         set({ loading: true, error: null });
         try {
-          const vendorVehicles = await vehicleService.getVehiclesByVendor(vendorId);
+          const vendorVehicles = await vehicleService.getVehiclesByVendor(
+            vendorId
+          );
           set({ vendorVehicles, loading: false });
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to fetch vendor vehicles' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch vendor vehicles",
           });
         }
       },
@@ -398,22 +461,24 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null, success: false });
         try {
           const vehicle = await vehicleService.updateVehicleStatus(id, status);
-          set(state => ({
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            vehicles: state.vehicles.map((v) => (v.id === id ? vehicle : v)),
+            userVehicles: state.userVehicles.map((v) =>
               v.id === id ? vehicle : v
             ),
-            userVehicles: state.userVehicles.map(v =>
-              v.id === id ? vehicle : v
-            ),
-            currentVehicle: state.currentVehicle?.id === id ? vehicle : state.currentVehicle,
+            currentVehicle:
+              state.currentVehicle?.id === id ? vehicle : state.currentVehicle,
             loading: false,
-            success: true
+            success: true,
           }));
           return vehicle;
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to update vehicle status' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to update vehicle status",
           });
           throw error;
         }
@@ -423,22 +488,28 @@ export const useVehicleStore = create<VehicleState>()(
         set({ loading: true, error: null, success: false });
         try {
           const vehicle = await vehicleService.uploadVideos(vehicleId, file);
-          set(state => ({
-            vehicles: state.vehicles.map(v =>
+          set((state) => ({
+            vehicles: state.vehicles.map((v) =>
               v.id === vehicleId ? vehicle : v
             ),
-            userVehicles: state.userVehicles.map(v =>
+            userVehicles: state.userVehicles.map((v) =>
               v.id === vehicleId ? vehicle : v
             ),
-            currentVehicle: state.currentVehicle?.id === vehicleId ? vehicle : state.currentVehicle,
+            currentVehicle:
+              state.currentVehicle?.id === vehicleId
+                ? vehicle
+                : state.currentVehicle,
             loading: false,
-            success: true
+            success: true,
           }));
           return vehicle;
         } catch (error) {
-          set({ 
-            loading: false, 
-            error: error instanceof Error ? error.message : 'Failed to upload videos' 
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to upload videos",
           });
           throw error;
         }
@@ -459,27 +530,28 @@ export const useVehicleStore = create<VehicleState>()(
           views: 0,
           loading: false,
           error: null,
-          success: false
+          success: false,
         });
       },
 
       setCurrentVehicle: (vehicle) => {
         set({ currentVehicle: vehicle });
-      }
+      },
     }),
     {
-      name: 'vehicle-storage',
+      name: "vehicle-storage",
       partialize: (state) => ({
         // Persistir apenas os dados necessários
         favorites: state.favorites,
-        userVehicles: state.userVehicles
+        userVehicles: state.userVehicles,
       }),
     }
   )
 );
 
 // Selectors opcionais (para manter compatibilidade)
-export const selectCurrentVehicle = () => useVehicleStore.getState().currentVehicle;
+export const selectCurrentVehicle = () =>
+  useVehicleStore.getState().currentVehicle;
 export const selectVehicles = () => useVehicleStore.getState().vehicles;
 export const selectVehicleLoading = () => useVehicleStore.getState().loading;
 export const selectVehicleError = () => useVehicleStore.getState().error;

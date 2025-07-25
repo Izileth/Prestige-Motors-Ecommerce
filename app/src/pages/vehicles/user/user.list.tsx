@@ -50,6 +50,8 @@ export function UserVehicleList() {
     const [confirmDelete, setConfirmDelete] = useState<Vehicle | null>(null);
     const [viewMode, setViewMode] = useState<"table" | "grid">("table");
     const [showFilters, setShowFilters] = useState(false);
+    
+    const [vehicleUpdates, setVehicleUpdates] = useState<Record<string, string>>({});
 
     const fetchData = useCallback(async () => {
         try {
@@ -105,20 +107,35 @@ export function UserVehicleList() {
             } else {
                 await addFavorite(vehicleId);
             }
-            // Remova esta linha para evitar chamada adicional
-            // await fetchUserFavorites();
+         
         } catch (error) {
             console.error("Erro ao atualizar favoritos:", error);
         }
     };
 
+
     const handleStatusChange = async (vehicleId: string, newStatus: string) => {
+        // Armazena o status sendo atualizado temporariamente
+        setVehicleUpdates(prev => ({ ...prev, [vehicleId]: newStatus }));
+        
         try {
             await updateStatus(vehicleId, newStatus);
+            // Remove da lista de updates temporários após sucesso
+            setVehicleUpdates(prev => {
+                const updated = { ...prev };
+                delete updated[vehicleId];
+                return updated;
+            });
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
+            // Remove da lista de updates em caso de erro
+            setVehicleUpdates(prev => {
+                const updated = { ...prev };
+                delete updated[vehicleId];
+                return updated;
+            });
         }
-    };
+};
 
     const isFavorite = (vehicleId: string) => {
         return Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId);
@@ -185,6 +202,7 @@ export function UserVehicleList() {
                             handleStatusChange={handleStatusChange}
                             setConfirmDelete={setConfirmDelete}
                             isDeleting={isDeleting}
+                            vehicleUpdates={vehicleUpdates}
                         />
                     ) : (
                         <VehicleGrid
@@ -196,6 +214,7 @@ export function UserVehicleList() {
                             handleStatusChange={handleStatusChange}
                             setConfirmDelete={setConfirmDelete}
                             isDeleting={isDeleting}
+                            vehicleUpdates={vehicleUpdates}
                         />
                     )}
                 </CardContent>

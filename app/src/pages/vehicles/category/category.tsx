@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CategoryGrid } from "~/src/components/template/grid/grid";
-import { VehicleFilters } from "~/src/components/template/filter/filter";
-import { VehicleCard } from "~/src/components/template/card/card";
-import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/card";
+import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
+import { VehicleFilters } from "~/src/components/common/VehicleFilter";
+import { VehicleCard } from "~/src/components/common/Vehiclecard";
+import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 import useVehicle from "~/src/hooks/useVehicle";
 import { Button } from "~/src/components/ui/button";
 import { Filter, X, ChevronUp, ArrowRight, Search } from "lucide-react";
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 import { Badge } from "~/src/components/ui/badge";
 
 import { ExpecionalCars } from "~/src/data/carousel";
-import { Carousel } from "~/src/components/template/carousel/carousel";
+import { Carousel } from "~/src/components/template/RadomCarousel";
 
 export const VehiclesByCategoryPage = () => {
   const location = useLocation();
@@ -106,7 +106,7 @@ export const VehiclesByCategoryPage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
       <Carousel items={ExpecionalCars} className="max-w-full w-full" />
-   
+
       {!filters.categoria && <CategoryGrid />}
 
       <div

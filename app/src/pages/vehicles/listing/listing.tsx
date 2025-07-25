@@ -1,31 +1,33 @@
+import type React from "react";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router";
+import useVehicle from "~/src/hooks/useVehicle";
 
-import type React from "react"
-import { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router"
-import useVehicle from "~/src/hooks/useVehicle"
+import { Input } from "~/src/components/ui/input";
+import { Button } from "~/src/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 
-// Components
-import { Input } from "~/src/components/ui/input"
-import { Button } from "~/src/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert"
-
-import { VehicleFilters } from "~/src/components/template/filter/filter"
-import VehicleStatistics from "~/src/components/template/statistics/statistcs"
-import { VehicleCard} from "~/src/components/template/card/card" // Componente extraído de card
-import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/card"
+import { VehicleFilters } from "~/src/components/common/VehicleFilter";
+import VehicleStatistics from "~/src/components/common/VehicleStatistics";
+import { VehicleCard } from "~/src/components/common/Vehiclecard";
+import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 
 // Icons
-import { Filter, Search, X } from "lucide-react"
+import { Filter, Search, X } from "lucide-react";
 
 // Types
-import type { Vehicle, VehicleSearchParams, VehicleError } from "~/src/types/vehicle"
+import type {
+  Vehicle,
+  VehicleSearchParams,
+  VehicleError,
+} from "~/src/types/vehicle";
 
 // Motion
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 // Data
-import { Carousel } from "~/src/components/template/carousel/carousel"
-import { PrincipalCars } from "~/src/data/carousel"
+import { Carousel } from "~/src/components/template/RadomCarousel";
+import { PrincipalCars } from "~/src/data/carousel";
 
 const VehicleListingPage = () => {
   const {
@@ -36,121 +38,130 @@ const VehicleListingPage = () => {
     removeFavorite,
     fetchUserFavorites,
     favorites,
-  } = useVehicle()
+  } = useVehicle();
 
-  const [searchParams, setSearchParams] = useState<VehicleSearchParams>({})
-  const [showFilters, setShowFilters] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const [error, setError] = useState<VehicleError | null>(null)
-  const filtersRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useState<VehicleSearchParams>({});
+  const [showFilters, setShowFilters] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [error, setError] = useState<VehicleError | null>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Fetch user favorites on component mount
   useEffect(() => {
-    fetchUserFavorites()
-  }, [])
+    fetchUserFavorites();
+  }, []);
 
   // Fetch vehicles when search params change with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchVehicles(searchParams)
-    }, 500)
+      fetchVehicles(searchParams);
+    }, 500);
 
-    return () => clearTimeout(timer)
-  }, [searchParams, fetchVehicles])
+    return () => clearTimeout(timer);
+  }, [searchParams, fetchVehicles]);
 
   // Track scroll position for sticky header effect
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
+      setScrolled(window.scrollY > 50);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close filters when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (filtersRef.current && !filtersRef.current.contains(event.target as Node) && showFilters) {
-        setShowFilters(false)
+      if (
+        filtersRef.current &&
+        !filtersRef.current.contains(event.target as Node) &&
+        showFilters
+      ) {
+        setShowFilters(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [showFilters])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showFilters]);
 
   // Auto-hide error after 5 seconds
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => setError(null), 5000)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => setError(null), 5000);
+      return () => clearTimeout(timer);
     }
-  }, [error])
+  }, [error]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchParams({ ...searchParams, modelo: e.target.value })
-  }
+    setSearchParams({ ...searchParams, modelo: e.target.value });
+  };
 
-  const handleFilterChange = (field: keyof VehicleSearchParams, value: string | number | boolean | undefined) => {
+  const handleFilterChange = (
+    field: keyof VehicleSearchParams,
+    value: string | number | boolean | undefined
+  ) => {
     if (value === "All" || value === undefined) {
       // Remove o campo dos parâmetros de busca se o valor for "All" ou undefined
-      const newParams = { ...searchParams }
-      delete newParams[field]
-      setSearchParams(newParams)
+      const newParams = { ...searchParams };
+      delete newParams[field];
+      setSearchParams(newParams);
     } else {
       // Define o novo valor
-      setSearchParams({ ...searchParams, [field]: value })
+      setSearchParams({ ...searchParams, [field]: value });
     }
-  }
+  };
 
   const handlePriceChange = (value: number[]) => {
     setSearchParams({
       ...searchParams,
       precoMin: value[0],
       precoMax: value[1],
-    })
-  }
+    });
+  };
 
   const resetFilters = () => {
-    setSearchParams({})
-  }
+    setSearchParams({});
+  };
 
   const toggleFavorite = async (vehicle: Vehicle) => {
     try {
       if (isFavorite(vehicle.id)) {
-        await removeFavorite(vehicle.id)
+        await removeFavorite(vehicle.id);
       } else {
-        await addFavorite(vehicle.id)
+        await addFavorite(vehicle.id);
       }
-      await fetchUserFavorites()
-      setError(null) // Limpa o erro se a operação for bem-sucedida
+      await fetchUserFavorites();
+      setError(null); // Limpa o erro se a operação for bem-sucedida
     } catch (err) {
-      const error = err as Error
-      
-      if (error.message === 'User not authenticated') {
+      const error = err as Error;
+
+      if (error.message === "User not authenticated") {
         setError({
-          message: 'Você precisa fazer login para adicionar aos favoritos',
-          type: 'auth'
-        })
+          message: "Você precisa fazer login para adicionar aos favoritos",
+          type: "auth",
+        });
       } else {
         setError({
-          message: 'Ocorreu um erro ao atualizar seus favoritos',
-          type: 'api'
-        })
-        console.error("Erro ao atualizar favoritos:", error)
+          message: "Ocorreu um erro ao atualizar seus favoritos",
+          type: "api",
+        });
+        console.error("Erro ao atualizar favoritos:", error);
       }
     }
-  }
+  };
 
   const isFavorite = (vehicleId: string) => {
-    return Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId)
-  }
+    return (
+      Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId)
+    );
+  };
 
   const retryFetch = () => {
-    fetchVehicles(searchParams)
-  }
+    fetchVehicles(searchParams);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
@@ -188,7 +199,7 @@ const VehicleListingPage = () => {
               </Button>
             </div>
             <div className="flex flex-row w-full  max-w-full items-center justify-center content-center">
-              <VehicleStatistics/>
+              <VehicleStatistics />
             </div>
           </div>
         </div>
@@ -205,8 +216,8 @@ const VehicleListingPage = () => {
             transition={{ duration: 0.2 }}
             className="container mx-auto px-2 lg:px-4 relative z-10"
           >
-            <VehicleFilters 
-              searchParams={searchParams} 
+            <VehicleFilters
+              searchParams={searchParams}
               onFilterChange={handleFilterChange}
               onReset={resetFilters}
             />
@@ -249,7 +260,7 @@ const VehicleListingPage = () => {
             ))}
           </div>
         )}
-        
+
         {/* Estado de erro */}
         {error && (
           <motion.div
@@ -258,19 +269,23 @@ const VehicleListingPage = () => {
             exit={{ opacity: 0, y: 20 }}
             className="fixed bottom-4 right-4 z-50 max-w-md"
           >
-            <Alert variant={error.type === 'auth' ? 'default' : 'destructive'}>
+            <Alert variant={error.type === "auth" ? "default" : "destructive"}>
               <div className="flex justify-between items-start">
                 <div>
                   <AlertTitle>
-                    {error.type === 'auth' ? 'Ação requerida' : 'Erro'}
+                    {error.type === "auth" ? "Ação requerida" : "Erro"}
                   </AlertTitle>
                   <AlertDescription>
                     {error.message}
-                    {error.type === 'auth' && (
+                    {error.type === "auth" && (
                       <Button
                         variant="link"
                         className="h-auto p-0 ml-2 text-inherit underline"
-                        onClick={() => navigate('/login', { state: { from: location.pathname } })}
+                        onClick={() =>
+                          navigate("/login", {
+                            state: { from: location.pathname },
+                          })
+                        }
                       >
                         Fazer login
                       </Button>
@@ -326,7 +341,8 @@ const VehicleListingPage = () => {
                   Falha ao carregar veículos
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 font-light">
-                  Não foi possível carregar os veículos no momento. Por favor, tente novamente.
+                  Não foi possível carregar os veículos no momento. Por favor,
+                  tente novamente.
                 </p>
               </div>
 
@@ -366,11 +382,7 @@ const VehicleListingPage = () => {
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 px-2 sm:px-4"
             >
               {vehicles.map((vehicle, index) => (
-                <VehicleCard 
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  index={index}
-                />
+                <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
               ))}
             </motion.div>
 
@@ -382,7 +394,9 @@ const VehicleListingPage = () => {
                 transition={{ duration: 0.5 }}
                 className="text-center py-16 px-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800"
               >
-                <h3 className="text-xl font-medium mb-2 text-gray-900 dark:text-gray-100">Nenhum veículo encontrado</h3>
+                <h3 className="text-xl font-medium mb-2 text-gray-900 dark:text-gray-100">
+                  Nenhum veículo encontrado
+                </h3>
                 <p className="text-gray-600 dark:text-gray-400">
                   Tente ajustar seus filtros de busca ou volte mais tarde.
                 </p>
@@ -392,7 +406,7 @@ const VehicleListingPage = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VehicleListingPage
+export default VehicleListingPage;

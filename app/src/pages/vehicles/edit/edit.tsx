@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { QuickEditSkeleton } from "~/src/components/layout/skeleton/edit";
+import { QuickEditSkeleton } from "~/src/components/layout/skeleton/VehicleEditSkeleton";
 import {
   UpdateVehicleHeader,
   PageTitle,

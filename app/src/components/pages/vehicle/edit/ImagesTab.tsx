@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import {
@@ -8,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
 } from "~/src/components/ui/card";
-import { FileUpload } from "~/src/components/template/file/file";
+import { FileUpload } from "~/src/components/common/VehicleFile";
 import { ImageIcon, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import type { VehicleImage } from "~/src/types/vehicle";
 import { acceptedFileTypes } from "~/src/types/enuns";

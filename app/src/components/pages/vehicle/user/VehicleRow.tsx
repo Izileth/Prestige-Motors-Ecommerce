@@ -21,6 +21,7 @@ interface VehicleRowProps {
     setConfirmDelete: (vehicle: Vehicle) => void;
     isDeleting: string | null;
     isUpdatingStatus?: string | null; // Novo prop para loading do status
+    vehicleUpdates: Record<string, string> // Add this field
 }
 
 export const VehicleRow = ({ 

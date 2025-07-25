@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRandomVehicles } from "~/src/hooks/useRandomVehicle";
 import { Button } from "~/src/components/ui/button";
-import { VehicleCard } from "../../template/card/card";
+import { VehicleCard } from "~/src/components/common/Vehiclecard";
 import { Skeleton } from "~/src/components/ui/skeleton";
 import { ArrowRight, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router";

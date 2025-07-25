@@ -10,9 +10,10 @@ interface VehicleTableProps {
     setHoveredVehicle: (vehicleId: string | null) => void;
     isFavorite: (vehicleId: string) => boolean;
     toggleFavorite: (vehicleId: string) => void;
-    handleStatusChange: (vehicleId: string, status: Vehicle['status']) => void;
+    handleStatusChange: (vehicleId: string, status: Vehicle['status']) => Promise<void>
     setConfirmDelete: (vehicle: Vehicle) => void;
     isDeleting: string | null;
+    vehicleUpdates: Record<string, string>;
 }
 
 const fadeIn = {

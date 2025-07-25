@@ -32,15 +32,16 @@ import { toast } from "sonner";
 
 // Interface para as props do VehicleCard
 interface VehicleCardProps {
-  vehicle: Vehicle;
-  index: number;
-  hoveredVehicle: string | null;
-  setHoveredVehicle: (vehicleId: string | null) => void;
-  isFavorite: (vehicleId: string) => boolean;
-  toggleFavorite: (vehicleId: string) => Promise<void> | void;
-  handleStatusChange: (vehicleId: string, status: Vehicle["status"]) => Promise<void> | void;
-  setConfirmDelete: (vehicle: Vehicle) => void;
-  isDeleting: string | null;
+    vehicle: Vehicle;
+    index: number;
+    hoveredVehicle: string | null;
+    setHoveredVehicle: (vehicleId: string | null) => void;
+    isFavorite: (vehicleId: string) => boolean;
+    toggleFavorite: (vehicleId: string) => Promise<void> | void;
+    handleStatusChange: (vehicleId: string, status: Vehicle["status"]) => Promise<void> | void;
+    setConfirmDelete: (vehicle: Vehicle) => void;
+    isDeleting: string | null;
+    vehicleUpdates: Record<string, string> // Add this field
 }
 
 const fadeIn = {

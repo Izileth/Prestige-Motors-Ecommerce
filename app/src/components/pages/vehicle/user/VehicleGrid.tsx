@@ -12,6 +12,7 @@ interface VehicleGridProps {
     handleStatusChange: (vehicleId: string, status: Vehicle['status']) => void;
     setConfirmDelete: (vehicle: Vehicle) => void;
     isDeleting: string | null;
+    vehicleUpdates: Record<string, string>;
 }
 
 const staggerContainer = {

@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router";
 
 import { Button } from "~/src/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
-import VehicleDetailsSkeleton from "~/src/components/layout/skeleton/id";
+import VehicleDetailsSkeleton from "~/src/components/layout/skeleton/VehicleDetailsSkeleton";
 import { X, ChevronLeft } from "lucide-react";
 
 import useVehicle from "~/src/hooks/useVehicle";
