@@ -160,10 +160,36 @@ export function UserVehicleList() {
 
     if (error) {
         return (
-            <Alert variant="destructive" className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-                <AlertTitle className="text-red-600 dark:text-red-400">Erro</AlertTitle>
-                <AlertDescription className="text-red-600 dark:text-red-400">{error}</AlertDescription>
-            </Alert>
+        <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
+            >
+              <div className="flex flex-col items-center gap-6">
+                {/* Ilustração SVG */}
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-gray-400 dark:text-gray-600"
+                >
+                  <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">
+                    104!
+                  </h1>
+                </motion.div>
+
+                <div className="px-6 gap-4 flex flex-col items-center">
+                  <h3 className="text-lg font-light text-gray-800 dark:text-gray-200">
+                    Falha ao carregar veículos
+                  </h3>
+                  <p className="text-gray-500 text-md dark:text-gray-400 font-light">
+                    Não foi possível carregar os veículos no momento. Por favor,
+                    tente novamente.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
         );
     }
 

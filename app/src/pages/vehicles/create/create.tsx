@@ -117,7 +117,7 @@ const CreateVehiclePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-16">
+    <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 py-2 md:py-8  px-0 md:px-8">
       <FormProvider {...form}>
         <FormHeader
           formProgress={formProgress}

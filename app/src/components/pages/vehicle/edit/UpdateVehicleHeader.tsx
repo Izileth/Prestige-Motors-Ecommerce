@@ -17,7 +17,7 @@ export function UpdateVehicleHeader({
   formProgress,
 }: UpdateVehicleHeaderProps) {
   return (
-    <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm shadow-sm py-4">
+    <div className="sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm shadow-sm py-4">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <Button

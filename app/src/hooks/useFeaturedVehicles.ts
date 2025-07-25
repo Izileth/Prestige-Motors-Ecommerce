@@ -1,19 +1,18 @@
-import { useEffect, useState, useCallback, useRef,  } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import useVehicle from './useVehicle';
 import type { Vehicle } from '../types/vehicle';
 import { CACHE_EXPIRY_MS } from '~/src/lib/cache';
 
 export const useFeaturedVehicles = (count: number = 4) => {
-    const { vehicles, loading, fetchVehicles } = useVehicle();
+    const { vehicles, loading, fetchVehicles, error: fetchError } = useVehicle();
     const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
+    const [error, setError] = useState<Error | null>(null);
     const lastFetchTime = useRef<number>(0);
     const isMounted = useRef(true);
     
-    // Função para selecionar veículos aleatórios
     const selectRandomVehicles = useCallback((vehicleList: Vehicle[]) => {
         if (vehicleList.length <= count) return [...vehicleList];
         
-        // Usar uma cópia e método estável para shuffle
         const shuffled = [...vehicleList];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -22,10 +21,10 @@ export const useFeaturedVehicles = (count: number = 4) => {
         return shuffled.slice(0, count);
     }, [count]);
     
-    // Carrega veículos apenas se necessário
     const loadFeaturedVehicles = useCallback(async (forceRefresh = false) => {
         if (!isMounted.current) return;
         
+        setError(null); // Reset error before new request
         const now = Date.now();
         const shouldFetch =
             forceRefresh ||
@@ -36,23 +35,24 @@ export const useFeaturedVehicles = (count: number = 4) => {
             try {
                 await fetchVehicles();
                 lastFetchTime.current = Date.now();
-            } catch (error) {
-                console.error('Failed to fetch vehicles:', error);
+            } catch (err) {
+                if (isMounted.current) {
+                    setError(err instanceof Error ? err : new Error('Failed to fetch vehicles'));
+                }
+                throw err; // Re-throw to allow components to handle
             }
         }
     }, [fetchVehicles, vehicles.length]);
     
-    // Carrega os veículos no mount e quando dependências mudam
     useEffect(() => {
         isMounted.current = true;
-        loadFeaturedVehicles();
+        loadFeaturedVehicles().catch(() => {}); // Error already handled
         
         return () => {
             isMounted.current = false;
         };
     }, [loadFeaturedVehicles]);
     
-    // Atualiza os veículos em destaque quando a lista muda
     useEffect(() => {
         if (vehicles.length > 0 && isMounted.current) {
             setFeaturedVehicles(selectRandomVehicles(vehicles));
@@ -62,6 +62,7 @@ export const useFeaturedVehicles = (count: number = 4) => {
     return {
         featuredVehicles,
         loading,
+        error: error || fetchError, // Combine both possible error sources
         refresh: () => loadFeaturedVehicles(true),
     };
 };

@@ -112,7 +112,7 @@ export const VehiclesByCategoryPage = () => {
       <div
         ref={resultsRef}
         className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 ${
-          scrolled ? "py-4 shadow-sm" : "py-8"
+          scrolled ? "py-4 shadow-none" : "py-8"
         }`}
       >
         <div className="container mx-auto px-4 mt-4">
@@ -121,21 +121,31 @@ export const VehiclesByCategoryPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col"
+              className="flex flex-col gap-2"
             >
-              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
-                {filters.categoria
-                  ? `VEÍCULOS DA CATEGORIA DE ${getCategoryName(
-                      filters.categoria
-                    ).toUpperCase()}`
-                  : "TODOS OS VEÍCULOS"}
-              </h1>
+              <div className="flex items-center gap-2 border-0 shadow-none flex-wrap">
+                <h1 className="text-2xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
+                  {filters.categoria ? "VEÍCULOS" : "TODOS OS VEÍCULOS"}
+                </h1>
+                
+                {filters.categoria && (
+                  <div className="relative">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm md:text-2xl font-medium bg-gradient-to-r from-zinc-950 to-zinc-900 text-white">
+                      {formatCategoryName(filters.categoria)}
+                      <motion.span 
+                        className="absolute -inset-1 -z-10 rounded-full bg-gradient-to-r from-primary/30 to-secondary/30 blur-sm"
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ repeat: Infinity, repeatType: "mirror", duration: 3 }}
+                      />
+                    </span>
+                  </div>
+                )}
+              </div>
+
               {vehicles.length > 0 && !loading && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {vehicles.length}{" "}
-                  {vehicles.length === 1
-                    ? "resultado encontrado"
-                    : "resultados encontrados"}
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {vehicles.length} {vehicles.length === 1 ? "resultado" : "resultados"} encontrados
                 </p>
               )}
             </motion.div>
@@ -218,141 +228,140 @@ export const VehiclesByCategoryPage = () => {
         </AnimatePresence>
 
         {/* Vehicle listing */}
-        <div className="py-8 px-4">
-          {error ? (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
-            >
-              <div className="flex flex-col items-center gap-6">
-                {/* Ilustração SVG */}
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-gray-400 dark:text-gray-600"
-                >
-                  <svg
-                    width="120"
-                    height="120"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
-                </motion.div>
 
-                <div className="space-y-3">
-                  <h3 className="text-xl font-light text-gray-800 dark:text-gray-200">
-                    Falha ao carregar veículos
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 font-light">
-                    Não foi possível carregar os veículos no momento. Por favor,
-                    tente novamente.
-                  </p>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={filters.categoria || 'all'}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="py-8 px-4"
+          >
+            <div className="py-8 px-4">
+            {error ? (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
+              >
+                <div className="flex flex-col items-center gap-6">
+                  {/* Ilustração SVG */}
+                  <motion.div
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-gray-400 dark:text-gray-600"
+                  >
+                    <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">104!</h1>
+                  </motion.div>
+
+                  <div className="px-6 gap-4 flex flex-col items-center">
+                    <h3 className="text-lg font-light text-gray-800 dark:text-gray-200">
+                      Falha ao carregar veículos
+                    </h3>
+                    <p className="text-gray-500 text-md dark:text-gray-400 font-light">
+                      Não foi possível carregar os veículos no momento. Por favor,
+                      tente novamente.
+                    </p>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="px-6 py-2 text-sm bg-transparent text-gray-800 dark:text-gray-200 font-light rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
+                    onClick={() => fetchVehicles(filters)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="animate-spin"
+                    >
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                    Tentar novamente...
+                  </motion.button>
                 </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-6 py-2 text-sm bg-transparent text-gray-800 dark:text-gray-200 font-light rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
-                  onClick={() => fetchVehicles(filters)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="animate-spin"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                  Tentar novamente
-                </motion.button>
+              </motion.div>
+            ) : loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {[...Array(6)].map((_, i) => (
+                  <VehicleCardSkeleton key={i} />
+                ))}
               </div>
-            </motion.div>
-          ) : loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(6)].map((_, i) => (
-                <VehicleCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : vehicles.length > 0 ? (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.1,
-                  },
-                },
-              }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-            >
-              {vehicles.map((vehicle) => (
-                <motion.div
-                  key={vehicle.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: { duration: 0.4 },
+            ) : vehicles.length > 0 ? (
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1,
                     },
-                  }}
-                >
-                  <VehicleCard
-                    vehicle={vehicle}
-                    isFavorite={favorites.some((v) => v.id === vehicle.id)}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-16 border border-gray-100 dark:border-gray-800 rounded-none"
-            >
-              <div className="max-w-md mx-auto space-y-4">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto">
-                  <Search className="w-6 h-6 text-gray-400 dark:text-gray-600" />
+                  },
+                }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              >
+                {vehicles.map((vehicle) => (
+                  <motion.div
+                    key={vehicle.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 0.4 },
+                      },
+                    }}
+                  >
+                    <VehicleCard
+                      vehicle={vehicle}
+                      isFavorite={favorites.some((v) => v.id === vehicle.id)}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-16 border border-gray-100 dark:border-gray-800 rounded-none"
+              >
+                <div className="max-w-md mx-auto space-y-4">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto">
+                    <Search className="w-6 h-6 text-gray-400 dark:text-gray-600" />
+                  </div>
+                  <h3 className="text-xl font-light text-gray-900 dark:text-gray-100">
+                    Nenhum veículo encontrado
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Não encontramos veículos que correspondam aos seus critérios
+                    de busca.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={resetFilters}
+                    className="mt-4 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900"
+                  >
+                    Limpar filtros
+                  </Button>
                 </div>
-                <h3 className="text-xl font-light text-gray-900 dark:text-gray-100">
-                  Nenhum veículo encontrado
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Não encontramos veículos que correspondam aos seus critérios
-                  de busca.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={resetFilters}
-                  className="mt-4 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900"
-                >
-                  Limpar filtros
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </div>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+      </AnimatePresence>
 
         {/* Show more button */}
         {vehicles.length > 0 && !loading && (
@@ -380,8 +389,10 @@ export const VehiclesByCategoryPage = () => {
   );
 };
 
-// Helper for category names
-const getCategoryName = (id: string) => {
+
+
+// Adicione esta função acima do componente principal
+const formatCategoryName = (id: string) => {
   const map: Record<string, string> = {
     SUV: "SUV",
     SPORTS_CAR: "Esportivos",
@@ -391,5 +402,11 @@ const getCategoryName = (id: string) => {
     CLASSIC: "Clássicos",
     RETRO_SUPER: "Retro Super",
   };
-  return map[id] || id;
+  
+  // Remove underlines e formata para título
+  const formatted = map[id] || id.replace(/_/g, ' ');
+  return formatted
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };

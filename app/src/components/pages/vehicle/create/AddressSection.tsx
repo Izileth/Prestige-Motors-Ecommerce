@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { VehicleAddressManager } from "~/src/components/pages/vehicle/create/address-manager";
+import { VehicleAddressManager } from "~/src/components/pages/vehicle/create/AddressManager";
 import {
   Card,
   CardHeader,
@@ -24,7 +24,7 @@ export function VehicleAddressSection({
   const handleAddressSuccess = () => {
     // Força uma re-validação do formulário após mudanças no endereço
     setValue("localizacao", {}, { shouldValidate: true });
-    
+
     // Opcional: Disparar um refresh dos dados do formulário
     // Isso ajuda a sincronizar o estado do formulário com os dados atualizados
     console.log("✅ Endereço atualizado com sucesso!");
