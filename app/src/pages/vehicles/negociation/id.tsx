@@ -44,7 +44,7 @@ export const NegotiationDetailsPage = () => {
         fetchNegotiationById,
         fetchMessages,
         fetchHistory,
-        clearError,
+        clearErrors,
     } = useNegotiations({
         negotiationId: id,
         withMessages: true,
@@ -169,7 +169,6 @@ export const NegotiationDetailsPage = () => {
         await cancelNegotiation(id)
 
         toast("Negociação cancelada com sucesso.")
-        // Redirect to negotiations list
         navigate("/vehicles/negotiations")
         } catch (error) {
         toast("Não foi possível cancelar a negociação. Tente novamente.")
@@ -212,7 +211,7 @@ export const NegotiationDetailsPage = () => {
             <ErrorMessage
             message={error}
             onRetry={() => {
-                clearError()
+                clearErrors()
                 if (id) {
                 fetchNegotiationById(id)
                 }

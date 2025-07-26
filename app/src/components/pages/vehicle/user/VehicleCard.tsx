@@ -41,7 +41,8 @@ interface VehicleCardProps {
     handleStatusChange: (vehicleId: string, status: Vehicle["status"]) => Promise<void> | void;
     setConfirmDelete: (vehicle: Vehicle) => void;
     isDeleting: string | null;
-    vehicleUpdates: Record<string, string> // Add this field
+    vehicleUpdates: Record<string, string> 
+    statusUpdating: Record<string, boolean>; 
 }
 
 const fadeIn = {

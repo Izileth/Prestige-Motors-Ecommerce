@@ -25,7 +25,7 @@ const NegotiationsPage = () => {
     
     const {
         createNegotiation,
-        clearError: clearNegotiationError,
+        clearErrors: clearNegotiationError,
         isLoading: negotiationLoading,
         error: negotiationError
     } = useNegotiationStore();

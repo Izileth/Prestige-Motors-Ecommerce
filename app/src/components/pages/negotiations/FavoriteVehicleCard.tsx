@@ -42,7 +42,7 @@ export const FavoriteVehicleCard = ({
     messagesEndRef
     }: FavoriteVehicleCardProps) => {
     const { user } = useAuth();
-    const { createNegotiation, isLoading, error, clearError } = useNegotiationStore();
+    const { createNegotiation, isLoading, error, clearErrors } = useNegotiationStore();
       
     const [localMessage, setLocalMessage] = useState("");
     const [messageSent, setMessageSent] = useState(false);
@@ -81,7 +81,7 @@ export const FavoriteVehicleCard = ({
         setLocalError(err instanceof Error ? err.message : 'Erro ao iniciar negociação');
         setTimeout(() => {
             setLocalError(null);
-            clearError();
+            clearErrors();
         }, 5000);
         }
     };

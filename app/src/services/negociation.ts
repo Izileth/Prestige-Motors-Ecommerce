@@ -24,6 +24,7 @@ export const negotiationService = {
     async getAll(status?: string): Promise<Negotiation[]> {
         const params = status ? { status } : {};
         const response = await api.get('/negotiations/user', { params });
+        console.log( 'Negociações Encontradas!', response.data);
         return response.data.data;
     },
 
@@ -44,7 +45,7 @@ export const negotiationService = {
         payload: AddMessagePayload
     ): Promise<NegotiationMessage> {
         const response = await api.post(
-            `/negotiations/${negotiationId}/messages`, 
+            `/negotiations/${negotiationId}/menssages`, 
             payload
         );
         return response.data;

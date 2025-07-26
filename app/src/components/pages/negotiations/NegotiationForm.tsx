@@ -39,10 +39,6 @@ export const NegotiationForm = ({ vehicle, messagesEndRef }: NegotiationFormProp
         }).format(value);
     };
 
-    // Função para converter string monetária para número
-    const parsePriceString = (priceString: string): number => {
-        return Number(priceString.replace(/[^\d]/g, ''));
-    };
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^\d]/g, '');

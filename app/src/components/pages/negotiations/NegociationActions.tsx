@@ -1,5 +1,4 @@
 import { Button } from "~/src/components/ui/button";
-import { Input } from "~/src/components/ui/input";
 import { Label } from "~/src/components/ui/label";
 import { Textarea } from "~/src/components/ui/textarea";
 import { useState, useEffect } from "react";
@@ -14,8 +13,9 @@ import {
     Info
 } from "lucide-react";
 import { Alert, AlertDescription } from "~/src/components/ui/alert";
-import { useCurrentPrice } from "~/src/hooks/useCurrentPrices";
-
+import{ MoneyUtils } from "~/src/utils/money";
+import { useMoneyInput } from "~/src/hooks/useInputValues";
+import { MoneyInput } from "./NegotiationImputValue";
 interface NegotiationActionsProps {
     negotiationId: string;
     currentPrice: number;
@@ -31,25 +31,27 @@ export const NegotiationActions = ({
     negotiationId,
     currentPrice,
     originalPrice,
+    
     onAccept,
     onReject,
     onCounter,
     disabled = false,
     isLoading = false
 }: NegotiationActionsProps) => {
-    const [newPrice, setNewPrice] = useState(currentPrice);
-    const [rejectReason, setRejectReason] = useState("");
-    const [acceptPrice, setAcceptPrice] = useState(currentPrice);
+    const [rejectReason, setRejectReason] = useState("");;
+    const counterPrice = useMoneyInput(currentPrice);
+    const acceptPrice = useMoneyInput(currentPrice);
     const [activeAction, setActiveAction] = useState<"accept" | "reject" | "counter" | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
   
 
     // Reset do preço quando a oferta atual muda
+
     useEffect(() => {
         if (activeAction === null) {
-        setNewPrice(currentPrice);
-        setAcceptPrice(currentPrice);
+            counterPrice.setCents(currentPrice);
+            acceptPrice.setCents(currentPrice);
         }
     }, [currentPrice, activeAction]);
 
@@ -72,10 +74,15 @@ export const NegotiationActions = ({
     };
 
     // Cálculos de diferença
-    const getPriceDifference = (newPrice: number, basePrice: number) => {
-        const diff = newPrice - basePrice;
-        const percentage = ((diff / basePrice) * 100).toFixed(1);
-        return { diff, percentage };
+ 
+    const getPriceDifference = (newPriceCents: number, basePriceCents: number) => {
+        const diffCents = newPriceCents - basePriceCents;
+        const percentage = ((diffCents / basePriceCents) * 100).toFixed(1);
+        return { 
+            diffCents, 
+            percentage,
+            diffFormatted: MoneyUtils.formatCentsWithSymbol(Math.abs(diffCents))
+        };
     };
 
     const handleAction = async (actionFn: () => Promise<void>, actionType: string) => {
@@ -94,21 +101,21 @@ export const NegotiationActions = ({
     };
 
     const handleCounterSubmit = () => {
-        const error = validateCounterPrice(newPrice);
+        const error = validateCounterPrice(counterPrice.cents);
         if (error) {
         setErrors({ counter: error });
         return;
         }
-        handleAction(() => onCounter(newPrice), 'counter');
+        handleAction(() => onCounter(counterPrice.cents), 'counter');
     };
 
     const handleAcceptSubmit = () => {
-        const error = validateAcceptPrice(acceptPrice);
+        const error = validateAcceptPrice(acceptPrice.cents);
         if (error) {
         setErrors({ accept: error });
         return;
         }
-        handleAction(() => onAccept(acceptPrice), 'accept');
+        handleAction(() => onAccept(acceptPrice.cents), 'accept');
     };
 
     const handleRejectSubmit = () => {
@@ -125,7 +132,7 @@ export const NegotiationActions = ({
             <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Ações da Negociação</h3>
             <div className="text-sm text-muted-foreground">
-                Oferta Inicial - R$ {currentPrice.toLocaleString('pt-BR')}
+                Oferta Inicial - {MoneyUtils.formatCentsWithSymbol(currentPrice)}
             </div>
             </div>
         </CardHeader>
@@ -203,33 +210,31 @@ export const NegotiationActions = ({
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground">
                         R$
                     </span>
-                    <Input
-                        id="accept-price"
-                        type="number"
-                        value={acceptPrice}
-                        onChange={(e) => {
-                        setAcceptPrice(Number(e.target.value));
-                        if (errors.accept) {
-                            setErrors(prev => ({ ...prev, accept: "" }));
-                        }
-                        }}
-                        className="pl-8"
-                        placeholder="0,00"
-                    />
+                    <MoneyInput
+                                id="accept-price"
+                                value={acceptPrice.cents}
+                                onChange={(cents) => {
+                                    acceptPrice.setCents(cents);
+                                    if (errors.accept) {
+                                        setErrors(prev => ({ ...prev, accept: "" }));
+                                    }
+                                }}
+                                error={errors.accept}
+                            />
                     </div>
-                    {acceptPrice !== currentPrice && (
-                    <div className="text-sm text-muted-foreground">
-                        {acceptPrice > currentPrice ? (
-                        <span className="text-green-600">
-                            +R$ {(acceptPrice - currentPrice).toLocaleString('pt-BR')} acima da oferta
-                        </span>
-                        ) : (
-                        <span className="text-red-600">
-                            -R$ {(currentPrice - acceptPrice).toLocaleString('pt-BR')} abaixo da oferta
-                        </span>
-                        )}
-                    </div>
-                    )}
+                      {acceptPrice.cents !== currentPrice && (
+                                <div className="text-sm text-muted-foreground">
+                                    {acceptPrice.cents > currentPrice ? (
+                                        <span className="text-green-600">
+                                            +{getPriceDifference(acceptPrice.cents, currentPrice).diffFormatted} acima da oferta
+                                        </span>
+                                    ) : (
+                                        <span className="text-red-600">
+                                            -{getPriceDifference(currentPrice, acceptPrice.cents).diffFormatted} abaixo da oferta
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                     {errors.accept && (
                     <p className="text-sm text-red-600 flex items-center">
                         <AlertCircle className="h-4 w-4 mr-1" />
@@ -275,37 +280,35 @@ export const NegotiationActions = ({
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground">
                         R$
                     </span>
-                    <Input
-                        id="counter-price"
-                        type="number"
-                        value={newPrice}
-                        onChange={(e) => {
-                        setNewPrice(Number(e.target.value));
-                        if (errors.counter) {
-                            setErrors(prev => ({ ...prev, counter: "" }));
-                        }
-                        }}
-                        className="pl-8"
-                        placeholder="0,00"
-                    />
+                    <MoneyInput
+                                id="counter-price"
+                                value={counterPrice.cents}
+                                onChange={(cents) => {
+                                    counterPrice.setCents(cents);
+                                    if (errors.counter) {
+                                        setErrors(prev => ({ ...prev, counter: "" }));
+                                    }
+                                }}
+                                error={errors.counter}
+                            />
                     </div>
-                    {newPrice && newPrice !== currentPrice && (
-                    <div className="text-sm">
-                        {newPrice > currentPrice ? (
-                        <span className="text-green-600">
-                            <Calculator className="h-4 w-4 inline mr-1" />
-                            +R$ {(newPrice - currentPrice).toLocaleString('pt-BR')} 
-                            ({getPriceDifference(newPrice, currentPrice).percentage}%) acima da oferta atual
-                        </span>
-                        ) : (
-                        <span className="text-red-600">
-                            <Calculator className="h-4 w-4 inline mr-1" />
-                            -R$ {(currentPrice - newPrice).toLocaleString('pt-BR')} 
-                            ({Math.abs(Number(getPriceDifference(newPrice, currentPrice).percentage))}%) abaixo da oferta atual
-                        </span>
-                        )}
-                    </div>
-                    )}
+                    {counterPrice.cents && counterPrice.cents !== currentPrice && (
+                                <div className="text-sm">
+                                    {counterPrice.cents > currentPrice ? (
+                                        <span className="text-green-600">
+                                            <Calculator className="h-4 w-4 inline mr-1" />
+                                            +{getPriceDifference(counterPrice.cents, currentPrice).diffFormatted}
+                                            ({getPriceDifference(counterPrice.cents, currentPrice).percentage}%) acima da oferta atual
+                                        </span>
+                                    ) : (
+                                        <span className="text-red-600">
+                                            <Calculator className="h-4 w-4 inline mr-1" />
+                                            -{getPriceDifference(currentPrice, counterPrice.cents).diffFormatted}
+                                            ({Math.abs(Number(getPriceDifference(counterPrice.cents, currentPrice).percentage))}%) abaixo da oferta atual
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                     {errors.counter && (
                     <p className="text-sm text-red-600 flex items-center">
                         <AlertCircle className="h-4 w-4 mr-1" />

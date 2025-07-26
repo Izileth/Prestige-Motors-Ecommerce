@@ -51,6 +51,10 @@ interface VehicleState {
   fetchVehiclesByVendor: (vendorId: string) => Promise<void>;
   updateStatus: (id: string, status: string) => Promise<Vehicle>;
   uploadVehicleVideos: (vehicleId: string, file: File) => Promise<Vehicle>;
+  
+  updateVehicleStatusOptimistic: (id: string, status: string) => Promise<Vehicle>;
+  updateUserVehicleLocally: (vehicleId: string, updates: Partial<Vehicle>) => void;
+  rollbackVehicleUpdate: (vehicleId: string, originalVehicle: Vehicle) => void;
 
   // Reducers
   resetVehicleState: () => void;
@@ -457,6 +461,105 @@ export const useVehicleStore = create<VehicleState>()(
         }
       },
 
+       updateVehicleStatusOptimistic: async (id: string, status: string) => {
+        const state = get();
+        
+        // Encontra o veículo original para possível rollback
+        const originalVehicle = state.userVehicles.find(v => v.id === id);
+        
+        if (!originalVehicle) {
+          throw new Error('Vehicle not found');
+        }
+
+        try {
+    
+          // 1. Atualiza o estado local (sem alterar loading para true)
+          set((currentState) => ({
+            userVehicles: currentState.userVehicles.map((v) =>
+              v.id === id ? { ...v, status: status as "DISPONIVEL" | "VENDIDO" | "RESERVADO" } : v
+            ),
+            vehicles: currentState.vehicles.map((v) =>
+              v.id === id ? { ...v, status: status as "DISPONIVEL" | "VENDIDO" | "RESERVADO" } : v
+            ),
+            currentVehicle:
+              currentState.currentVehicle?.id === id 
+                ? { ...currentState.currentVehicle, status: status as "DISPONIVEL" | "VENDIDO" | "RESERVADO" }
+                : currentState.currentVehicle,
+            error: null // Limpa erros anteriores
+          }))
+
+          // 2. Faz a requisição para o servidor (sem alterar loading para true)
+          const updatedVehicle = await vehicleService.updateVehicleStatus(id, status);
+          
+          // 3. Confirma o update com os dados do servidor (caso haja diferenças)
+          set((currentState) => ({
+            userVehicles: currentState.userVehicles.map((v) =>
+              v.id === id ? updatedVehicle : v
+            ),
+            vehicles: currentState.vehicles.map((v) =>
+              v.id === id ? updatedVehicle : v
+            ),
+            currentVehicle:
+              currentState.currentVehicle?.id === id 
+                ? updatedVehicle
+                : currentState.currentVehicle,
+            success: true
+          }));
+
+          return updatedVehicle;
+
+        } catch (error) {
+          // 4. Rollback em caso de erro
+          set((currentState) => ({
+            userVehicles: currentState.userVehicles.map((v) =>
+              v.id === id ? originalVehicle : v
+            ),
+            vehicles: currentState.vehicles.map((v) =>
+              v.id === id ? originalVehicle : v
+            ),
+            currentVehicle:
+              currentState.currentVehicle?.id === id 
+                ? originalVehicle
+                : currentState.currentVehicle,
+            error: error instanceof Error 
+              ? error.message 
+              : "Failed to update vehicle status",
+            success: false
+          }));
+          
+          throw error;
+        }
+      },
+
+      // Função auxiliar para update local
+      updateUserVehicleLocally: (vehicleId: string, updates: Partial<Vehicle>) => {
+        set((state) => ({
+          userVehicles: state.userVehicles.map(vehicle =>
+            vehicle.id === vehicleId 
+              ? { ...vehicle, ...updates }
+              : vehicle
+          ),
+          vehicles: state.vehicles.map(vehicle =>
+            vehicle.id === vehicleId 
+              ? { ...vehicle, ...updates }
+              : vehicle
+          )
+        }));
+      },
+
+      // Função para rollback
+      rollbackVehicleUpdate: (vehicleId: string, originalVehicle: Vehicle) => {
+        set((state) => ({
+          userVehicles: state.userVehicles.map(vehicle =>
+            vehicle.id === vehicleId ? originalVehicle : vehicle
+          ),
+          vehicles: state.vehicles.map(vehicle =>
+            vehicle.id === vehicleId ? originalVehicle : vehicle
+          )
+        }));
+      },
+    
+
       updateStatus: async (id, status) => {
         set({ loading: true, error: null, success: false });
         try {
@@ -471,7 +574,7 @@ export const useVehicleStore = create<VehicleState>()(
             loading: false,
             success: true,
           }));
-          return vehicle;
+          return vehicle; // ✅ Retorna apenas o veículo atualizado
         } catch (error) {
           set({
             loading: false,
@@ -541,7 +644,6 @@ export const useVehicleStore = create<VehicleState>()(
     {
       name: "vehicle-storage",
       partialize: (state) => ({
-        // Persistir apenas os dados necessários
         favorites: state.favorites,
         userVehicles: state.userVehicles,
       }),

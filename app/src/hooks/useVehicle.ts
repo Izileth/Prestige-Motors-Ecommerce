@@ -43,6 +43,7 @@ const useVehicle = () => {
     registerVehicleView,
     fetchVehicleViews,
     updateStatus,
+    updateVehicleStatusOptimistic,
     deleteVehicleImage,
     resetVehicleState,
     setCurrentVehicle
@@ -111,13 +112,18 @@ const useVehicle = () => {
     }
   }, [updateVehicle]);
 
+
+
   const updateStatusWithHandling = useCallback(async (id: string, status: string) => {
-    try {
-      return await updateStatus(id, status);
-    } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Failed to update vehicle status');
-    }
-  }, [updateStatus]);
+  try {
+    // Usa apenas a função otimista do store
+    return await updateVehicleStatusOptimistic(id, status);
+  } catch (error) {
+    // O rollback já é feito automaticamente no store
+    throw new Error(error instanceof Error ? error.message : 'Failed to update vehicle status');
+  }
+}, [updateVehicleStatusOptimistic]);
+    
 
   const deleteImageWithHandling = useCallback(async (vehicleId: string, imageUrl: string) => {
     try {
@@ -167,6 +173,7 @@ const useVehicle = () => {
     deleteVehicleImage: deleteImageWithHandling,
     resetVehicleState,
     setCurrentVehicle,
+    updateVehicleStatus: updateStatusWithHandling,
 
     // Métodos utilitários
     isFavorite: isFavoriteSafe, // Usando a versão segura

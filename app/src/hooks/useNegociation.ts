@@ -32,7 +32,7 @@ export const useNegotiations = (options?: {
         fetchMessages,
         fetchHistory,
         resetCurrentNegotiation,
-        clearError
+        clearErrors
     } = useNegotiationStore();
 
     // Memoriza as negociações filtradas por status
@@ -100,7 +100,7 @@ export const useNegotiations = (options?: {
         fetchNegotiationById,
         fetchMessages,
         fetchHistory,
-        clearError,
+        clearErrors,
         
         // Utilitários
         isEmpty: !isLoading && filteredNegotiations.length === 0,

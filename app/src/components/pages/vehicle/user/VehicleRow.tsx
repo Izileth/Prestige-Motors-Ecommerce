@@ -22,6 +22,7 @@ interface VehicleRowProps {
     isDeleting: string | null;
     isUpdatingStatus?: string | null; // Novo prop para loading do status
     vehicleUpdates: Record<string, string> // Add this field
+    statusUpdating: Record<string, boolean>; 
 }
 
 export const VehicleRow = ({ 

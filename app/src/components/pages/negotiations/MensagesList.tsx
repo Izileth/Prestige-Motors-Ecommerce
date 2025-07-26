@@ -21,6 +21,9 @@ import type { NegotiationMessage, MessageType, AddMessagePayload } from '~/src/t
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { MoneyUtils } from '~/src/utils/money';
+import { useMoneyInput } from '~/src/hooks/useInputValues';
+import { MoneyInput } from './NegotiationImputValue';
 interface MessageListProps {
     messages: NegotiationMessage[];
     currentUserId: string;
@@ -170,7 +173,8 @@ export const MessageList = ({
     const [newMessage, setNewMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
     const [messageType, setMessageType] = useState<'TEXTO' | 'OFERTA' | 'CONTRA_OFERTA'>('TEXTO'); // NOVO
-    const [offerPrice, setOfferPrice] = useState<string>(''); // NOVO
+     
+    const offerPrice = useMoneyInput(currentPrice);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { addMessage } = useNegotiationStore();
 
@@ -186,12 +190,10 @@ export const MessageList = ({
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
-   
+      
     const handleSendMessage = async () => {
-        // Validações baseadas no tipo
         if (messageType === 'TEXTO' && (!newMessage.trim() || isSending || !canSendMessage)) return;
-        if ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && (!offerPrice.trim() || isSending || !canSendOffer)) return;
+        if ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && (!offerPrice.isValid || isSending || !canSendOffer)) return;
 
         setIsSending(true);
         try {
@@ -203,12 +205,10 @@ export const MessageList = ({
                 await addMessage(negotiationId, payload);
                 setNewMessage('');
             } else if ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && onSendOffer) {
-                const price = parseFloat(offerPrice.replace(/[^\d,]/g, '').replace(',', '.'));
-                await onSendOffer(price, messageType);
-                setOfferPrice('');
+                await onSendOffer(offerPrice.cents, messageType); // ENVIA EM CENTAVOS
+                offerPrice.setCents(currentPrice); // Reset
             }
             
-            // Reset para texto após envio
             setMessageType('TEXTO');
             toast('Mensagem enviada com sucesso.');
         } catch (error) {
@@ -218,7 +218,6 @@ export const MessageList = ({
             setIsSending(false);
         }
     };
-    
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -325,7 +324,7 @@ export const MessageList = ({
                                 size="sm"
                                 onClick={() => {
                                     setMessageType('TEXTO');
-                                    setOfferPrice('');
+                                    setNewMessage('');
                                 }}
                                 className={messageType === 'TEXTO' ? 'bg-gray-800 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
                             >
@@ -385,21 +384,16 @@ export const MessageList = ({
                                         {messageType === 'OFERTA' ? 'Nova Oferta' : 'Contraproposta'}
                                     </span>
                                 </div>
-                                <input
-                                    type="text"
-                                    value={offerPrice}
-                                    onChange={(e) => {
-                                        const value = e.target.value.replace(/[^\d.,]/g, '');
-                                        setOfferPrice(value);
-                                    }}
-                                    placeholder="Digite o valor (ex: 50000,00)"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-gray-500 text-gray-800"
+                                <MoneyInput
+                                    value={offerPrice.cents}
+                                    onChange={(cents) => offerPrice.setCents(cents)}
+                                    placeholder="Digite o valor"
                                     disabled={isSending}
                                 />
                                 {currentPrice > 0 && (
-                                    <div className="text-xs text-gray-600">
-                                        Valor atual: R$ {currentPrice.toLocaleString("pt-BR")}
-                                    </div>
+                                <div className="text-xs text-gray-600">
+                                    Valor atual: {MoneyUtils.formatCentsWithSymbol(currentPrice)}
+                                </div>
                                 )}
                             </div>
                         )}
@@ -409,7 +403,7 @@ export const MessageList = ({
                             onClick={handleSendMessage}
                             disabled={
                                 (messageType === 'TEXTO' && !newMessage.trim()) ||
-                                ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && !offerPrice.trim()) ||
+                                ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && !offerPrice.cents) ||
                                 isSending
                             }
                             size="lg"
@@ -426,7 +420,7 @@ export const MessageList = ({
                         {messageType === 'TEXTO' 
                             ? `${newMessage.length}/500 caracteres`
                             : offerPrice 
-                                ? `Valor: R$ ${parseFloat(offerPrice.replace(/[^\d,]/g, '').replace(',', '.') || '0').toLocaleString("pt-BR")}`
+                                ? `Valor: R$ ${parseFloat(offerPrice.formattedWithSymbol).toFixed(2)}`
                                 : 'Digite um valor'
                         }
                     </span>

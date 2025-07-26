@@ -17,6 +17,7 @@ import {
 import type { StatusFilter } from "~/src/components/pages/vehicle/user";
 
 import type { Vehicle } from "~/src/types/vehicle";
+import { toast } from "sonner";
 const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -50,6 +51,9 @@ export function UserVehicleList() {
     const [confirmDelete, setConfirmDelete] = useState<Vehicle | null>(null);
     const [viewMode, setViewMode] = useState<"table" | "grid">("table");
     const [showFilters, setShowFilters] = useState(false);
+    
+    const [statusUpdating, setStatusUpdating] = useState<Record<string, boolean>>({});
+
     
     const [vehicleUpdates, setVehicleUpdates] = useState<Record<string, string>>({});
 
@@ -114,28 +118,38 @@ export function UserVehicleList() {
     };
 
 
+
+
     const handleStatusChange = async (vehicleId: string, newStatus: string) => {
-        // Armazena o status sendo atualizado temporariamente
-        setVehicleUpdates(prev => ({ ...prev, [vehicleId]: newStatus }));
+        setStatusUpdating(prev => ({ ...prev, [vehicleId]: true }));
+        
+
+        const previousVehicles = [...userVehicles];
+        const updatedVehicles = userVehicles.map(vehicle => 
+            vehicle.id === vehicleId 
+                ? { ...vehicle, status: newStatus }
+                : vehicle
+        );
         
         try {
+      
             await updateStatus(vehicleId, newStatus);
-            // Remove da lista de updates temporários após sucesso
-            setVehicleUpdates(prev => {
-                const updated = { ...prev };
-                delete updated[vehicleId];
-                return updated;
-            });
+            
+
+            await fetchData();
+            
+            toast.success("Status atualizado com sucesso!");
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
-            // Remove da lista de updates em caso de erro
-            setVehicleUpdates(prev => {
-                const updated = { ...prev };
-                delete updated[vehicleId];
-                return updated;
-            });
+            
+            toast.error("Erro ao atualizar status!");
+        } finally {
+            setTimeout(() => {
+                setStatusUpdating(prev => ({ ...prev, [vehicleId]: false }));
+            }, 500);
         }
-};
+    };
+
 
     const isFavorite = (vehicleId: string) => {
         return Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId);
@@ -229,6 +243,7 @@ export function UserVehicleList() {
                             setConfirmDelete={setConfirmDelete}
                             isDeleting={isDeleting}
                             vehicleUpdates={vehicleUpdates}
+                            statusUpdating={statusUpdating}
                         />
                     ) : (
                         <VehicleGrid
@@ -241,6 +256,7 @@ export function UserVehicleList() {
                             setConfirmDelete={setConfirmDelete}
                             isDeleting={isDeleting}
                             vehicleUpdates={vehicleUpdates}
+                            statusUpdating={statusUpdating}
                         />
                     )}
                 </CardContent>
