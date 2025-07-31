@@ -26,6 +26,8 @@ import {
 import { useNegotiationStore } from '~/src/store/slices/negociation';
 import type { RespondNegotiationPayload } from '~/src/types/negociation';
 
+import { NegotiationPageSkeleton } from '~/src/components/layout/skeleton/NegotiationsSkeleton';
+
 import { toast } from 'sonner';
 
 export const NegotiationDetailsPage = () => {
@@ -196,12 +198,7 @@ export const NegotiationDetailsPage = () => {
 
     if (isLoading) {
         return (
-        <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="flex flex-col items-center space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-700" />
-            <p className="text-sm text-gray-600">Carregando negociação...</p>
-            </div>
-        </div>
+            <NegotiationPageSkeleton/>
         )
     }
 

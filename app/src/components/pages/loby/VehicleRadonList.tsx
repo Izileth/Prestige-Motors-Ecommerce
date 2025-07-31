@@ -128,10 +128,8 @@ export function RandomVehicles() {
                 </motion.div>
               ))}
             </motion.div>
+            
           )}
-        </AnimatePresence>
-
-        {/* Rodapé */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -150,6 +148,8 @@ export function RandomVehicles() {
             />
           </Button>
         </motion.div>
+        </AnimatePresence>
+     
       </div>
     </section>
   );

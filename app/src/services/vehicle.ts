@@ -18,38 +18,77 @@ import type {
   ReviewCreateInput,
 } from "../types/reviews";
 
+import { extractIdFromSlug , createSlug} from "../utils/slugify";
+
 import type { VehicleUpdateInput } from "../types/inputs";
 
 import type { VehicleStatsData } from "~/src/components/common/VehicleStatistics";
 import type { UserStats } from "~/src/types/user";
 
 export const vehicleService = {
+   
   async getVehicles(params?: VehicleSearchParams): Promise<Vehicle[]> {
-    // Limpa parâmetros undefined/null/empty
-    const cleanParams = Object.fromEntries(
-      Object.entries(params || {}).filter(
-        ([_, v]) => v !== undefined && v !== null && v !== ""
-      )
-    );
+        const cleanParams = Object.fromEntries(
+            Object.entries(params || {}).filter(
+                ([_, v]) => v !== undefined && v !== null && v !== ""
+            )
+        );
 
-    console.log("Enviando parâmetros para API:", cleanParams); // Debug
+        const response = await api.get("/vehicles", {
+            params: cleanParams,
+            paramsSerializer: {
+                indexes: null,
+            },
+        });
 
-    const response = await api.get("/vehicles", {
-      params: cleanParams,
-      paramsSerializer: {
-        indexes: null, // Evita notação de colchetes nos arrays
-      },
-    });
+        const vehicles = response.data?.data || [];
+        
+        // Adiciona slug mascarado a cada veículo
+        return vehicles.map((vehicle: Vehicle) => ({
+            ...vehicle,
+            slug: createSlug(
+                vehicle.marca, 
+                vehicle.modelo, 
+                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
+                vehicle.id
+            )
+        }));
+    },
+   
+    async getVehicleBySlug(slug: string): Promise<Vehicle> {
+        const id = extractIdFromSlug(slug);
+        const response = await api.get(`/vehicles/${id}`);
+        const vehicle = response.data;
+        
+        // Adiciona slug ao veículo retornado
+        return {
+            ...vehicle,
+            slug: createSlug(
+                vehicle.marca, 
+                vehicle.modelo, 
+                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
+                vehicle.id
+            )
+        };
+    },
 
-    console.log("Resposta da API:", response.config.url); // Verifique a URL final
-    return response.data?.data || [];
-  },
+
+
 
   async getVehicleById(id: string): Promise<Vehicle> {
-    const response = await api.get(`/vehicles/${id}`);
-    console.log("Veículo Encontrado!", response.data);
-    return response.data;
-  },
+        const response = await api.get(`/vehicles/${id}`);
+        const vehicle = response.data;
+        
+        return {
+            ...vehicle,
+            slug: createSlug(
+                vehicle.marca, 
+                vehicle.modelo, 
+                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
+                vehicle.id
+            )
+        };
+    },
 
   async createVehicle(data: VehicleCreateInput): Promise<Vehicle> {
     const response = await api.post<Vehicle>("/vehicles", data);

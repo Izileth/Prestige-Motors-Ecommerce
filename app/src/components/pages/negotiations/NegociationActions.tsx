@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription } from "~/src/components/ui/alert";
 import{ MoneyUtils } from "~/src/utils/money";
+
 import { useMoneyInput } from "~/src/hooks/useInputValues";
 import { MoneyInput } from "./NegotiationImputValue";
 interface NegotiationActionsProps {
@@ -75,16 +76,20 @@ export const NegotiationActions = ({
 
     // Cálculos de diferença
  
+
+
     const getPriceDifference = (newPriceCents: number, basePriceCents: number) => {
         const diffCents = newPriceCents - basePriceCents;
-        const percentage = ((diffCents / basePriceCents) * 100).toFixed(1);
+        const percentage = basePriceCents > 0 
+            ? ((diffCents / basePriceCents) * 100).toFixed(1)
+            : '0.0';
+        
         return { 
             diffCents, 
             percentage,
             diffFormatted: MoneyUtils.formatCentsWithSymbol(Math.abs(diffCents))
         };
     };
-
     const handleAction = async (actionFn: () => Promise<void>, actionType: string) => {
         setActionLoading(true);
         setErrors({});
@@ -132,7 +137,8 @@ export const NegotiationActions = ({
             <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Ações da Negociação</h3>
             <div className="text-sm text-muted-foreground">
-                Oferta Inicial - {MoneyUtils.formatCentsWithSymbol(currentPrice)}
+            Oferta Inicial - R$ {currentPrice.toLocaleString('pt-BR')}
+            
             </div>
             </div>
         </CardHeader>
@@ -140,20 +146,21 @@ export const NegotiationActions = ({
         <CardContent className="space-y-4">
             {/* Informações contextuais */}
             {originalPrice && originalPrice !== currentPrice && (
-            <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                {currentPrice > originalPrice ? (
-                    <span className="text-green-600">
-                    Oferta {getPriceDifference(currentPrice, originalPrice).percentage}% acima do preço original
-                    </span>
-                ) : (
-                    <span className="text-red-600">
-                    Oferta {Math.abs(Number(getPriceDifference(currentPrice, originalPrice).percentage))}% abaixo do preço original
-                    </span>
-                )}
-                </AlertDescription>
-            </Alert>
+                <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertDescription>
+                        {currentPrice > originalPrice ? (
+                            <span className="text-green-600">
+                                Oferta {getPriceDifference(currentPrice, originalPrice).percentage}% acima do preço original
+                            </span>
+                        ) : (
+                            <span className="text-red-600">
+                                {/* CORREÇÃO: Usar Math.abs no percentage também */}
+                                Oferta {Math.abs(parseFloat(getPriceDifference(currentPrice, originalPrice).percentage))}% abaixo do preço original
+                            </span>
+                        )}
+                    </AlertDescription>
+                </Alert>
             )}
 
             {/* Botões principais */}
@@ -222,19 +229,19 @@ export const NegotiationActions = ({
                                 error={errors.accept}
                             />
                     </div>
-                      {acceptPrice.cents !== currentPrice && (
-                                <div className="text-sm text-muted-foreground">
-                                    {acceptPrice.cents > currentPrice ? (
-                                        <span className="text-green-600">
-                                            +{getPriceDifference(acceptPrice.cents, currentPrice).diffFormatted} acima da oferta
-                                        </span>
-                                    ) : (
-                                        <span className="text-red-600">
-                                            -{getPriceDifference(currentPrice, acceptPrice.cents).diffFormatted} abaixo da oferta
-                                        </span>
-                                    )}
-                                </div>
+                    {acceptPrice.cents !== currentPrice && (
+                        <div className="text-sm text-muted-foreground">
+                            {acceptPrice.cents > currentPrice ? (
+                                <span className="text-green-600">
+                                    +{getPriceDifference(acceptPrice.cents, currentPrice).diffFormatted} acima da oferta
+                                </span>
+                            ) : (
+                                <span className="text-red-600">
+                                    -{getPriceDifference(currentPrice, acceptPrice.cents).diffFormatted} abaixo da oferta
+                                </span>
                             )}
+                        </div>
+                    )}        
                     {errors.accept && (
                     <p className="text-sm text-red-600 flex items-center">
                         <AlertCircle className="h-4 w-4 mr-1" />
@@ -293,22 +300,23 @@ export const NegotiationActions = ({
                             />
                     </div>
                     {counterPrice.cents && counterPrice.cents !== currentPrice && (
-                                <div className="text-sm">
-                                    {counterPrice.cents > currentPrice ? (
-                                        <span className="text-green-600">
-                                            <Calculator className="h-4 w-4 inline mr-1" />
-                                            +{getPriceDifference(counterPrice.cents, currentPrice).diffFormatted}
-                                            ({getPriceDifference(counterPrice.cents, currentPrice).percentage}%) acima da oferta atual
-                                        </span>
-                                    ) : (
-                                        <span className="text-red-600">
-                                            <Calculator className="h-4 w-4 inline mr-1" />
-                                            -{getPriceDifference(currentPrice, counterPrice.cents).diffFormatted}
-                                            ({Math.abs(Number(getPriceDifference(counterPrice.cents, currentPrice).percentage))}%) abaixo da oferta atual
-                                        </span>
-                                    )}
-                                </div>
-                            )}
+                            <div className="text-sm">
+                                {counterPrice.cents > currentPrice ? (
+                                    <span className="text-green-600">
+                                        <Calculator className="h-4 w-4 inline mr-1" />
+                                        +{getPriceDifference(counterPrice.cents, currentPrice).diffFormatted}
+                                        ({getPriceDifference(counterPrice.cents, currentPrice).percentage}%) acima da oferta atual
+                                    </span>
+                                ) : (
+                                    <span className="text-red-600">
+                                        <Calculator className="h-4 w-4 inline mr-1" />
+                                        -{getPriceDifference(currentPrice, counterPrice.cents).diffFormatted}
+                                        {/* CORREÇÃO: Calcular percentage corretamente para valores negativos */}
+                                        ({Math.abs(parseFloat(getPriceDifference(counterPrice.cents, currentPrice).percentage))}%) abaixo da oferta atual
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     {errors.counter && (
                     <p className="text-sm text-red-600 flex items-center">
                         <AlertCircle className="h-4 w-4 mr-1" />

@@ -3,6 +3,7 @@ import type { Negotiation } from "./negociation";
 // Vehicle Interface
 export interface Vehicle {
     id: string;
+    slug?: string; 
     marca: string;
     modelo: string;
     anoFabricacao: number;

@@ -143,8 +143,8 @@ const VehicleStatistics = () => {
     // Error state
     if (error || !stats) {
         return (
-            <div className="w-full bg-transparent p-6">
-                <p className="text-sm text-red-600">{error || "Não foi possível carregar as estatísticas"}</p>
+            <div className="w-full bg-transparent py-2 flex flex-row gap-2"  >
+                <h1 className="font-medium text-sm">101!</h1><p className="text-sm text-zinc-900">{error || "Não foi possível carregar as estatísticas"}</p>
             </div>
         )
     }

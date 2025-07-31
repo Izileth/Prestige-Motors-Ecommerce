@@ -114,13 +114,7 @@ const VehicleListingPage = () => {
     }
   };
 
-  const handlePriceChange = (value: number[]) => {
-    setSearchParams({
-      ...searchParams,
-      precoMin: value[0],
-      precoMax: value[1],
-    });
-  };
+
 
   const resetFilters = () => {
     setSearchParams({});
@@ -337,6 +331,7 @@ const VehicleListingPage = () => {
               </motion.div>
 
               <div className="space-y-3">
+                <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">104!</h1>
                 <h3 className="text-xl font-light text-gray-800 dark:text-gray-200">
                   Falha ao carregar veículos
                 </h3>
@@ -394,7 +389,8 @@ const VehicleListingPage = () => {
                 transition={{ duration: 0.5 }}
                 className="text-center py-16 px-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800"
               >
-                <h3 className="text-xl font-medium mb-2 text-gray-900 dark:text-gray-100">
+                <h1 className="text-9xl font-semibold mb-2 text-gray-900 dark:text-gray-100">101!</h1>
+                <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-gray-100">
                   Nenhum veículo encontrado
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">

@@ -20,7 +20,7 @@ const VehicleHeader: React.FC<VehicleHeaderProps> = ({
 
   return (
     <div
-      className={`sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300  ${
+      className={`sticky top-0 z-10 bg-transparent dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300  ${
         scrolled ? "shadow-sm py-3" : "py-6"
       }`}
     >

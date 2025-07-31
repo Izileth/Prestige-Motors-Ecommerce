@@ -1,18 +1,30 @@
-// stores/reviewStore.ts
 import { create } from 'zustand';
 import vehicleService from '~/src/services/vehicle';
-import type { ReviewsStore } from '~/src/types/reviews';
-export const useReviewStore = create<ReviewsStore>((set, get) => ({
-    // Estado inicial
+import type { Review, ReviewStats, ReviewCreateInput, ReviewUpdateInput } from '~/src/types/reviews';
+
+interface ReviewState {
+    reviews: Record<string, Review[]>;
+    stats: Record<string, ReviewStats>;
+    loading: boolean;
+    error: string | null;
+}
+
+interface ReviewActions {
+    fetchReviews: (vehicleId: string) => Promise<void>;
+    fetchStats: (vehicleId: string) => Promise<void>;
+    createReview: (data: ReviewCreateInput) => Promise<Review>;
+    updateReview: (reviewId: string, data: ReviewUpdateInput) => Promise<Review>;
+    deleteReview: (reviewId: string) => Promise<void>;
+    clearError: () => void;
+}
+
+export const useReviewStore = create<ReviewState & ReviewActions>((set, get) => ({
     reviews: {},
     stats: {},
     loading: false,
     error: null,
 
-    // Ações
-    fetchReviews: async (vehicleId) => {
-        if (get().reviews[vehicleId]) return;
-
+    fetchReviews: async (vehicleId: string) => {
         set({ loading: true, error: null });
         try {
             const reviews = await vehicleService.getVehicleReviews(vehicleId);
@@ -22,15 +34,13 @@ export const useReviewStore = create<ReviewsStore>((set, get) => ({
             }));
         } catch (error) {
             set({ 
-                error: error instanceof Error ? error.message : 'Failed to fetch reviews',
-                loading: false
+                error: error instanceof Error ? error.message : 'Erro ao carregar avaliações',
+                loading: false 
             });
         }
     },
 
-    fetchStats: async (vehicleId) => {
-        if (get().stats[vehicleId]) return;
-
+    fetchStats: async (vehicleId: string) => {
         set({ loading: true, error: null });
         try {
             const stats = await vehicleService.getReviewStats(vehicleId);
@@ -40,96 +50,85 @@ export const useReviewStore = create<ReviewsStore>((set, get) => ({
             }));
         } catch (error) {
             set({ 
-                error: error instanceof Error ? error.message : 'Failed to fetch stats',
-                loading: false
+                error: error instanceof Error ? error.message : 'Erro ao carregar estatísticas',
+                loading: false 
             });
         }
     },
 
-    
-
-    // No seu arquivo de store (reviewStore.ts)
-    createReview: async (vehicleId, data) => {  // Adicione o parâmetro data
+    // ✅ CORRIGIDO: createReview no store
+    createReview: async (data: ReviewCreateInput) => {
         set({ loading: true, error: null });
         try {
-            const newReview = await vehicleService.createReview({
-                vehicleId,
-                rating: data.rating,  // Use o rating do formulário
-                comentario: data.comentario || ''  // Use o comentário do formulário
-            });
+            console.log('Store createReview - data:', data);
+            
+            const newReview = await vehicleService.createReview(data);
+            const { vehicleId } = data;
             
             set(state => ({
                 reviews: {
                     ...state.reviews,
                     [vehicleId]: [...(state.reviews[vehicleId] || []), newReview]
                 },
-                stats: {}, // Invalida cache de stats
                 loading: false
             }));
             
             return newReview;
         } catch (error) {
-            set({ 
-                error: error instanceof Error ? error.message : 'Failed to create review',
-                loading: false
-            });
+            const errorMessage = error instanceof Error ? error.message : 'Erro ao criar avaliação';
+            set({ error: errorMessage, loading: false });
             throw error;
         }
     },
 
-    updateReview: async (reviewId, data) => {
+    updateReview: async (reviewId: string, data: ReviewUpdateInput) => {
         set({ loading: true, error: null });
         try {
+            console.log('Store updateReview - reviewId:', reviewId);
+            console.log('Store updateReview - data:', data);
+            
             const updatedReview = await vehicleService.updateReview(reviewId, data);
-            set(state => {
-                const updatedReviews = { ...state.reviews };
-                for (const vehicleId in updatedReviews) {
-                    const index = updatedReviews[vehicleId].findIndex(r => r.id === reviewId);
-                    if (index !== -1) {
-                        updatedReviews[vehicleId] = [...updatedReviews[vehicleId]];
-                        updatedReviews[vehicleId][index] = updatedReview;
-                        return {
-                            reviews: updatedReviews,
-                            stats: {},
-                            loading: false
-                        };
-                    }
-                }
-                return { loading: false };
-            });
+            const vehicleId = data.vehicleId || updatedReview.vehicleId;
+            
+            set(state => ({
+                reviews: {
+                    ...state.reviews,
+                    [vehicleId]: (state.reviews[vehicleId] || []).map(review =>
+                        review.id === reviewId ? updatedReview : review
+                    )
+                },
+                loading: false
+            }));
+            
             return updatedReview;
         } catch (error) {
-            set({ 
-                error: error instanceof Error ? error.message : 'Failed to update review',
-                loading: false
-            });
+            const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar avaliação';
+            set({ error: errorMessage, loading: false });
             throw error;
         }
     },
 
-    deleteReview: async (reviewId) => {
+    deleteReview: async (reviewId: string) => {
         set({ loading: true, error: null });
         try {
+            console.log('Store deleteReview - reviewId:', reviewId);
+            
             await vehicleService.deleteReview(reviewId);
-            set(state => {
-                const updatedReviews = { ...state.reviews };
-                for (const vehicleId in updatedReviews) {
-                    updatedReviews[vehicleId] = updatedReviews[vehicleId].filter(r => r.id !== reviewId);
-                }
-                return {
-                    reviews: updatedReviews,
-                    stats: {},
-                    loading: false
-                };
-            });
-        } catch (error) {
-            set({ 
-                error: error instanceof Error ? error.message : 'Failed to delete review',
+            
+            // Remove a review de todos os veículos (já que não sabemos qual veículo)
+            set(state => ({
+                reviews: Object.keys(state.reviews).reduce((acc, vehicleId) => {
+                    acc[vehicleId] = state.reviews[vehicleId].filter(review => review.id !== reviewId);
+                    return acc;
+                }, {} as Record<string, Review[]>),
                 loading: false
-            });
+            }));
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir avaliação';
+            set({ error: errorMessage, loading: false });
             throw error;
         }
     },
 
-    clearReviews: () => set({ reviews: {}, stats: {}, error: null })
+    clearError: () => set({ error: null })
 }));

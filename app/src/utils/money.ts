@@ -1,4 +1,3 @@
-
 export class MoneyUtils {
   static stringToCents(value: string): number {
     if (!value || typeof value !== 'string') return 0;
@@ -20,7 +19,6 @@ export class MoneyUtils {
     }
     
     // Se só tem ponto, pode ser separador de milhar ou decimal
-    // Assume decimal se tem exatamente 2 dígitos após o último ponto
     const parts = cleaned.split('.');
     if (parts.length >= 2 && parts[parts.length - 1].length === 2) {
       // É decimal: "1234.56" -> 123456
@@ -34,18 +32,10 @@ export class MoneyUtils {
     }
   }
 
-  /**
-   * Converte centavos (inteiro) para reais (float)
-   * 123456 -> 1234.56
-   */
   static centsToReais(cents: number): number {
     return cents / 100;
   }
 
-  /**
-   * Formata centavos para string brasileira
-   * 123456 -> "1.234,56"
-   */
   static formatCents(cents: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -53,10 +43,6 @@ export class MoneyUtils {
     }).format(cents / 100).replace('R$', '').trim();
   }
 
-  /**
-   * Formata centavos para display com R$
-   * 123456 -> "R$ 1.234,56"
-   */
   static formatCentsWithSymbol(cents: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -64,9 +50,35 @@ export class MoneyUtils {
     }).format(cents / 100);
   }
 
-  /**
-   * Valida se o valor é um valor monetário válido
-   */
+  // CORREÇÃO: Método applyMoneyMask corrigido
+  static applyMoneyMask(value: string): string {
+    // Remove tudo exceto dígitos
+    const numbers = value.replace(/\D/g, '');
+    
+    if (!numbers) return '';
+    
+    // Trata como centavos: "1234" vira 1234 centavos = R$ 12,34
+    // Se quiser tratar como reais, descomente a linha abaixo:
+    // const cents = parseInt(numbers) * 100;
+    const cents = parseInt(numbers);
+    return this.formatCents(cents);
+  }
+
+  // NOVO: Método para aplicar máscara tratando como reais
+  static applyMoneyMaskAsReais(value: string): string {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    const cents = parseInt(numbers) * 100; // Trata como reais inteiros
+    return this.formatCents(cents);
+  }
+
+  // NOVO: Método para extrair centavos de string formatada brasileira
+  static extractCentsFromFormattedString(formattedValue: string): number {
+    // Remove R$ e espaços, depois converte
+    const cleaned = formattedValue.replace(/R\$\s*/, '');
+    return this.stringToCents(cleaned);
+  }
+
   static isValidAmount(value: string | number): boolean {
     if (typeof value === 'number') {
       return value >= 0 && Number.isFinite(value);
@@ -75,20 +87,4 @@ export class MoneyUtils {
     const cents = this.stringToCents(value);
     return cents >= 0;
   }
-
-  /**
-   * Máscara para input de dinheiro
-   * Aplica formatação enquanto o usuário digita
-   */
-  static applyMoneyMask(value: string): string {
-    // Remove tudo exceto dígitos
-    const numbers = value.replace(/\D/g, '');
-    
-    if (!numbers) return '';
-    
-    // Converte para centavos e formata
-    const cents = parseInt(numbers);
-    return this.formatCents(cents);
-  }
 }
-

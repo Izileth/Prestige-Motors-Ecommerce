@@ -22,10 +22,12 @@ import VehicleSidebar from "~/src/components/pages/vehicle/id/VehicleSidebar";
 import VehicleReviews from "~/src/components/pages/vehicle/id/VehicleReviews";
 import VehicleRecommendationsGrid from "~/src/components/pages/vehicle/id/VehicleRadomGrid";
 
-import { toast } from "sonner"
-;
+import { toast } from "sonner";
+
+import { createSlug, extractIdFromSlug } from "~/src/utils/slugify";
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>(); 
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
 
@@ -40,7 +42,9 @@ const VehicleDetailsPage = () => {
     fetchUserFavorites,
   } = useVehicle();
 
-  const { createReview: createVehicleReview, updateReview, deleteReview } = useReviews(id);
+  const vehicleId = slug ? extractIdFromSlug(slug) : undefined;
+  
+  const { createReview: createVehicleReview, updateReview, deleteReview } = useReviews(vehicleId);
 
   const [reviewForm, setReviewForm] = useState<{
     mode: 'create' | 'edit';
@@ -49,24 +53,38 @@ const VehicleDetailsPage = () => {
   }>({ 
     mode: 'create',
     data: {
-      vehicleId: id !== undefined ? id : "",
+      vehicleId: vehicleId || "",
       rating: 5,
       comentario: "",
     }
   });
 
+  useEffect(() => {
+    if (vehicleId && reviewForm.data.vehicleId !== vehicleId) {
+      setReviewForm(prev => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          vehicleId: vehicleId
+        }
+      }));
+      console.log("ReviewForm atualizado com vehicleId:", vehicleId);
+    }
+  }, [vehicleId]);
+    
+
   const [isPostingReview, setIsPostingReview] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [vehicleError, setVehicleError] = useState<VehicleError | null>(null);
-
+  
   useEffect(() => {
-    if (!id) return;
+    if (!vehicleId) return;
 
     let isMounted = true;
 
     const loadData = async () => {
       try {
-        await fetchVehicleById(id);
+        await fetchVehicleById(vehicleId); 
         if (isMounted) {
           await fetchUserFavorites();
         }
@@ -80,7 +98,8 @@ const VehicleDetailsPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [vehicleId]); 
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -124,49 +143,78 @@ const VehicleDetailsPage = () => {
     }
   };
 
+
+
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
+    
+   
+    if (!vehicleId) {
+      console.error("Vehicle ID is required for review submission");
+      setVehicleError({
+        message: 'ID do veículo não encontrado',
+        type: 'api'
+      });
+      return;
+    }
 
     try {
       setIsPostingReview(true);
       
       if (reviewForm.mode === 'create') {
         await createVehicleReview({ 
-            vehicleId: id,
+            vehicleId: vehicleId, 
             rating: reviewForm.data.rating,
             comentario: reviewForm.data.comentario
         });
+        toast.success("Avaliação enviada com sucesso!");
       } else if (reviewForm.mode === 'edit' && reviewForm.editingId) {
         await updateReview(reviewForm.editingId, {
           ...reviewForm.data,
           id: reviewForm.editingId
         });
+        toast.success("Avaliação atualizada com sucesso!");
       }
       
+    
       setReviewForm({
         mode: 'create',
-        data: { vehicleId: id, rating: 5, comentario: "" }
+        data: { vehicleId: vehicleId, rating: 5, comentario: "" }
       });
       setVehicleError(null);
       
-      await fetchVehicleById(id);
+    
+      await fetchVehicleById(vehicleId);
     } catch (error) {
       const err = error as Error;
       setVehicleError({
         message: err.message || 'Não foi possível enviar sua avaliação',
         type: 'api'
       });
+      console.error("Erro ao enviar avaliação:", error);
+
+      toast.error("Erro ao processar avaliação");
     } finally {
       setIsPostingReview(false);
     }
   };
 
-  const handleEditReview = (review: Review) => {
+
+   const handleEditReview = (review: Review) => {
+
+    if (!vehicleId) {
+      console.error("Vehicle ID is required for editing review");
+      setVehicleError({
+        message: 'ID do veículo não encontrado',
+        type: 'api'
+      });
+      return;
+    }
+
     setReviewForm({
       mode: 'edit',
       data: {
-        vehicleId: review.vehicleId,
+        vehicleId: vehicleId, 
         rating: review.rating,
         comentario: review.comentario || ""
       },
@@ -174,33 +222,40 @@ const VehicleDetailsPage = () => {
     });
     
     document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' });
+    toast.info("Modo de edição ativado");
   };
 
-  const handleDeleteReview = async (reviewId: string) => {
+   const handleDeleteReview = async (reviewId: string) => {
     if (!window.confirm('Tem certeza que deseja excluir esta avaliação?')) return;
+    
+    if (!vehicleId) {
+      console.error("Vehicle ID is required for deleting review");
+      setVehicleError({
+        message: 'ID do veículo não encontrado',
+        type: 'api'
+      });
+      return;
+    }
     
     try {
       await deleteReview(reviewId);
-      if (id) {
-        await fetchVehicleById(id);
-      } else {
-        console.error("id is undefined");
-      }
+      
+      await fetchVehicleById(vehicleId);
       setVehicleError(null);
+      toast.success("Avaliação excluída com sucesso!");
     } catch (error) {
       const err = error as Error;
       setVehicleError({
         message: err.message || 'Não foi possível excluir a avaliação',
         type: 'api'
       });
+      toast.error("Erro ao excluir avaliação");
     }
   };
- 
 
-  const handleShare = async () => {
+   const handleShare = async () => {
     if (!currentVehicle) return;
 
-    // Informações essenciais do veículo
     const { 
       marca, 
       modelo, 
@@ -211,20 +266,19 @@ const VehicleDetailsPage = () => {
       quilometragem 
     } = currentVehicle;
 
+
     const shareUrl = window.location.href;
     const shareTitle = `${marca} ${modelo} (${anoFabricacao}/${anoModelo})`;
     
-    // Texto formatado com informações principais
     const shareText = `🚗 ${marca} ${modelo} (${anoFabricacao}/${anoModelo})
     
-    📍 Principais informações:
-    ✔️ ${preco ? `R$ ${preco.toLocaleString('pt-BR')}` : 'Preço sob consulta'}
-    ✔️ ${quilometragem ? `${quilometragem.toLocaleString('pt-BR')} km` : 'KM não informada'}
-    ✔️ Cor: ${cor || 'Não especificada'}
+      Principais informações:
+      ${preco ? `R$ ${preco.toLocaleString('pt-BR')}` : 'Preço sob consulta'}
+      ${quilometragem ? `${quilometragem.toLocaleString('pt-BR')} km` : 'KM não informada'}
+      Cor: ${cor || 'Não especificada'}
 
-    🔗 Ver mais detalhes: ${shareUrl}`;
+      Ver mais detalhes: ${shareUrl}`;
 
-    // Dados para compartilhamento
     const shareData: ShareData = {
       title: shareTitle,
       text: shareText,
@@ -232,26 +286,53 @@ const VehicleDetailsPage = () => {
     };
 
     try {
-      // Tenta usar a API de compartilhamento nativo
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback para copiar para área de transferência
         await navigator.clipboard.writeText(`${shareText}`);
         toast.success("Informações do veículo copiadas para a área de transferência!");
       }
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
-      // Fallback alternativo
       prompt("Copie as informações do veículo:", shareText);
       toast.error("Falha ao compartilhar, copiado para área de transferência!");
     }
   };
 
-  // Handler para clicar em uma recomendação
-  const handleRecommendationClick = (vehicle: any) => {
-    navigate(`/vehicles/${vehicle.id}`);
-  };
+
+    const handleRecommendationClick = (vehicle: any) => {
+      const newSlug = createSlug(
+        vehicle.marca, 
+        vehicle.modelo, 
+        vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
+        vehicle.id
+      );
+      navigate(`/vehicles/${newSlug}`);
+    };
+
+    // ✅ HELPER FUNCTION - cancelEditMode
+    const cancelEditMode = () => {
+      if (!vehicleId) return;
+      
+      setReviewForm({
+        mode: 'create',
+        data: { vehicleId: vehicleId, rating: 5, comentario: "" }
+      });
+      toast.info("Edição cancelada");
+    };
+
+  if (!slug) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">URL inválida</p>
+          <Button onClick={() => navigate('/vehicles')} className="mt-4">
+            Voltar para listagem
+          </Button>
+        </div>
+      </div>
+    );
+  }  
 
   if (loading) return <VehicleDetailsSkeleton />;
 
@@ -327,7 +408,7 @@ const VehicleDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 pb-16 md:px-6">
+    <div className="min-h-screen bg-white dark:bg-gray-950 pb-16 md:px-6">
       <VehicleHeader
         isFavorite={isFavorite(currentVehicle.id)}
         scrolled={scrolled}
@@ -342,7 +423,7 @@ const VehicleDetailsPage = () => {
           <div className="lg:col-span-2">
             <VehicleImageGallery vehicle={currentVehicle} />
             <VehicleDetails vehicle={currentVehicle} />
-            <VehicleReviews
+             <VehicleReviews
               reviews={currentVehicle.avaliacoes || []}
               user={user}
               reviewForm={reviewForm}
@@ -350,15 +431,17 @@ const VehicleDetailsPage = () => {
               onReviewSubmit={handleReviewSubmit}
               onEditReview={handleEditReview}
               onDeleteReview={handleDeleteReview}
-              onReviewFormChange={(field, value) =>
-                setReviewForm((prev) => ({ ...prev, data: { ...prev.data, [field]: value } }))
-              }
-              onCancelEdit={() =>
-                setReviewForm({
-                  mode: 'create',
-                  data: { vehicleId: id || "", rating: 5, comentario: "" },
-                })
-              }
+              onReviewFormChange={(field, value) => {
+                console.log("Form field changed:", field, value);
+                setReviewForm((prev) => ({ 
+                  ...prev, 
+                  data: { 
+                    ...prev.data, 
+                    [field]: field === 'rating' ? Number(value) : value // Garantir que rating é number
+                  } 
+                }));
+              }}
+              onCancelEdit={cancelEditMode}
               onNavigateToLogin={() => navigate("/login", { state: { from: location.pathname } })}
             />
           </div>

@@ -17,6 +17,9 @@ import { useNavigate } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import useVehicle from "~/src/hooks/useVehicle";
 import type { VehicleError } from "~/src/types/vehicle";
+
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
+
 interface VehicleCardProps {
     vehicle: Vehicle;
     isFavorite?: boolean;
@@ -38,6 +41,8 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         favorites,
         isFavorite: isFavoriteSafe // Use a versão segura do hook
     } = useVehicle();
+      
+    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat("pt-BR", {
@@ -94,7 +99,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             transition={{ duration: 0.3, delay: 0.05 * index }}
             className="w-full h-full"
         >
-        <Card onClick={() => navigate(`/vehicles/${vehicle.id}`)} className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
+        <Card onClick={() => navigateToVehicle(vehicle)} className="overflow-hidden border-0 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
             <div className="relative overflow-hidden group">
             {vehicle.imagens && vehicle.imagens.length > 0 ? (
                 <div className="overflow-hidden">
@@ -266,7 +271,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                 variant="default"
                 className="w-full rounded-md shadow-none bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
                 size="lg"
-                onClick={() => navigate(`/vehicles/${vehicle.id}`)}
+                onClick={() => navigateToVehicle(vehicle)}
             >
                 Ver detalhes
                 <ChevronRight

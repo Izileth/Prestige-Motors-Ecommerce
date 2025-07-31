@@ -79,22 +79,22 @@ export const VehiclesDestactsListing = ({
               >
                 <VehicleCard vehicle={vehicle} />
               </motion.div>
+              
             ))}
+            {featuredVehicles.length > 0 && (
+            <div className="flex justify-center mt-12">
+              <Button
+                onClick={handleVehicles}
+                variant="outline"
+                className="gap-2 border-none shadow-none bg-transparent"
+              >
+                Ver todos os veículos
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+          )}
       </div>
-
-      {/* Call to Action */}
-      {featuredVehicles.length > 0 && (
-        <div className="flex justify-center mt-12">
-          <Button
-            onClick={handleVehicles}
-            variant="outline"
-            className="gap-2 border-none shadow-none bg-transparent"
-          >
-            Ver todos os veículos
-            <ArrowRight size={16} />
-          </Button>
-        </div>
-      )}
+     
     </section>
   );
 };

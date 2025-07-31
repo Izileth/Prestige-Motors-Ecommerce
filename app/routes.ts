@@ -35,7 +35,7 @@ export default [
     route("vehicles/user", "routes/vehicle/user/list.tsx"),
 
     route("vehicles", "routes/vehicle/vehicle.tsx"),
-    route("vehicles/:id", "routes/vehicle/id/id.tsx"),
+    route("vehicles/:slug", "routes/vehicle/id/id.tsx"),
     route("vehicles/create", "routes/vehicle/create/create.tsx"),
     route("vehicles/edit/:id", "routes/vehicle/edit/edit.tsx"),
     

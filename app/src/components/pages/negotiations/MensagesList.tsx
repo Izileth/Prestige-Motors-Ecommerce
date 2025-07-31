@@ -69,7 +69,7 @@ const MessageBubble = ({ message, isOwn, showAvatar = true, isLast = false }: Me
         
         const messageDate = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
         
-        // FIX: Verificar se a data é válida
+    
         if (isNaN(messageDate.getTime())) {
             console.error('Data inválida recebida:', dateInput);
             return 'Data inválida';
@@ -84,15 +84,19 @@ const MessageBubble = ({ message, isOwn, showAvatar = true, isLast = false }: Me
         }
     };
 
+
     const extractPriceFromContent = (content: string, type: MessageType) => {
-        if (type === 'OFERTA' || type === 'CONTRA_OFERTA') {
-            const priceMatch = content.match(/R\$\s*([\d.,]+)/);
-            if (priceMatch) {
-                return priceMatch[1];
-            }
+    if (type === 'OFERTA' || type === 'CONTRA_OFERTA') {
+
+        const priceMatch = content.match(/R\$\s*([\d.,]+)/);
+        if (priceMatch) {
+            const extractedValue = priceMatch[1];
+            const cents = MoneyUtils.stringToCents(extractedValue);
+            return MoneyUtils.formatCents(cents); // Retorna apenas o valor sem R$
         }
-        return null;
-    };
+    }
+    return null;
+};
 
     const price = extractPriceFromContent(message.conteudo, message.tipo);
 
@@ -148,9 +152,14 @@ const MessageBubble = ({ message, isOwn, showAvatar = true, isLast = false }: Me
                 </div>
             )}
             {/* Price highlight for financial messages */}
+        
             {price && (
-                <div className={`text-lg font-bold mb-2 ${isOwn ? "text-white" : "text-gray-800"}`}>R$ {price}</div>
-            )}
+            <div className={`text-lg font-bold mb-2 ${isOwn ? "text-white" : "text-gray-800"}`}>
+                
+                R$ {price}
+            </div>
+        )}
+
             {/* Message content */}
             <div className="text-sm leading-relaxed whitespace-pre-wrap ">{message.conteudo}</div>
             </div>
@@ -392,7 +401,8 @@ export const MessageList = ({
                                 />
                                 {currentPrice > 0 && (
                                 <div className="text-xs text-gray-600">
-                                    Valor atual: {MoneyUtils.formatCentsWithSymbol(currentPrice)}
+                                    
+                                    Valor atual: {currentPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </div>
                                 )}
                             </div>
@@ -400,17 +410,17 @@ export const MessageList = ({
                     </div>
                     <div className="flex flex-col justify-end">
                         <Button
-                            onClick={handleSendMessage}
-                            disabled={
-                                (messageType === 'TEXTO' && !newMessage.trim()) ||
-                                ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && !offerPrice.cents) ||
-                                isSending
-                            }
-                            size="lg"
-                            className="h-[60px] px-6 bg-gray-800 text-white hover:bg-gray-700"
-                        >
-                            {isSending ? <Clock className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                        </Button>
+                        onClick={handleSendMessage}
+                        disabled={
+                            (messageType === 'TEXTO' && !newMessage.trim()) ||
+                            ((messageType === 'OFERTA' || messageType === 'CONTRA_OFERTA') && offerPrice.cents <= 0) ||
+                            isSending
+                        }
+                        size="lg"
+                        className="h-[60px] px-6 bg-gray-800 text-white hover:bg-gray-700"
+                    >
+                        {isSending ? <Clock className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
                     </div>
                 </div>
                 
@@ -419,8 +429,8 @@ export const MessageList = ({
                     <span>
                         {messageType === 'TEXTO' 
                             ? `${newMessage.length}/500 caracteres`
-                            : offerPrice 
-                                ? `Valor: R$ ${parseFloat(offerPrice.formattedWithSymbol).toFixed(2)}`
+                            : offerPrice.cents > 0
+                                ? `Valor: ${currentPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
                                 : 'Digite um valor'
                         }
                     </span>
