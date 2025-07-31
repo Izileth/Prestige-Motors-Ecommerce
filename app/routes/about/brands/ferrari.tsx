@@ -1,4 +1,4 @@
-import type { Route } from "./+types/ferrari.brand";
+import type { Route } from "./+types/ferrari";
 import FearriPage from "~/src/pages/about/brands/ferrari.brand";
 export function meta({}: Route.MetaArgs) {
     return [

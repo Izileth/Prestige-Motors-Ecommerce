@@ -1,4 +1,4 @@
-import type { Route } from "./+types/amg.brand";
+import type { Route } from "./+types/amg";
 import AmgPage from "~/src/pages/about/brands/amg.brand";
 export function meta({}: Route.MetaArgs) {
     return [

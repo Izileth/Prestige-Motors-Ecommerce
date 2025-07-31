@@ -1,280 +1,540 @@
 
-import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { motion, useScroll, useTransform, useInView } from "framer-motion"
+import { useRef, useEffect, useState } from "react"
 
-export default function LamborghiniPage() {
-  const [scrollY, setScrollY] = useState(0)
+const fadeInUp = {
+  initial: { opacity: 0, y: 60 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const slideInLeft = {
+  initial: { opacity: 0, x: -100 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const slideInRight = {
+  initial: { opacity: 0, x: 100 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const isInView = useInView(ref)
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" },
-  }
-
-  const staggerContainer = {
-    animate: {
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
+    if (isInView) {
+      let startTime: number
+      const animate = (currentTime: number) => {
+        if (!startTime) startTime = currentTime
+        const progress = Math.min((currentTime - startTime) / (duration * 1000), 1)
+        setCount(Math.floor(progress * end))
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        }
+      }
+      requestAnimationFrame(animate)
+    }
+  }, [isInView, end, duration])
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-gray-50 font-sans antialiased overflow-x-hidden">
+    <span ref={ref}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  )
+}
+
+export default function LamborghiniPage() {
+  const { scrollYProgress } = useScroll()
+  const heroRef = useRef(null)
+  const historyRef = useRef(null)
+  const milestonesRef = useRef(null)
+  const impactRef = useRef(null)
+
+  const heroIsInView = useInView(heroRef, { once: true })
+  const historyIsInView = useInView(historyRef, { once: true })
+  const milestonesIsInView = useInView(milestonesRef, { once: true })
+  const impactIsInView = useInView(impactRef, { once: true })
+
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
+
+  const milestones = [
+    {
+      year: "1966",
+      title: "Miura Revelado",
+      description:
+        "O Lamborghini Miura, considerado o primeiro verdadeiro supercarro, estabelece um novo padrão para layout de motor central e design deslumbrante.",
+    },
+    {
+      year: "1974",
+      title: "Era Countach",
+      description:
+        "O revolucionário Countach, com sua forma em cunha radical e portas em tesoura, define a estética dos supercarros por décadas.",
+    },
+    {
+      year: "1990",
+      title: "Diablo Ascende",
+      description:
+        "O Diablo assume o lugar do Countach, expandindo os limites de performance com seu potente motor V12 e estilo agressivo.",
+    },
+    {
+      year: "2001",
+      title: "Murciélago Decola",
+      description:
+        "O Murciélago, nomeado em homenagem a um lendário touro de lide, torna-se o modelo V12 principal, incorporando poder bruto e design dramático.",
+    },
+    {
+      year: "2003",
+      title: "Reinado do Gallardo",
+      description:
+        "O Gallardo, primeiro modelo V10 da Lamborghini, torna-se seu carro mais vendido, tornando a marca mais acessível enquanto mantém seu espírito essencial.",
+    },
+    {
+      year: "2018",
+      title: "Super SUV Urus",
+      description:
+        "O Urus, o primeiro Super Sport Utility Vehicle do mundo, combina o DNA de performance da Lamborghini com a versatilidade de um SUV.",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-white text-black font-light antialiased overflow-x-hidden">
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-0.5 bg-black z-50 origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-800 via-zinc-900 to-black">
-        <motion.div style={{ y: scrollY * 0.5 }} className="absolute inset-0 z-0">
+      <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
           <img
             src="https://i.pinimg.com/736x/2e/71/68/2e716836bc2c99fa4d030a77bdd847ed.jpg"
             alt="Lamborghini supercar with aggressive stance"
-            className="opacity-40 grayscale w-full h-full object-cover object-center bg-fixed"
+            className="object-cover object-center grayscale w-full h-full"
           />
+          <div className="absolute inset-0 bg-black/70" />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="relative z-10 text-center px-4 py-16"
+          animate={heroIsInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 1.2, ease: [0.6, -0.05, 0.01, 0.99] }}
+          className="relative z-10 text-center px-4"
         >
           <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className=" backdrop-blur-md rounded-3xl p-12 shadow-2xl "
+            initial={{ width: 0 }}
+            animate={heroIsInView ? { width: "100%" } : {}}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="h-px bg-white mb-8 mx-auto max-w-24"
+          />
+
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-6xl md:text-9xl font-thin tracking-[0.2em] text-white mb-6"
           >
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-6xl md:text-9xl font-black tracking-tighter leading-none text-gray-50 drop-shadow-2xl mb-6"
-            >
-              Lamborghini
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-xl md:text-3xl font-light text-gray-200 tracking-wide mb-8"
-            >
-              Unleashing the Raging Bull
-            </motion.p>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "100px" }}
-              transition={{ duration: 1, delay: 1 }}
-              className="h-1 bg-gradient-to-r from-zinc-600 via-zinc-950 to-zinc-800 mx-auto rounded-full"
-            />
-          </motion.div>
+            LAMBORGHINI
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-lg md:text-xl font-light text-white/80 tracking-widest mb-4"
+          >
+            LIBERTANDO O TOURO INDOMÁVEL
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-sm md:text-base font-light text-white/60 tracking-wide max-w-2xl mx-auto"
+          >
+            Onde a audácia italiana encontra a performance extrema
+          </motion.p>
+
+          <motion.div
+            initial={{ width: 0 }}
+            animate={heroIsInView ? { width: "100%" } : {}}
+            transition={{ duration: 1, delay: 1.1 }}
+            className="h-px bg-white mt-8 mx-auto max-w-24"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+            className="w-px h-16 bg-white/60"
+          />
         </motion.div>
       </section>
 
       {/* History Section */}
-      <section className="py-24 px-4 md:px-6 lg:py-32 bg-white text-gray-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100" />
-
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-          className="max-w-6xl mx-auto relative z-10"
-        >
-          <motion.h3
-            variants={fadeInUp}
-            className="text-6xl font-bold tracking-tight text-center mb-16 text-gray-900 relative"
+      <section ref={historyRef} className="py-32 px-4 md:px-6 bg-white relative">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={historyIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
           >
-            The Genesis of Fury
             <motion.div
               initial={{ width: 0 }}
-              whileInView={{ width: "80px" }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-gray-800 rounded-full"
+              animate={historyIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
             />
-          </motion.h3>
-
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div variants={fadeInUp} className="space-y-8">
-              <motion.p variants={fadeInUp} className="text-xl leading-relaxed">
-                Automobili Lamborghini S.p.A. was founded in 1963 by Ferruccio Lamborghini, a successful manufacturer of
-                tractors and industrial burners. Legend has it, a dispute with Enzo Ferrari over the quality of
-                Ferrari's clutches led Ferruccio to declare he could build a better car himself.
-              </motion.p>
-              <motion.p variants={fadeInUp} className="text-xl leading-relaxed">
-                From this audacious challenge, a new automotive force emerged, dedicated to creating grand touring cars
-                that were powerful, luxurious, and distinctively Italian, setting the stage for a legendary rivalry and
-                a legacy of groundbreaking supercars.
-              </motion.p>
-            </motion.div>
-
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">A GÊNESE DA FÚRIA</h2>
             <motion.div
-              variants={fadeInUp}
-              whileHover={{ scale: 1.02, rotateY: 5 }}
-              transition={{ duration: 0.3 }}
-              className="bg-gradient-to-br from-gray-100 to-gray-200 p-10 rounded-3xl shadow-xl"
+              initial={{ width: 0 }}
+              animate={historyIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div
+              variants={slideInLeft}
+              initial="initial"
+              animate={historyIsInView ? "animate" : "initial"}
+              className="space-y-8"
             >
-              <h4 className="text-3xl font-semibold mb-6 text-gray-900">Ferruccio Lamborghini</h4>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                "I wanted to make a perfect car, not a perfect Ferrari." - The visionary industrialist who dared to
-                challenge the established order and created a brand synonymous with extreme performance and bold design.
+              <p className="text-lg leading-relaxed text-gray-700 font-light">
+                A Automobili Lamborghini S.p.A. foi fundada em 1963 por Ferruccio Lamborghini, um bem-sucedido
+                fabricante de tratores e queimadores industriais. A lenda diz que uma discussão com Enzo Ferrari sobre a
+                qualidade das embreagens da Ferrari levou Ferruccio a declarar que ele mesmo poderia construir um carro
+                melhor.
+              </p>
+              <p className="text-lg leading-relaxed text-gray-700 font-light">
+                Desse desafio audacioso, surgiu uma nova força automotiva, dedicada a criar grand tourers potentes,
+                luxuosos e distintamente italianos, estabelecendo o cenário para uma rivalidade lendária e um legado de
+                supercarros inovadores.
               </p>
             </motion.div>
+
+            <motion.div
+              variants={slideInRight}
+              initial="initial"
+              animate={historyIsInView ? "animate" : "initial"}
+              className="relative"
+            >
+              <div className="bg-gray-50 p-8 border border-gray-200 relative group hover:border-black transition-colors duration-300">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-full bg-black origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <div className="relative z-10 group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-2xl font-light mb-4 tracking-wide">FERRUCCIO LAMBORGHINI</h3>
+                  <div className="w-12 h-px bg-current mb-4" />
+                  <p className="leading-relaxed font-light">
+                    "Eu queria fazer um carro perfeito, não uma Ferrari perfeita." - O visionário industrial que ousou
+                    desafiar a ordem estabelecida e criou uma marca sinônimo de performance extrema e design ousado.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* Milestones Section */}
-      <section className="py-24 px-4 md:px-6 lg:py-32 bg-zinc-900 text-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900" />
-
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-          className="max-w-7xl mx-auto relative z-10"
-        >
-          <motion.h3
-            variants={fadeInUp}
-            className="text-6xl font-bold tracking-tight text-center mb-20 text-gray-50 relative"
+      {/* Statistics Section */}
+      <section className="py-20 bg-black text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
-            Iconic Roars
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: "80px" }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-gray-400 rounded-full"
-            />
-          </motion.h3>
-
-          <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              {
-                year: "1966",
-                title: "Miura Unleashed",
-                description:
-                  "The Lamborghini Miura, often considered the first true supercar, sets a new standard for mid-engine layout and breathtaking design.",
-              },
-              {
-                year: "1974",
-                title: "Countach Era",
-                description:
-                  "The revolutionary Countach, with its radical wedge shape and scissor doors, defines the supercar aesthetic for decades to come.",
-              },
-              {
-                year: "1990",
-                title: "Diablo Ascends",
-                description:
-                  "The Diablo takes the reins from the Countach, pushing performance boundaries with its powerful V12 engine and aggressive styling.",
-              },
-              {
-                year: "2001",
-                title: "Murciélago Takes Flight",
-                description:
-                  "The Murciélago, named after a legendary fighting bull, becomes the flagship V12 model, embodying raw power and dramatic design.",
-              },
-              {
-                year: "2003",
-                title: "Gallardo's Reign",
-                description:
-                  "The Gallardo, Lamborghini's first V10 model, becomes its best-selling car, making the brand more accessible while retaining its core spirit.",
-              },
-              {
-                year: "2018",
-                title: "Urus Super SUV",
-                description:
-                  "The Urus, the world's first Super Sport Utility Vehicle, combines Lamborghini's performance DNA with SUV versatility, opening new markets.",
-              },
-            ].map((milestone, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                whileHover={{
-                  scale: 1.05,
-                  rotateY: 5,
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-                }}
-                transition={{ duration: 0.3 }}
-                className="group bg-gradient-to-br from-zinc-950 to-zinc-800 p-8 rounded-3xl shadow-2xl border border-zinc-900/50 cursor-pointer"
-              >
-                <motion.h4 className="text-3xl font-bold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
-                  {milestone.year}: {milestone.title}
-                </motion.h4>
-                <motion.p className="text-gray-300 leading-relaxed text-lg">{milestone.description}</motion.p>
+              { number: 1963, label: "ANO DE FUNDAÇÃO", suffix: "" },
+              { number: 60, label: "ANOS DE INOVAÇÃO", suffix: "+" },
+              { number: 350, label: "KM/H VELOCIDADE MÁXIMA", suffix: "+" },
+              { number: 14000, label: "GALLARDOS PRODUZIDOS", suffix: "+" },
+            ].map((stat, index) => (
+              <motion.div key={index} variants={fadeInUp} className="text-center group">
+                <div className="text-3xl md:text-4xl font-thin mb-2">
+                  <AnimatedCounter end={stat.number} suffix={stat.suffix} />
+                </div>
+                <div className="w-8 h-px bg-white mx-auto mb-2 group-hover:w-16 transition-all duration-300" />
+                <div className="text-xs tracking-widest text-gray-400 font-light">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
-        </motion.div>
+        </div>
+      </section>
+
+      {/* Milestones Section */}
+      <section ref={milestonesRef} className="py-32 px-4 md:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={milestonesIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={milestonesIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">RUGIDOS ICÔNICOS</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={milestonesIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            animate={milestonesIsInView ? "animate" : "initial"}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {milestones.map((milestone, index) => (
+              <motion.div key={index} variants={fadeInUp} className="group relative">
+                <div className="border border-gray-200 p-8 h-full relative overflow-hidden group-hover:border-black transition-colors duration-300">
+                  <motion.div
+                    className="absolute top-0 left-0 w-full h-full bg-black origin-bottom"
+                    initial={{ scaleY: 0 }}
+                    whileHover={{ scaleY: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  <div className="relative z-10 group-hover:text-white transition-colors duration-300">
+                    <div className="text-3xl font-thin mb-4 tracking-wider">{milestone.year}</div>
+                    <div className="w-12 h-px bg-current mb-4" />
+                    <h3 className="text-xl font-light mb-4 tracking-wide">{milestone.title}</h3>
+                    <p className="text-sm leading-relaxed font-light opacity-80">{milestone.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Bull Heritage Section */}
+      <section className="py-32 bg-black text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="h-px bg-white mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-white mb-4">🐂</h2>
+            <h3 className="text-2xl md:text-3xl font-light tracking-widest text-white/80 mb-8">O TOURO INDOMÁVEL</h3>
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.6 }}
+              viewport={{ once: true }}
+              className="h-px bg-white mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <p className="text-xl md:text-2xl font-light leading-relaxed text-white/90 mb-8">
+              Cada Lamborghini carrega o nome de touros lendários, simbolizando força, poder e a natureza indomável que
+              define a essência da marca.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
+              {["Miura", "Diablo", "Murciélago", "Huracán"].map((bull, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center group"
+                >
+                  <div className="w-16 h-px bg-white mx-auto mb-4 group-hover:w-24 transition-all duration-300" />
+                  <h4 className="text-lg font-light tracking-wide">{bull}</h4>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Impact Section */}
-      <section className="py-24 px-4 md:px-6 lg:py-32 bg-white text-gray-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100" />
-
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-          className="max-w-6xl mx-auto relative z-10"
-        >
-          <motion.h3
-            variants={fadeInUp}
-            className="text-6xl font-bold tracking-tight text-center mb-16 text-gray-900 relative"
+      <section ref={impactRef} className="py-32 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={impactIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
           >
-            Shaping the Supercar World
             <motion.div
               initial={{ width: 0 }}
-              whileInView={{ width: "80px" }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-zinc-900 rounded-full"
+              animate={impactIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
             />
-          </motion.h3>
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">
+              MOLDANDO O MUNDO DOS SUPERCARROS
+            </h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={impactIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
 
-          <div className="space-y-12">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            animate={impactIsInView ? "animate" : "initial"}
+            className="space-y-8"
+          >
             {[
               {
-                title: "Revolutionary Design",
-                content:
-                  "Lamborghini has consistently pushed the boundaries of automotive design, introducing radical, futuristic shapes and iconic features like scissor doors. Their bold aesthetic has influenced countless designers and set trends in the supercar segment.",
+                title: "Design Revolucionário",
+                description:
+                  "A Lamborghini tem consistentemente expandido os limites do design automotivo, introduzindo formas radicais e futuristas, além de características icônicas como portas em tesoura. Sua estética ousada influenciou inúmeros designers.",
               },
               {
-                title: "Uncompromising Performance",
-                content:
-                  "From its powerful V12 engines to advanced aerodynamics and lightweight materials, Lamborghini has always prioritized raw, exhilarating performance. They build cars that are not just fast, but also deliver an unparalleled visceral driving experience.",
+                title: "Performance Inegociável",
+                description:
+                  "Desde seus potentes motores V12 até aerodinâmica avançada e materiais leves, a Lamborghini sempre priorizou performance bruta e emocionante. Eles constroem carros que oferecem uma experiência de direção visceral sem paralelos.",
               },
               {
-                title: "Brand Iconography",
-                content:
-                  "The 'Raging Bull' emblem and the names derived from famous fighting bulls (Miura, Countach, Diablo, Murciélago, Aventador, Huracán) have created a powerful and aggressive brand identity that resonates globally, symbolizing strength and untamed power.",
+                title: "Iconografia da Marca",
+                description:
+                  "O emblema do 'Touro Indomável' e os nomes derivados de touros de lide famosos criaram uma identidade de marca poderosa e agressiva que ressoa globalmente, simbolizando força e poder indomável.",
               },
             ].map((impact, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.15)",
-                }}
-                transition={{ duration: 0.3 }}
-                className="bg-gradient-to-r from-gray-50 to-gray-100 p-10 rounded-3xl shadow-xl border border-gray-200"
-              >
-                <motion.h4 className="text-3xl font-bold mb-6 text-gray-900">{impact.title}</motion.h4>
-                <motion.p className="text-xl leading-relaxed text-gray-700">{impact.content}</motion.p>
+              <motion.div key={index} variants={fadeInUp} className="group">
+                <div className="border-l-2 border-gray-200 pl-8 py-6 group-hover:border-black transition-colors duration-300">
+                  <h3 className="text-2xl font-light mb-4 tracking-wide">{impact.title}</h3>
+                  <div className="w-12 h-px bg-black mb-4 group-hover:w-24 transition-all duration-300" />
+                  <p className="text-lg leading-relaxed text-gray-700 font-light">{impact.description}</p>
+                </div>
               </motion.div>
             ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
-     
+      {/* Innovation Section */}
+      <section className="py-32 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">INOVAÇÃO EXTREMA</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.6 }}
+              viewport={{ once: true }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <p className="text-lg leading-relaxed text-gray-700 font-light mb-8">
+              A Lamborghini continua a redefinir os limites da performance automotiva, integrando tecnologias
+              revolucionárias como hibridização, materiais compostos avançados e aerodinâmica ativa. Cada novo modelo
+              representa um salto evolutivo na busca pela perfeição em engenharia e design.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+              {["Fibra de Carbono", "Aerodinâmica Ativa", "Hibridização"].map((tech, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center group"
+                >
+                  <div className="w-16 h-px bg-black mx-auto mb-4 group-hover:w-24 transition-all duration-300" />
+                  <h4 className="text-xl font-light tracking-wide">{tech}</h4>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="text-2xl font-thin tracking-[0.3em] mb-8">LAMBORGHINI</div>
+            <div className="w-16 h-px bg-white mx-auto mb-8" />
+            <div className="text-sm font-light tracking-widest text-gray-400 mb-4">LIBERTANDO O TOURO INDOMÁVEL</div>
+          </motion.div>
+        </div>
+      </footer>
     </div>
   )
 }

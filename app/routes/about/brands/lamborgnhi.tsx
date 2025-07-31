@@ -1,4 +1,4 @@
-import type { Route } from "./+types/lamborghini.brand";
+import type { Route } from "./+types/lamborgnhi";
 import LamborghiniPage from "~/src/pages/about/brands/lamborgnhi.brand";
 export function meta({}: Route.MetaArgs) {
     return [

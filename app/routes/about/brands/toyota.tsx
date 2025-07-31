@@ -1,4 +1,4 @@
-import type { Route } from "./+types/toyota.brand";
+import type { Route } from "./+types/toyota";
 import ToyotaPage from "~/src/pages/about/brands/toyota.brand";
 export function meta({}: Route.MetaArgs) {
     return [

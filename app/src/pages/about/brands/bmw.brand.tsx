@@ -1,281 +1,539 @@
 
-import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { motion, useScroll, useTransform, useInView } from "framer-motion"
+import { useRef, useEffect, useState } from "react"
 
-export default function BmwPage() {
-    const [scrollY, setScrollY] = useState(0)
+const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const staggerContainer = {
+    animate: {
+        transition: {
+        staggerChildren: 0.1,
+        },
+    },
+}
+
+const slideInLeft = {
+    initial: { opacity: 0, x: -100 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const slideInRight = {
+    initial: { opacity: 0, x: 100 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+    const [count, setCount] = useState(0)
+    const ref = useRef(null)
+    const isInView = useInView(ref)
 
     useEffect(() => {
-        const handleScroll = () => setScrollY(window.scrollY)
-        window.addEventListener("scroll", handleScroll)
-        return () => window.removeEventListener("scroll", handleScroll)
-    }, [])
-
-    const fadeInUp = {
-        initial: { opacity: 0, y: 60 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.8, ease: "easeOut" },
-    }
-
-    const staggerContainer = {
-        animate: {
-        transition: {
-            staggerChildren: 0.2,
-        },
-        },
-    }
+        if (isInView) {
+        let startTime: number
+        const animate = (currentTime: number) => {
+            if (!startTime) startTime = currentTime
+            const progress = Math.min((currentTime - startTime) / (duration * 1000), 1)
+            setCount(Math.floor(progress * end))
+            if (progress < 1) {
+            requestAnimationFrame(animate)
+            }
+        }
+        requestAnimationFrame(animate)
+        }
+    }, [isInView, end, duration])
 
     return (
-        <div className="min-h-screen bg-gray-900 text-gray-50 font-sans antialiased overflow-x-hidden">
+        <span ref={ref}>
+        {count.toLocaleString()}
+        {suffix}
+        </span>
+    )
+}
 
+export default function BmwPage() {
+    const { scrollYProgress } = useScroll()
+    const heroRef = useRef(null)
+    const historyRef = useRef(null)
+    const milestonesRef = useRef(null)
+    const impactRef = useRef(null)
+
+    const heroIsInView = useInView(heroRef, { once: true })
+    const historyIsInView = useInView(historyRef, { once: true })
+    const milestonesIsInView = useInView(milestonesRef, { once: true })
+    const impactIsInView = useInView(impactRef, { once: true })
+
+    const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
+
+    const milestones = [
+        {
+        year: "1916",
+        title: "Fundação da BMW",
+        description:
+            "A Bayerische Motoren Werke AG é estabelecida, inicialmente focada em motores de avião, preparando o terreno para uma futura gigante automotiva.",
+        },
+        {
+        year: "1923",
+        title: "Primeira Motocicleta (R32)",
+        description:
+            "A BMW introduz sua primeira motocicleta, a R32, estabelecendo novos padrões de engenharia e design no mundo das duas rodas.",
+        },
+        {
+        year: "1928",
+        title: "Primeiro Automóvel (Dixi 3/15)",
+        description:
+            "A BMW adquire a Automobilwerk Eisenach e começa a produzir carros, começando com o Dixi 3/15, um Austin Seven licenciado.",
+        },
+        {
+        year: "1962",
+        title: "A Nova Classe",
+        description:
+            "Introdução do BMW 1500, marcando a 'Nova Classe' de sedãs que salvou a empresa e definiu sua identidade moderna como fabricante de sedãs esportivos.",
+        },
+        {
+        year: "1972",
+        title: "Divisão BMW M",
+        description:
+            "A BMW Motorsport GmbH é fundada, criando versões de alta performance dos carros BMW e estabelecendo a lendária série 'M'.",
+        },
+        {
+        year: "2013",
+        title: "Série BMW i",
+        description:
+            "Lançamento do BMW i3 e i8, marcando a entrada significativa da BMW na tecnologia de veículos elétricos e híbridos, mostrando compromisso com mobilidade sustentável.",
+        },
+    ]
+
+    return (
+        <div className="min-h-screen bg-white text-black font-light antialiased overflow-x-hidden">
+        {/* Progress Bar */}
+        <motion.div
+            className="fixed top-0 left-0 right-0 h-0.5 bg-black z-50 origin-left"
+            style={{ scaleX: scrollYProgress }}
+        />
 
         {/* Hero Section */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-800 via-zinc-900 to-black">
-            <motion.div style={{ y: scrollY * 0.5 }} className="absolute inset-0 z-0">
+        <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
+            <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
             <img
                 src="https://i.pinimg.com/1200x/76/0a/3f/760a3f6d7969fe65cacad14263429321.jpg"
                 alt="BMW M series car on track"
-                className="opacity-40 grayscale w-full h-full object-cover object-center"
+                className="object-cover object-center grayscale w-full h-full"
             />
+            <div className="absolute inset-0 bg-black/70" />
             </motion.div>
 
             <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative z-10 text-center px-4 py-16"
+            animate={heroIsInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 1.2, ease: [0.6, -0.05, 0.01, 0.99] }}
+            className="relative z-10 text-center px-4"
             >
             <motion.div
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="bg-transparent backdrop-blur-lg rounded-3xl p-12 shadow-2x"
-            >
-                <motion.h2
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="text-6xl md:text-9xl font-black tracking-tighter leading-none text-gray-50 drop-shadow-2xl mb-6"
-                >
-                BMW
-                </motion.h2>
-                <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-                className="text-xl md:text-3xl font-light text-gray-200 tracking-wide mb-8"
-                >
-                The Ultimate Driving Machine
-                </motion.p>
-                <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: "100px" }}
-                transition={{ duration: 1, delay: 1 }}
-                className="h-1 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-500 mx-auto rounded-full"
-                />
+                animate={heroIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="h-px bg-white mb-8 mx-auto max-w-24"
+            />
+
+            <motion.h1
+                initial={{ opacity: 0, y: 50 }}
+                animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="text-6xl md:text-9xl font-thin tracking-[0.2em] text-white mb-6"
+            >
+                BMW
+            </motion.h1>
+
+            <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="text-lg md:text-xl font-light text-white/80 tracking-widest mb-4"
+            >
+                A MÁQUINA DEFINITIVA DE DIRIGIR
+            </motion.p>
+
+            <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="text-sm md:text-base font-light text-white/60 tracking-wide max-w-2xl mx-auto"
+            >
+                Onde a precisão alemã encontra o prazer de dirigir
+            </motion.p>
+
+            <motion.div
+                initial={{ width: 0 }}
+                animate={heroIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 1.1 }}
+                className="h-px bg-white mt-8 mx-auto max-w-24"
+            />
             </motion.div>
+
+            <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2, duration: 1 }}
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+            >
+            <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                className="w-px h-16 bg-white/60"
+            />
             </motion.div>
         </section>
 
         {/* History Section */}
-        <section className="py-24 px-4 md:px-6 lg:py-32 bg-white text-gray-800 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100" />
-
+        <section ref={historyRef} className="py-32 px-4 md:px-6 bg-white relative">
+            <div className="max-w-6xl mx-auto">
             <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="max-w-6xl mx-auto relative z-10"
+                initial={{ opacity: 0, y: 50 }}
+                animate={historyIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+                className="text-center mb-20"
             >
-            <motion.h3
-                variants={fadeInUp}
-                className="text-6xl font-bold tracking-tight text-center mb-16 text-gray-900 relative"
-            >
-                A Century of Innovation
                 <motion.div
                 initial={{ width: 0 }}
-                whileInView={{ width: "80px" }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-gray-800 rounded-full"
+                animate={historyIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="h-px bg-black mb-8 mx-auto max-w-16"
                 />
-            </motion.h3>
+                <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">UM SÉCULO DE INOVAÇÃO</h2>
+                <motion.div
+                initial={{ width: 0 }}
+                animate={historyIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.6 }}
+                className="h-px bg-black mt-8 mx-auto max-w-16"
+                />
+            </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-                <motion.div variants={fadeInUp} className="space-y-8">
-                <motion.p variants={fadeInUp} className="text-xl leading-relaxed">
-                    Bayerische Motoren Werke AG, commonly known as BMW, was founded in 1916 in Munich, Germany. Initially,
-                    the company produced aircraft engines, then motorcycles, before venturing into automobile manufacturing
-                    in 1928.
-                </motion.p>
-                <motion.p variants={fadeInUp} className="text-xl leading-relaxed">
-                    From its early days, BMW established a reputation for engineering excellence, precision, and a focus on
-                    driving pleasure. This commitment to performance and innovation has been the driving force behind its
-                    success, shaping its identity as a leading luxury and performance automotive brand.
-                </motion.p>
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+                <motion.div
+                variants={slideInLeft}
+                initial="initial"
+                animate={historyIsInView ? "animate" : "initial"}
+                className="space-y-8"
+                >
+                <p className="text-lg leading-relaxed text-gray-700 font-light">
+                    A Bayerische Motoren Werke AG, comumente conhecida como BMW, foi fundada em 1916 em Munique, Alemanha.
+                    Inicialmente, a empresa produzia motores de avião, depois motocicletas, antes de entrar na fabricação de
+                    automóveis em 1928.
+                </p>
+                <p className="text-lg leading-relaxed text-gray-700 font-light">
+                    Desde seus primeiros dias, a BMW estabeleceu uma reputação por excelência em engenharia, precisão e foco
+                    no prazer de dirigir. Esse compromisso com desempenho e inovação tem sido a força motriz por trás de seu
+                    sucesso.
+                </p>
                 </motion.div>
 
                 <motion.div
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02, rotateY: 5 }}
-                transition={{ duration: 0.3 }}
-                className="bg-gradient-to-br from-zinc-50 to-zinc-100 p-10 rounded-3xl shadow-xl"
+                variants={slideInRight}
+                initial="initial"
+                animate={historyIsInView ? "animate" : "initial"}
+                className="relative"
                 >
-                <h4 className="text-3xl font-semibold mb-6 text-gray-900">The BMW Roundel</h4>
-                <p className="text-gray-700 leading-relaxed text-lg">
-                    The iconic BMW logo, often thought to represent a spinning propeller, actually symbolizes the Bavarian
-                    flag's blue and white colors, reflecting the company's origins in Bavaria.
-                </p>
+                <div className="bg-gray-50 p-8 border border-gray-200 relative group hover:border-black transition-colors duration-300">
+                    <motion.div
+                    className="absolute top-0 left-0 w-full h-full bg-black origin-left"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                    />
+                    <div className="relative z-10 group-hover:text-white transition-colors duration-300">
+                    <h3 className="text-2xl font-light mb-4 tracking-wide">O EMBLEMA DA BMW</h3>
+                    <div className="w-12 h-px bg-current mb-4" />
+                    <p className="leading-relaxed font-light">
+                        O icônico logo da BMW, frequentemente associado a uma hélice girando, na verdade simboliza as cores
+                        azul e branco da bandeira da Baviera, refletindo as origens da empresa na região.
+                    </p>
+                    </div>
+                </div>
                 </motion.div>
             </div>
+            </div>
+        </section>
+
+        {/* Statistics Section */}
+        <section className="py-20 bg-black text-white">
+            <div className="max-w-6xl mx-auto px-4">
+            <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-8"
+            >
+                {[
+                { number: 1916, label: "ANO DE FUNDAÇÃO", suffix: "" },
+                { number: 107, label: "ANOS DE EXCELÊNCIA", suffix: "" },
+                { number: 2500000, label: "VEÍCULOS PRODUZIDOS/ANO", suffix: "+" },
+                { number: 140, label: "PAÍSES DE OPERAÇÃO", suffix: "+" },
+                ].map((stat, index) => (
+                <motion.div key={index} variants={fadeInUp} className="text-center group">
+                    <div className="text-3xl md:text-4xl font-thin mb-2">
+                    <AnimatedCounter end={stat.number} suffix={stat.suffix} />
+                    </div>
+                    <div className="w-8 h-px bg-white mx-auto mb-2 group-hover:w-16 transition-all duration-300" />
+                    <div className="text-xs tracking-widest text-gray-400 font-light">{stat.label}</div>
+                </motion.div>
+                ))}
             </motion.div>
+            </div>
         </section>
 
         {/* Milestones Section */}
-        <section className="py-24 px-4 md:px-6 lg:py-32 bg-zinc-900 text-gray-50 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-900" />
-
+        <section ref={milestonesRef} className="py-32 px-4 md:px-6 bg-white">
+            <div className="max-w-6xl mx-auto">
             <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-            className="max-w-7xl mx-auto relative z-10"
+                initial={{ opacity: 0, y: 50 }}
+                animate={milestonesIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+                className="text-center mb-20"
             >
-            <motion.h3
-                variants={fadeInUp}
-                className="text-6xl font-bold tracking-tight text-center mb-20 text-gray-50 relative"
-            >
-                Defining Moments
                 <motion.div
                 initial={{ width: 0 }}
-                whileInView={{ width: "80px" }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-gray-400 rounded-full"
+                animate={milestonesIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="h-px bg-black mb-8 mx-auto max-w-16"
                 />
-            </motion.h3>
-
-            <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[
-                {
-                    year: "1916",
-                    title: "Founding of BMW",
-                    description:
-                    "Bayerische Motoren Werke AG is established, initially focusing on aircraft engines, laying the groundwork for a future automotive giant.",
-                },
-                {
-                    year: "1923",
-                    title: "First Motorcycle (R32)",
-                    description:
-                    "BMW introduces its first motorcycle, the R32, setting new standards for engineering and design in the two-wheeled world.",
-                },
-                {
-                    year: "1928",
-                    title: "First Automobile (Dixi 3/15)",
-                    description:
-                    "BMW acquires Automobilwerk Eisenach and begins producing cars, starting with the Dixi 3/15, a licensed Austin Seven.",
-                },
-                {
-                    year: "1962",
-                    title: "The New Class",
-                    description:
-                    "Introduction of the BMW 1500, marking the 'New Class' of sedans that saved the company and defined its modern identity as a sports sedan manufacturer.",
-                },
-                {
-                    year: "1972",
-                    title: "BMW M Division",
-                    description:
-                    "BMW Motorsport GmbH is founded, creating high-performance versions of BMW cars and establishing the legendary 'M' series.",
-                },
-                {
-                    year: "2013",
-                    title: "BMW i Series",
-                    description:
-                    "Launch of the BMW i3 and i8, marking BMW's significant entry into electric and hybrid vehicle technology, showcasing a commitment to sustainable mobility.",
-                },
-                ].map((milestone, index) => (
+                <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">MOMENTOS DEFINITIVOS</h2>
                 <motion.div
-                    key={index}
-                    variants={fadeInUp}
-                    whileHover={{
-                    scale: 1.05,
-                    rotateY: 5,
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="group bg-gradient-to-br from-zinc-900 to-zinc-700 p-8 rounded-3xl shadow-2xl border border-zinc-900/50 cursor-pointer"
-                >
-                    <motion.h4 className="text-3xl font-bold mb-4 text-gray-50 group-hover:text-gray-200 transition-colors">
-                    {milestone.year}: {milestone.title}
-                    </motion.h4>
-                    <motion.p className="text-gray-300 leading-relaxed text-lg">{milestone.description}</motion.p>
+                initial={{ width: 0 }}
+                animate={milestonesIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.6 }}
+                className="h-px bg-black mt-8 mx-auto max-w-16"
+                />
+            </motion.div>
+
+            <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                animate={milestonesIsInView ? "animate" : "initial"}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+                {milestones.map((milestone, index) => (
+                <motion.div key={index} variants={fadeInUp} className="group relative">
+                    <div className="border border-gray-200 p-8 h-full relative overflow-hidden group-hover:border-black transition-colors duration-300">
+                    <motion.div
+                        className="absolute top-0 left-0 w-full h-full bg-black origin-bottom"
+                        initial={{ scaleY: 0 }}
+                        whileHover={{ scaleY: 1 }}
+                        transition={{ duration: 0.3 }}
+                    />
+                    <div className="relative z-10 group-hover:text-white transition-colors duration-300">
+                        <div className="text-3xl font-thin mb-4 tracking-wider">{milestone.year}</div>
+                        <div className="w-12 h-px bg-current mb-4" />
+                        <h3 className="text-xl font-light mb-4 tracking-wide">{milestone.title}</h3>
+                        <p className="text-sm leading-relaxed font-light opacity-80">{milestone.description}</p>
+                    </div>
+                    </div>
                 </motion.div>
                 ))}
             </motion.div>
+            </div>
+        </section>
+
+        {/* M Division Section */}
+        <section className="py-32 bg-black text-white">
+            <div className="max-w-6xl mx-auto px-4">
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center mb-20"
+            >
+                <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                transition={{ duration: 1, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="h-px bg-white mb-8 mx-auto max-w-16"
+                />
+                <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-white mb-4">BMW M</h2>
+                <h3 className="text-2xl md:text-3xl font-light tracking-widest text-white/80 mb-8">MOTORSPORT</h3>
+                <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                transition={{ duration: 1, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="h-px bg-white mt-8 mx-auto max-w-16"
+                />
             </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="max-w-4xl mx-auto text-center"
+            >
+                <p className="text-xl md:text-2xl font-light leading-relaxed text-white/90 mb-8">
+                A divisão M representa o ápice da engenharia BMW, onde cada componente é refinado para entregar
+                performance pura e prazer de dirigir incomparável.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                {["M3", "M5", "M8"].map((model, index) => (
+                    <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="text-center group"
+                    >
+                    <div className="w-16 h-px bg-white mx-auto mb-4 group-hover:w-24 transition-all duration-300" />
+                    <h4 className="text-xl font-light tracking-wide">{model}</h4>
+                    </motion.div>
+                ))}
+                </div>
+            </motion.div>
+            </div>
         </section>
 
         {/* Impact Section */}
-        <section className="py-24 px-4 md:px-6 lg:py-32 bg-white text-gray-800 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100" />
-
+        <section ref={impactRef} className="py-32 px-4 md:px-6 bg-gray-50">
+            <div className="max-w-6xl mx-auto">
             <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="max-w-6xl mx-auto relative z-10"
+                initial={{ opacity: 0, y: 50 }}
+                animate={impactIsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+                className="text-center mb-20"
             >
-            <motion.h3
-                variants={fadeInUp}
-                className="text-6xl font-bold tracking-tight text-center mb-16 text-gray-900 relative"
-            >
-                Shaping the Driving Experience
                 <motion.div
                 initial={{ width: 0 }}
-                whileInView={{ width: "80px" }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 h-1 bg-gray-800 rounded-full"
+                animate={impactIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="h-px bg-black mb-8 mx-auto max-w-16"
                 />
-            </motion.h3>
+                <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">
+                MOLDANDO A EXPERIÊNCIA DE DIREÇÃO
+                </h2>
+                <motion.div
+                initial={{ width: 0 }}
+                animate={impactIsInView ? { width: "100%" } : {}}
+                transition={{ duration: 1, delay: 0.6 }}
+                className="h-px bg-black mt-8 mx-auto max-w-16"
+                />
+            </motion.div>
 
-            <div className="space-y-12">
+            <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                animate={impactIsInView ? "animate" : "initial"}
+                className="space-y-8"
+            >
                 {[
                 {
-                    title: "Driving Dynamics & Performance",
-                    content:
-                    "BMW's unwavering focus on driving dynamics has set a benchmark for the industry. Their commitment to balanced chassis, precise steering, and powerful, refined engines has created a unique driving experience that is often imitated but rarely replicated.",
+                    title: "Dinâmica de Direção & Performance",
+                    description:
+                    "O foco inabalável da BMW em dinâmica de direção estabeleceu um padrão para a indústria. Seu compromisso com chassi balanceado, direção precisa e motores potentes criou uma experiência de direção única.",
                 },
                 {
-                    title: "Technological Leadership",
-                    content:
-                    "BMW has been at the forefront of automotive technology, introducing innovations like iDrive, EfficientDynamics for fuel efficiency, and advanced driver-assistance systems. They continue to lead in areas like connectivity and autonomous driving.",
+                    title: "Liderança Tecnológica",
+                    description:
+                    "A BMW esteve na vanguarda da tecnologia automotiva, introduzindo inovações como o iDrive, EfficientDynamics e sistemas avançados de assistência ao motorista. Continuam liderando em conectividade e direção autônoma.",
                 },
                 {
-                    title: "Luxury Sports Sedan Segment",
-                    content:
-                    "BMW largely defined the luxury sports sedan segment, proving that comfort and practicality could coexist with exhilarating performance. This blend has influenced countless competitors and shaped consumer expectations for premium vehicles.",
+                    title: "Segmento de Sedãs Esportivos de Luxo",
+                    description:
+                    "A BMW basicamente definiu o segmento de sedãs esportivos de luxo, provando que conforto e praticidade podem coexistir com performance emocionante. Essa combinação influenciou inúmeros concorrentes.",
                 },
                 ].map((impact, index) => (
-                <motion.div
-                    key={index}
-                    variants={fadeInUp}
-                    whileHover={{
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.15)",
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-gradient-to-r from-gray-50 to-gray-100 p-10 rounded-3xl shadow-xl border border-gray-200"
-                >
-                    <motion.h4 className="text-3xl font-bold mb-6 text-gray-900">{impact.title}</motion.h4>
-                    <motion.p className="text-xl leading-relaxed text-gray-700">{impact.content}</motion.p>
+                <motion.div key={index} variants={fadeInUp} className="group">
+                    <div className="border-l-2 border-gray-200 pl-8 py-6 group-hover:border-black transition-colors duration-300">
+                    <h3 className="text-2xl font-light mb-4 tracking-wide">{impact.title}</h3>
+                    <div className="w-12 h-px bg-black mb-4 group-hover:w-24 transition-all duration-300" />
+                    <p className="text-lg leading-relaxed text-gray-700 font-light">{impact.description}</p>
+                    </div>
                 </motion.div>
                 ))}
-            </div>
             </motion.div>
+            </div>
         </section>
 
-   
+        {/* Innovation Section */}
+        <section className="py-32 bg-white">
+            <div className="max-w-6xl mx-auto px-4">
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center mb-20"
+            >
+                <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                transition={{ duration: 1, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="h-px bg-black mb-8 mx-auto max-w-16"
+                />
+                <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">INOVAÇÃO CONTÍNUA</h2>
+                <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                transition={{ duration: 1, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="h-px bg-black mt-8 mx-auto max-w-16"
+                />
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="max-w-4xl mx-auto text-center"
+            >
+                <p className="text-lg leading-relaxed text-gray-700 font-light mb-8">
+                A BMW continua a liderar a transformação da mobilidade, investindo em eletrificação, direção autônoma e
+                tecnologias sustentáveis. A série BMW i representa o futuro da mobilidade premium, combinando performance
+                com responsabilidade ambiental.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                {["Eletrificação", "Direção Autônoma", "Conectividade"].map((tech, index) => (
+                    <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="text-center group"
+                    >
+                    <div className="w-16 h-px bg-black mx-auto mb-4 group-hover:w-24 transition-all duration-300" />
+                    <h4 className="text-xl font-light tracking-wide">{tech}</h4>
+                    </motion.div>
+                ))}
+                </div>
+            </motion.div>
+            </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-black text-white py-16">
+            <div className="max-w-6xl mx-auto px-4">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center"
+            >
+                <div className="text-2xl font-thin tracking-[0.3em] mb-8">BMW</div>
+                <div className="w-16 h-px bg-white mx-auto mb-8" />
+                <div className="text-sm font-light tracking-widest text-gray-400 mb-4">A MÁQUINA DEFINITIVA DE DIRIGIR</div>
+            </motion.div>
+            </div>
+        </footer>
         </div>
     )
 }

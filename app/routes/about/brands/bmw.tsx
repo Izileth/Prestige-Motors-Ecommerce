@@ -1,4 +1,4 @@
-import type { Route } from "./+types/bmw.brand";
+import type { Route } from "./+types/bmw";
 import BmwPage from "~/src/pages/about/brands/bmw.brand";
 export function meta({}: Route.MetaArgs) {
     return [
