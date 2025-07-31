@@ -1,5 +1,7 @@
 import { create } from 'zustand';
-import { vehicleService } from '~/src/services/vehicle';
+
+import vehicleAddressService from '~/src/services/addresses';
+
 import type {
     VehicleAddress,
     VehicleWithAddress,
@@ -33,7 +35,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     getAddress: async (vehicleId) => {
         set({ loading: true, error: null });
         try {
-            const address = await vehicleService.getVehicleAddress(vehicleId);
+            const address = await vehicleAddressService.getVehicleAddress(vehicleId);
             set({ currentAddress: address, loading: false });
         } catch (error) {
             set({ 
@@ -46,7 +48,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     createAddress: async (payload) => {
         set({ loading: true, error: null, success: false });
         try {
-            const updatedVehicle = await vehicleService.createVehicleAddress(payload);
+            const updatedVehicle = await vehicleAddressService.createVehicleAddress(payload);
             set({ 
                 currentAddress: updatedVehicle.localizacao,
                 loading: false,
@@ -65,7 +67,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     updateAddress: async (payload) => {
         set({ loading: true, error: null, success: false });
         try {
-            const updatedVehicle = await vehicleService.updateVehicleAddress(payload);
+            const updatedVehicle = await vehicleAddressService.updateVehicleAddress(payload);
             set({ 
                 currentAddress: updatedVehicle.localizacao,
                 loading: false,
@@ -84,7 +86,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     removeAddress: async (payload) => {
         set({ loading: true, error: null, success: false });
         try {
-            const updatedVehicle = await vehicleService.removeVehicleAddress(payload);
+            const updatedVehicle = await vehicleAddressService.removeVehicleAddress(payload);
             set({ 
                 currentAddress: null,
                 loading: false,

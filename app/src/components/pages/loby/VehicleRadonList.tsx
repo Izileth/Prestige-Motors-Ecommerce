@@ -8,7 +8,7 @@ import { ArrowRight, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export function RandomVehicles() {
-  const { vehicles, loading, refresh } = useRandomVehicles(4);
+  const { vehicles, loading, refresh } = useRandomVehicles(12);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
@@ -81,7 +81,7 @@ export function RandomVehicles() {
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             >
-              {Array.from({ length: 4 }).map((_, index) => (
+              {Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="space-y-4">
                   <Skeleton className="h-64 w-full bg-gray-100 dark:bg-gray-900" />
                   <div className="space-y-2">
@@ -130,23 +130,23 @@ export function RandomVehicles() {
             </motion.div>
             
           )}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 flex justify-center"
-        >
-          <Button
-            onClick={handleViewAll}
-            variant="outline"
-            className="group border-0 shadow-none transition-colors duration-300 rounded-none"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-16 flex justify-center"
           >
-            <span className="font-light">Ver catálogo completo</span>
-            <ArrowRight
-              size={16}
-              className="ml-2 group-hover:translate-x-1 transition-transform duration-300"
-            />
-          </Button>
+            <Button
+              onClick={handleViewAll}
+              variant="outline"
+              className="group border-0 shadow-none transition-colors duration-300 rounded-none"
+            >
+              <span className="font-light">Ver catálogo completo</span>
+              <ArrowRight
+                size={16}
+                className="ml-2 group-hover:translate-x-1 transition-transform duration-300"
+              />
+            </Button>
         </motion.div>
         </AnimatePresence>
      

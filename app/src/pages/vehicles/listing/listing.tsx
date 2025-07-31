@@ -331,7 +331,17 @@ const VehicleListingPage = () => {
               </motion.div>
 
               <div className="space-y-3">
-                <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">104!</h1>
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-gray-400 dark:text-gray-600"
+                >
+                  <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">
+                    104!
+                  </h1>
+                </motion.div>
+
                 <h3 className="text-xl font-light text-gray-800 dark:text-gray-200">
                   Falha ao carregar veículos
                 </h3>

@@ -17,16 +17,11 @@ export const VehiclesDestactsListing = ({
   title = "Veículos em Destaque",
   subtitle = "Descubra nossa seleção premium",
   showRefresh = true,
-  itemCount = 4,
+  itemCount = 12,
 }: VehicleListingProps) => {
   const { featuredVehicles, loading, refresh } = useFeaturedVehicles(itemCount);
   const hasInitialLoad = useRef(false);
 
-  const navigate = useNavigate();
-
-  const handleVehicles = () => {
-    navigate("/vehicles");
-  };
   // Só atualiza o ref uma vez quando os veículos são carregados
   useEffect(() => {
     if (!hasInitialLoad.current && featuredVehicles.length > 0) {
@@ -65,7 +60,7 @@ export const VehiclesDestactsListing = ({
       </div>
 
       {/* Listagem */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full max-w-full">
         {loading && !hasInitialLoad.current
           ? Array.from({ length: itemCount }).map((_, index) => (
               <VehicleCardSkeleton key={`skeleton-${index}`} />
@@ -81,18 +76,6 @@ export const VehiclesDestactsListing = ({
               </motion.div>
               
             ))}
-            {featuredVehicles.length > 0 && (
-            <div className="flex justify-center mt-12">
-              <Button
-                onClick={handleVehicles}
-                variant="outline"
-                className="gap-2 border-none shadow-none bg-transparent"
-              >
-                Ver todos os veículos
-                <ArrowRight size={16} />
-              </Button>
-            </div>
-          )}
       </div>
      
     </section>

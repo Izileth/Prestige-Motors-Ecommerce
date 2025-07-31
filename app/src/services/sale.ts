@@ -1,4 +1,5 @@
 import api from './api';
+import type { Vehicle } from '../types/vehicle';
 import type { SaleData, SaleStats, UpdateSaleData, UserSaleStats } from '../types/sale';
 import type { UserTransactionsResponse } from '../types/transactions';
 
@@ -33,6 +34,11 @@ export const saleService = {
     async getPurchasesByUser(userId: string) {
         const response = await api.get(`/sales/buyers/${userId}`);
         console.log("Compras Encontradas!", response.data);
+        return response.data;
+    },
+       
+    async getVehiclesByVendor(vendorId: string): Promise<Vehicle[]> {
+        const response = await api.get(`/vehicles/vendors/${vendorId}`);
         return response.data;
     },
 

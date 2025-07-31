@@ -4,7 +4,6 @@ import { negotiationService } from '~/src/services/negociation';
 import type { NegotiationStatus, NegotiationHistory, NegotiationMessage, Negotiation, CreateNegotiationPayload, AddMessagePayload, RespondNegotiationPayload } from '~/src/types/negociation';
 
 interface NegotiationStore {
-    // Estado
     negotiations: Negotiation[];
     currentNegotiation: Negotiation | null;
     messages: NegotiationMessage[];
@@ -15,8 +14,7 @@ interface NegotiationStore {
     error: string | null;
     messagesError: string | null;
     historyError: string | null;
-    
-    // Ações
+
     createNegotiation: (payload: CreateNegotiationPayload) => Promise<Negotiation>;
     fetchNegotiations: (status?: NegotiationStatus) => Promise<void>;
     fetchNegotiationById: (id: string) => Promise<void>;
@@ -45,6 +43,8 @@ export const useNegotiationStore = create<NegotiationStore>()(
         historyError: null,
 
         // Ações
+
+        // Cria Negociação
         createNegotiation: async (payload) => {
             set({ isLoading: true, error: null });
             try {
@@ -63,7 +63,8 @@ export const useNegotiationStore = create<NegotiationStore>()(
                 throw new Error(errorMessage);
             }
         },
-
+        
+        // Busca Negociação
         fetchNegotiations: async (status) => {
             set({ isLoading: true, error: null });
             try {
@@ -78,6 +79,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
             }
         },
     
+        // Busca Negociação por ID
         fetchNegotiationById: async (id) => {
             set({ 
                 isLoading: true, 
@@ -105,7 +107,8 @@ export const useNegotiationStore = create<NegotiationStore>()(
                 });
             }
         },
-
+        
+        // Adiciona Mensagem
         addMessage: async (negotiationId, payload) => {
             set({ isLoading: true, error: null });
             try {
@@ -127,6 +130,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
             }
         },
 
+        // Responde Negociação
         respondToNegotiation: async (negotiationId, payload) => {
             set({ isLoading: true, error: null });
             try {
@@ -151,6 +155,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
             }
         },
 
+        // Cancela Negociação
         cancelNegotiation: async (id) => {
             set({ isLoading: true, error: null });
             try {
@@ -174,6 +179,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
             }
         },
 
+
         fetchMessages: async (negotiationId) => {
             set({ isFetchingMessages: true, messagesError: null });
             try {
@@ -196,6 +202,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
             }
         },
 
+        // Busca Histórico
         fetchHistory: async (negotiationId) => {
             set({ isFetchingHistory: true, historyError: null });
             try {

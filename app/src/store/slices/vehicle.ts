@@ -1,19 +1,23 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import vehicleService from "~/src/services/vehicle";
-import type { ReviewCreateInput, VehicleUpdateInput } from "~/src/types/inputs";
+import vehicleViewService from "~/src/services/views";
+import vehicleFavoritesService from "~/src/services/favorites";
+import vehicleStatsService from "~/src/services/stats";
+import { saleService } from "~/src/services/sale";
+import reviewService from "~/src/services/reviews";
+import type { VehicleUpdateInput } from "~/src/types/inputs";
 import type {
   Vehicle,
-  VehicleUserStats,
   VehicleCreateInput,
   VehicleSearchParams,
-  VehicleGlobalStats,
 } from "~/src/types/vehicle";
 import type { Review } from "~/src/types/reviews";
 import type { VehicleStatsData } from "~/src/components/common/VehicleStatistics";
 import type { UserStats } from "~/src/types/user";
+
 interface VehicleState {
-  // Estado (igual ao Redux)
+  
   vehicles: Vehicle[];
   featuredVehicles: Vehicle[];
   favorites: Vehicle[];
@@ -29,7 +33,7 @@ interface VehicleState {
   error: string | null;
   success: boolean;
 
-  // Ações (todas as thunks + reducers)
+
   fetchVehicles: (params?: VehicleSearchParams) => Promise<void>;
   fetchVehicleById: (id: string) => Promise<void>;
 
@@ -56,7 +60,7 @@ interface VehicleState {
   updateUserVehicleLocally: (vehicleId: string, updates: Partial<Vehicle>) => void;
   rollbackVehicleUpdate: (vehicleId: string, originalVehicle: Vehicle) => void;
 
-  // Reducers
+
   resetVehicleState: () => void;
   setCurrentVehicle: (vehicle: Vehicle | null) => void;
 }
@@ -214,7 +218,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchUserFavorites: async () => {
         set({ loading: true, error: null });
         try {
-          const favorites = await vehicleService.getUserFavorites();
+          const favorites = await vehicleFavoritesService.getUserFavorites();
           set({ favorites, loading: false });
         } catch (error) {
           set({
@@ -230,7 +234,7 @@ export const useVehicleStore = create<VehicleState>()(
       addFavorite: async (vehicleId) => {
         set({ loading: true, error: null });
         try {
-          const vehicle = await vehicleService.addFavorite(vehicleId);
+          const vehicle = await vehicleFavoritesService.addFavorite(vehicleId);
           set((state) => ({
             vehicles: state.vehicles.map((v) =>
               v.id === vehicleId ? { ...v, isFavorite: true } : v
@@ -255,7 +259,7 @@ export const useVehicleStore = create<VehicleState>()(
       removeFavorite: async (vehicleId) => {
         set({ loading: true, error: null });
         try {
-          await vehicleService.removeFavorite(vehicleId);
+          await vehicleFavoritesService.removeFavorite(vehicleId);
           set((state) => ({
             favorites: state.favorites.filter((v) => v.id !== vehicleId),
             vehicles: state.vehicles.map((v) =>
@@ -282,7 +286,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchVehicleReviews: async (vehicleId) => {
         set({ loading: true, error: null });
         try {
-          const reviews = await vehicleService.getVehicleReviews(vehicleId);
+          const reviews = await reviewService.getVehicleReviews(vehicleId);
           set({ reviews, loading: false });
         } catch (error) {
           set({
@@ -359,7 +363,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchVehicleStats: async () => {
         set({ loading: true, error: null });
         try {
-          const stats = await vehicleService.getVehicleStats();
+          const stats = await vehicleStatsService.getVehicleStats();
           set({ stats, loading: false });
           return stats; // Adicione esta linha para retornar os dados
         } catch (error) {
@@ -375,7 +379,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchUserVehicles: async () => {
         set({ loading: true, error: null });
         try {
-          const userVehicles = await vehicleService.getUserVehicles();
+          const userVehicles = await vehicleStatsService.getUserVehicles();
           set({ userVehicles, loading: false });
         } catch (error) {
           set({
@@ -391,7 +395,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchUserVehicleStats: async () => {
         set({ loading: true, error: null });
         try {
-          const userStats = await vehicleService.getUserVehicleStats();
+          const userStats = await vehicleStatsService.getUserVehicleStats();
           set({ userStats, loading: false });
         } catch (error) {
           set({
@@ -406,7 +410,7 @@ export const useVehicleStore = create<VehicleState>()(
 
       registerVehicleView: async (vehicleId) => {
         try {
-          await vehicleService.registerVehicleView(vehicleId);
+          await vehicleViewService.registerVehicleView(vehicleId);
           set((state) => ({
             vehicles: state.vehicles.map((v) =>
               v.id === vehicleId
@@ -430,7 +434,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchVehicleViews: async () => {
         set({ loading: true, error: null });
         try {
-          const views = await vehicleService.getVehicleViews();
+          const views = await vehicleViewService.getVehicleViews();
           set({ views, loading: false });
         } catch (error) {
           set({
@@ -446,7 +450,7 @@ export const useVehicleStore = create<VehicleState>()(
       fetchVehiclesByVendor: async (vendorId) => {
         set({ loading: true, error: null });
         try {
-          const vendorVehicles = await vehicleService.getVehiclesByVendor(
+          const vendorVehicles = await saleService.getVehiclesByVendor(
             vendorId
           );
           set({ vendorVehicles, loading: false });
