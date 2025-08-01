@@ -120,9 +120,9 @@ const CreateSaleForm = () => {
     const isLoading = loadingStates.creating || isSubmitting
 
     return (
-        <div className="w-full max-w-full mx-auto p-4">
-            <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200 hover:shadow-md">
-                <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5">
+        <div className="w-full max-w-full mx-auto px-2 py-4">
+            <Card className="border-none  shadow-none bg-white transition-all duration-200 ">
+                <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-0 py-5">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white border border-gray-200 rounded-lg">
                             <DollarSign className="h-4 w-4 text-gray-600" strokeWidth={1.5} />

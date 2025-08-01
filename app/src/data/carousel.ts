@@ -98,26 +98,30 @@ export const PrincipalCars = [
 export const ExpecionalCars = [
     {
         id: 1,
-        image: "https://d2blhp03rkvfi4.cloudfront.net/cache/width_916/car/car-445728/photo/2020-lamborghini-sian-3490000-1694643913.webp",
+        image: "https://luxurypulse.com/img/pictures/5e4d968923e3beznye.jpeg",
         title: "Supercars",
-        description: "Prepare-se para ser levado ao limite. Supercarros que aceleram corações e impressionam em qualquer cenário.",
+        description:
+        "Potência bruta, design escultural e presença dominante. Supercarros que não apenas andam — impõem respeito por onde passam.",
     },
     {
         id: 2,
-        image: "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-471041/photo/2022-lamborghini-countach-0-857798937.webp",
+        image: "https://luxurypulse.com/img/pictures/5e4d96895b70dgtxed.jpeg",
         title: "Hypercars",
-        description: "O auge da engenharia automotiva. Hypercars que redefinem velocidade, tecnologia e luxo em cada detalhe.",
+        description:
+        "A fronteira entre o impossível e o inalcançável. Hypercars que são obras-primas tecnológicas em sua forma mais pura e extrema.",
     },
     {
         id: 3,
-        image: "https://images.classic.com/vehicles/34bab1a8d809179244ea536d288ced27.jpeg?w=1200&h=676&fit=crop",
-        title: "Japanese Cars",
-        description: "Mais do que máquinas, são lendas em movimento. Japoneses que equilibram performance e personalidade.",
+        image: "https://luxurypulse.com/img/pictures/5e4d968946ff3cafzy.jpeg",
+        title: "Track Monsters",
+        description:
+        "Construídos para as pistas, afinados para a vitória. Máquinas selvagens que desafiam os limites da física e da adrenalina.",
     },
     {
         id: 4,
-        image: "https://images.classic.com/vehicles/35e4b14c-ead8-4119-80d5-887bc532623e.jpg?w=1200&h=676&fit=crop",
-        title: "Classic Cars",
-        description: "Cada curva conta uma história. Clássicos que são símbolos de uma era de ouro da indústria automobilística.",
+        image: "https://luxurypulse.com/img/pictures/5e4d968945785vghck.jpeg",
+        title: "Luxury Icons",
+        description:
+        "Mais que carros, são declarações de prestígio. Obras de arte sobre rodas que entregam luxo absoluto e exclusividade incomparável.",
     },
 ];

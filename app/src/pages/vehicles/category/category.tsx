@@ -104,14 +104,14 @@ export const VehiclesByCategoryPage = () => {
   ).length;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300 ">
       <Carousel items={ExpecionalCars} className="max-w-full w-full" />
 
       {!filters.categoria && <CategoryGrid />}
 
       <div
         ref={resultsRef}
-        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 ${
+        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-4 ${
           scrolled ? "py-4 shadow-none" : "py-8"
         }`}
       >
@@ -130,10 +130,10 @@ export const VehiclesByCategoryPage = () => {
                 
                 {filters.categoria && (
                   <div className="relative">
-                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm md:text-2xl font-medium bg-gradient-to-r from-zinc-950 to-zinc-900 text-white">
+                    <span className="inline-flex items-center px-4 py-2 rounded-none text-sm md:text-3xl uppercase font-medium bg-gradient-to-r from-zinc-950 to-zinc-900 text-white">
                       {formatCategoryName(filters.categoria)}
                       <motion.span 
-                        className="absolute -inset-1 -z-10 rounded-full bg-gradient-to-r from-primary/30 to-secondary/30 blur-sm"
+                        className="absolute -inset-1 -z-10 rounded-none bg-gradient-to-r from-primary/30 to-secondary/30 blur-sm"
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         transition={{ repeat: Infinity, repeatType: "mirror", duration: 3 }}

@@ -156,7 +156,7 @@ const Footer: React.FC<FooterProps> = ({
         title: "Garagem",
         links: [
             { name: "Anunciar", href: "/vehicles/create" },
-            { name: "Classes", href: "/vehicles/category" },
+            { name: "Vendas", href: "/sale/dashboard" },
             { name: "Veículos", href: "/vehicles/user" },
             { name: "Destaques", href: "/destacts" },
         ],
@@ -175,8 +175,6 @@ const Footer: React.FC<FooterProps> = ({
         links: [
             { name: "Nossa História", href: "/about" },
             { name: "Nossa Missão", href: "/history" },
-            { name: "Nosso Suporte", href: "/support" },
-            { name: "Nossa Política", href: "/polities/ecological" },
         ],
         },
     ]

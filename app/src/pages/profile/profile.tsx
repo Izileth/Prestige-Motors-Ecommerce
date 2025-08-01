@@ -316,7 +316,7 @@ export default function DashboardPage() {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="flex items-center justify-center h-screen border-none shadow-none bg-gray-50 dark:bg-gray-950">
+      <div className="flex items-center justify-center h-screen border-none shadow-none bg-white dark:bg-gray-950">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -325,8 +325,8 @@ export default function DashboardPage() {
         >
           <Card className="border-none shadow-none bg-white dark:bg-gray-900">
             <CardHeader>
-              <CardTitle className="text-center text-gray-900 dark:text-gray-100">
-                Acesso Restrito
+              <CardTitle className="text-center mb-2 text-3xl text-gray-900 dark:text-gray-100">
+                Acesso Restrito!
               </CardTitle>
               <CardDescription className="text-center text-gray-600 dark:text-gray-400">
                 Você precisa estar logado para acessar esta página.
@@ -347,7 +347,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950 pb-16">
       <AnimatePresence>
         {notification.show && (
           <motion.div

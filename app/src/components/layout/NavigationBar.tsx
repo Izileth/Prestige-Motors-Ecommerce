@@ -133,8 +133,7 @@ const Navigation: React.FC<NavigationProps> = ({
       submenu: [
         { name: "Quem Somos", href: "/about" },
         { name: "Nossa Missão", href: "/history" },
-        { name: "Suporte", href: "/support" },
-        { name: "Política Ecológica", href: "/polities/ecological" },
+        
       ],
     },
     { name: "Catálogo", href: "/vehicles" },

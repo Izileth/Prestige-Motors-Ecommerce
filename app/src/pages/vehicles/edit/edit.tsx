@@ -218,7 +218,7 @@ export function EditVehiclePage() {
 
   if (!currentVehicle && !loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
         <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 text-center">
           <div className="text-gray-900 dark:text-gray-100 mb-4 text-lg">
             Veículo não encontrado

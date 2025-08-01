@@ -1,6 +1,6 @@
 import { Carousel } from "~/src/components/template/RadomCarousel";
 import { FeaturedCars } from "~/src/data/carousel";
-import { VehiclesDestactsListing } from "~/src/components/pages/loby/VehicleDestactsList";
+import { VehiclesDestactsListing } from "~/src/components/pages/initial/VehicleDestactsList";
 
 export default function DestactsPage() {
   return (

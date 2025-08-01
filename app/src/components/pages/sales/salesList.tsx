@@ -23,9 +23,9 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
     }
     
     return (
-        <div className="w-full max-w-full mx-auto p-4">
-        <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200">
-            <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5 flex items-center gap-3">
+        <div className="w-full max-w-full mx-auto py-2 px-0">
+        <Card className=" border-none shadow-none bg-white transition-all duration-200 px-0">
+            <CardHeader className="border-b border-gray-100 bg-gray-50/30  py-5 flex items-center gap-2">
             <div className="p-2 bg-white border border-gray-200 rounded-lg">
                 <Tag className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
             </div>
@@ -34,9 +34,9 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
             </CardTitle>
             </CardHeader>
 
-            <CardContent className="p-6">
+            <CardContent className="py-6">
             {sales.length === 0 ? (
-                <div className="text-center py-16 px-6 bg-gray-50/50 rounded-lg border border-gray-200">
+                <div className="text-center py-16 rounded-lg border-none shadow-none">
                 <div className="max-w-sm mx-auto">
                     <div className="p-4 bg-white border border-gray-200 rounded-full w-fit mx-auto mb-6">
                     <Search className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
@@ -48,14 +48,14 @@ const SalesList: React.FC<SalesListProps> = ({ sales, onSelectSale, title }) => 
                 </div>
                 </div>
             ) : (
-                <ul className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                <ul className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 px-0">
                 {sales.map((sale) => (
                     <li key={sale.id}>
                     <Card
                         onClick={() => onSelectSale(sale)}
-                        className="group cursor-pointer border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-white h-full flex flex-col"
+                        className="group cursor-pointer  border-none shadow-none  transition-all duration-200 bg-white h-full flex flex-col px-0"
                     >
-                        <CardContent className="p-4 flex flex-col h-full">
+                        <CardContent className="p-4 flex flex-col h-full px-0">
                         <div className="flex items-center gap-3 mb-3">
                             {sale.vehicle?.imagemPrincipal ? (
                             <div className="relative w-16 h-16 rounded-md overflow-hidden border border-gray-200 bg-gray-50 shrink-0">

@@ -1,350 +1,558 @@
-import { motion } from "framer-motion"
-import { ArrowRight, Trophy, Shield, Heart } from "lucide-react"
 
-const OurMissionPage = () => {
-  // Animation variants for consistent effects
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  }
+import { motion, useScroll, useTransform, useInView } from "framer-motion"
+import { useRef, useEffect, useState } from "react"
+import { ArrowRight, Trophy, Shield, Heart, Star, Users, Award } from "lucide-react"
 
-  const fadeInUp = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-  }
+const fadeInUp = {
+  initial: { opacity: 0, y: 60 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const slideInLeft = {
+  initial: { opacity: 0, x: -100 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+const slideInRight = {
+  initial: { opacity: 0, x: 100 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+}
+
+function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const isInView = useInView(ref)
+
+  useEffect(() => {
+    if (isInView) {
+      let startTime: number
+      const animate = (currentTime: number) => {
+        if (!startTime) startTime = currentTime
+        const progress = Math.min((currentTime - startTime) / (duration * 1000), 1)
+        setCount(Math.floor(progress * end))
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        }
+      }
+      requestAnimationFrame(animate)
+    }
+  }, [isInView, end, duration])
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* Hero Section - Minimalist approach */}
-      <motion.section
-        className="relative h-[70vh] flex items-center justify-center overflow-hidden"
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-        transition={{ duration: 0.8 }}
-      >
-        <motion.div
-          className="absolute grayscale-100 inset-0 bg-[url('https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/80c9257f-e41e-436f-9a80-8d50893c6d22/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_2.jpg')] bg-cover bg-center opacity-5"
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.2 }}
-        />
+    <span ref={ref}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  )
+}
 
-        <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
-          <motion.h1
-            className="text-4xl md:text-6xl font-light text-gray-900 mb-8 tracking-tight"
-            variants={fadeInUp}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Nossa Missão
-          </motion.h1>
-          <motion.div
-            className="h-px w-16 bg-gray-300 mx-auto mb-8"
-            variants={fadeIn}
-            transition={{ delay: 0.4, duration: 0.6 }}
+export default function PrestigeMissionPage() {
+  const { scrollYProgress } = useScroll()
+  const heroRef = useRef(null)
+  const missionRef = useRef(null)
+  const pillarsRef = useRef(null)
+  const differentiatorsRef = useRef(null)
+  const ctaRef = useRef(null)
+
+  const heroIsInView = useInView(heroRef, { once: true })
+  const missionIsInView = useInView(missionRef, { once: true })
+  const pillarsIsInView = useInView(pillarsRef, { once: true })
+  const differentiatorsIsInView = useInView(differentiatorsRef, { once: true })
+  const ctaIsInView = useInView(ctaRef, { once: true })
+
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
+
+  const pillars = [
+    {
+      icon: Trophy,
+      title: "Excelência Inigualável",
+      description:
+        "Buscamos a perfeição em cada detalhe, desde a seleção dos veículos até o pós-venda. Nossos padrões superam as expectativas do mercado.",
+    },
+    {
+      icon: Shield,
+      title: "Integridade Absoluta",
+      description:
+        "Agimos com transparência e ética em todas as transações. Cada informação compartilhada é verificada e cada promessa é cumprida.",
+    },
+    {
+      icon: Heart,
+      title: "Paixão Automotiva",
+      description:
+        "Nossa equipe é formada por verdadeiros entusiastas que compartilham o mesmo amor por automóveis excepcionais que nossos clientes.",
+    },
+  ]
+
+  const differentiators = [
+    {
+      title: "Seleção Curada",
+      description:
+        "Cada veículo em nosso portfólio passa por um rigoroso processo de seleção. Trabalhamos apenas com os melhores exemplares, verificando minuciosamente sua procedência, histórico de manutenção e condições.",
+      features: [
+        "Inspeção técnica de 212 pontos",
+        "Verificação completa de histórico",
+        "Avaliação por especialistas independentes",
+      ],
+      image:
+        "https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/80c9257f-e41e-436f-9a80-8d50893c6d22/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_1.jpg",
+    },
+    {
+      title: "Experiência Personalizada",
+      description:
+        "Entendemos que cada cliente é único. Nossos consultores especializados dedicam tempo para compreender suas necessidades e preferências, oferecendo soluções sob medida.",
+      features: ["Consultoria individualizada", "Test-drives em locais exclusivos", "Programa de entrega premium"],
+      image:
+        "https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/6c3d4134-b64b-4de3-89bf-32f2ecb862bb/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_1.jpg",
+    },
+    {
+      title: "Compromisso Pós-Venda",
+      description:
+        "Nosso relacionamento não termina na entrega das chaves. Oferecemos um programa completo de pós-venda para garantir que sua experiência com o veículo seja tão extraordinária quanto o processo de aquisição.",
+      features: ["Assistência 24/7", "Programa de manutenção preferencial", "Eventos exclusivos para clientes"],
+      image:
+        "https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/69533692-5801-4ec0-9617-369725398cdc/Leonardo_Kino_XL_Stylized_image_of_the_Prestige_Motors_custome_3.jpg",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-white text-black font-light antialiased overflow-x-hidden">
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-0.5 bg-black z-50 origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      {/* Hero Section */}
+      <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
+          <img
+            src="https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/80c9257f-e41e-436f-9a80-8d50893c6d22/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_2.jpg"
+            alt="Prestige Motors luxury experience"
+            className="object-cover object-center grayscale w-full h-full"
           />
+          <div className="absolute inset-0 bg-black/70" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={heroIsInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 1.2, ease: [0.6, -0.05, 0.01, 0.99] }}
+          className="relative z-10 text-center px-4"
+        >
+          <motion.div
+            initial={{ width: 0 }}
+            animate={heroIsInView ? { width: "100%" } : {}}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="h-px bg-white mb-8 mx-auto max-w-24"
+          />
+
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-6xl md:text-9xl font-thin tracking-[0.2em] text-white mb-6"
+          >
+            MISSÃO
+          </motion.h1>
+
           <motion.p
-            className="text-lg text-gray-500 max-w-xl mx-auto font-light"
-            variants={fadeInUp}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-lg md:text-xl font-light text-white/80 tracking-widest mb-4"
+          >
+            NOSSA RAZÃO DE EXISTIR
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={heroIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-sm md:text-base font-light text-white/60 tracking-wide max-w-2xl mx-auto"
           >
             Redefinindo padrões no universo automotivo de luxo
           </motion.p>
-        </div>
-      </motion.section>
-
-      {/* Mission Statement - Clean, elegant card */}
-      <section className="py-24 px-4 max-w-5xl mx-auto">
-        <motion.div
-          className="border-t border-gray-100 pt-12"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h2
-            className="text-2xl font-light mb-12 text-center tracking-wide"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Nossa Razão de Existir
-          </motion.h2>
-
-          <motion.p
-            className="text-xl text-gray-700 mb-12 text-center font-light italic max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            "Na Prestige Motors, nossa missão é transcender as expectativas no mercado de veículos de luxo, oferecendo
-            uma experiência de compra tão excepcional quanto os automóveis que representamos."
-          </motion.p>
 
           <motion.div
-            className="w-16 h-px bg-gray-300 mx-auto my-12"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            initial={{ width: 0 }}
+            animate={heroIsInView ? { width: "100%" } : {}}
+            transition={{ duration: 1, delay: 1.1 }}
+            className="h-px bg-white mt-8 mx-auto max-w-24"
           />
+        </motion.div>
 
-          <motion.p
-            className="text-base text-gray-600 max-w-3xl mx-auto text-center font-light leading-relaxed"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            Acreditamos que adquirir um veículo de luxo deve ser uma jornada memorável, repleta de descobertas e prazer.
-            Nosso compromisso vai além da transação - cultivamos relacionamentos duradouros, oferecendo assessoria
-            especializada, transparência absoluta e serviços personalizados que atendem às necessidades dos clientes
-            mais exigentes.
-          </motion.p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+            className="w-px h-16 bg-white/60"
+          />
         </motion.div>
       </section>
 
-      {/* Pillars Section - Minimal cards */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4">
-          <motion.h2
-            className="text-2xl font-light text-center mb-20 tracking-wide"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+      {/* Statistics Section */}
+      <section className="py-20 bg-black text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
-            Pilares da Prestige Motors
-          </motion.h2>
+            {[
+              { number: 98, label: "SATISFAÇÃO DO CLIENTE", suffix: "%" },
+              { number: 212, label: "PONTOS DE INSPEÇÃO", suffix: "" },
+              { number: 24, label: "ASSISTÊNCIA DISPONÍVEL", suffix: "/7" },
+              { number: 100, label: "TRANSPARÊNCIA", suffix: "%" },
+            ].map((stat, index) => (
+              <motion.div key={index} variants={fadeInUp} className="text-center group">
+                <div className="text-3xl md:text-4xl font-thin mb-2">
+                  <AnimatedCounter end={stat.number} suffix={stat.suffix} />
+                </div>
+                <div className="w-8 h-px bg-white mx-auto mb-2 group-hover:w-16 transition-all duration-300" />
+                <div className="text-xs tracking-widest text-gray-400 font-light">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-3 gap-12">
-            {/* Pillar 1 */}
+      {/* Mission Statement Section */}
+      <section ref={missionRef} className="py-32 px-4 md:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={missionIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
             <motion.div
-              className="flex flex-col items-center text-center"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ y: -5 }}
-            >
-              <div className="border border-gray-200 p-5 rounded-full mb-8 text-gray-700">
-                <Trophy size={24} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-lg font-light mb-4 tracking-wide">Excelência Inigualável</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                Buscamos a perfeição em cada detalhe, desde a seleção dos veículos até o pós-venda. Nossos padrões
-                superam as expectativas do mercado.
-              </p>
-            </motion.div>
+              initial={{ width: 0 }}
+              animate={missionIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">NOSSA DECLARAÇÃO</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={missionIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
 
-            {/* Pillar 2 */}
-            <motion.div
-              className="flex flex-col items-center text-center"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ y: -5 }}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={missionIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="max-w-5xl mx-auto"
+          >
+            <motion.blockquote
+              className="text-2xl md:text-3xl font-light text-center text-gray-800 mb-12 italic leading-relaxed"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={missionIsInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 1, delay: 0.5 }}
             >
-              <div className="border border-gray-200 p-5 rounded-full mb-8 text-gray-700">
-                <Shield size={24} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-lg font-light mb-4 tracking-wide">Integridade Absoluta</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                Agimos com transparência e ética em todas as transações. Cada informação compartilhada é verificada e
-                cada promessa é cumprida.
-              </p>
-            </motion.div>
+              "Na Prestige Motors, nossa missão é transcender as expectativas no mercado de veículos de luxo, oferecendo
+              uma experiência de compra tão excepcional quanto os automóveis que representamos."
+            </motion.blockquote>
 
-            {/* Pillar 3 */}
             <motion.div
-              className="flex flex-col items-center text-center"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              whileHover={{ y: -5 }}
+              initial={{ width: 0 }}
+              animate={missionIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="w-24 h-px bg-gray-300 mx-auto mb-12"
+            />
+
+            <motion.p
+              className="text-lg leading-relaxed text-gray-700 font-light text-center max-w-4xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={missionIsInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 1 }}
             >
-              <div className="border border-gray-200 p-5 rounded-full mb-8 text-gray-700">
-                <Heart size={24} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-lg font-light mb-4 tracking-wide">Paixão Automotiva</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                Nossa equipe é formada por verdadeiros entusiastas que compartilham o mesmo amor por automóveis
-                excepcionais que nossos clientes.
-              </p>
-            </motion.div>
+              Acreditamos que adquirir um veículo de luxo deve ser uma jornada memorável, repleta de descobertas e
+              prazer. Nosso compromisso vai além da transação - cultivamos relacionamentos duradouros, oferecendo
+              assessoria especializada, transparência absoluta e serviços personalizados que atendem às necessidades dos
+              clientes mais exigentes.
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pillars Section */}
+      <section ref={pillarsRef} className="py-32 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={pillarsIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={pillarsIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">PILARES DA PRESTIGE</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={pillarsIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            animate={pillarsIsInView ? "animate" : "initial"}
+            className="grid md:grid-cols-3 gap-12"
+          >
+            {pillars.map((pillar, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                className="group text-center"
+                whileHover={{ y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  className="inline-flex items-center justify-center w-20 h-20 border border-gray-200 rounded-full mb-8 group-hover:border-black transition-colors duration-300"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <pillar.icon size={32} strokeWidth={1} className="text-gray-700 group-hover:text-black" />
+                </motion.div>
+                <h3 className="text-2xl font-light mb-6 tracking-wide">{pillar.title}</h3>
+                <div className="w-12 h-px bg-gray-300 mx-auto mb-6 group-hover:w-24 group-hover:bg-black transition-all duration-300" />
+                <p className="text-lg leading-relaxed text-gray-700 font-light">{pillar.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Differentiators Section */}
+      <section ref={differentiatorsRef} className="py-32 px-4 md:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={differentiatorsIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={differentiatorsIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">O QUE NOS DIFERENCIA</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={differentiatorsIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
+          <div className="space-y-32">
+            {differentiators.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                className={`grid md:grid-cols-5 gap-16 items-center ${index % 2 === 1 ? "md:grid-flow-col-dense" : ""}`}
+              >
+                <motion.div
+                  className={`md:col-span-2 relative group ${index % 2 === 1 ? "md:col-start-4" : ""}`}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="aspect-[4/3] overflow-hidden border border-gray-200">
+                    <img
+                      src={item.image || "/placeholder.svg"}
+                      alt={item.title}
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 w-full h-full"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  variants={index % 2 === 0 ? slideInRight : slideInLeft}
+                  initial="initial"
+                  whileInView="animate"
+                  viewport={{ once: true }}
+                  className={`md:col-span-3 ${index % 2 === 1 ? "md:col-start-1" : ""}`}
+                >
+                  <div className="w-12 h-px bg-black mb-6" />
+                  <h3 className="text-3xl font-light mb-6 tracking-wide">{item.title}</h3>
+                  <p className="text-lg leading-relaxed text-gray-700 font-light mb-8">{item.description}</p>
+                  <ul className="space-y-4">
+                    {item.features.map((feature, featureIndex) => (
+                      <motion.li
+                        key={featureIndex}
+                        className="flex items-start text-gray-600 font-light"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: featureIndex * 0.1 }}
+                      >
+                        <span className="text-gray-400 mr-4 mt-1">—</span>
+                        <span>{feature}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Differentiators Section - Clean layout */}
-      <section className="py-24 px-4 max-w-5xl mx-auto">
-        <motion.h2
-          className="text-2xl font-light text-center mb-20 tracking-wide"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          O Que Nos Diferencia
-        </motion.h2>
-
-        <div className="space-y-24">
-          {/* Differentiator 1 */}
+      {/* Excellence Commitment Section */}
+      <section className="py-32 bg-black text-white">
+        <div className="max-w-6xl mx-auto px-4">
           <motion.div
-            className="grid md:grid-cols-5 gap-12 items-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
           >
-            <div className="md:col-span-2">
-              <div className="aspect-[4/3] bg-[url('https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/80c9257f-e41e-436f-9a80-8d50893c6d22/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_1.jpg')] bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" />
-            </div>
-            <div className="md:col-span-3">
-              <div className="h-px w-12 bg-gray-200 mb-6" />
-              <h3 className="text-xl font-light mb-6 tracking-wide">Seleção Curada</h3>
-              <p className="text-gray-600 mb-6 font-light leading-relaxed">
-                Cada veículo em nosso portfólio passa por um rigoroso processo de seleção. Trabalhamos apenas com os
-                melhores exemplares, verificando minuciosamente sua procedência, histórico de manutenção e condições.
-              </p>
-              <ul className="space-y-3 text-gray-600 font-light">
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Inspeção técnica de 212 pontos</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Verificação completa de histórico</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Avaliação por especialistas independentes</span>
-                </li>
-              </ul>
-            </div>
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="h-px bg-white mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-white mb-4">
+              COMPROMISSO COM A EXCELÊNCIA
+            </h2>
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "100%" }}
+              transition={{ duration: 1, delay: 0.6 }}
+              viewport={{ once: true }}
+              className="h-px bg-white mt-8 mx-auto max-w-16"
+            />
           </motion.div>
 
-          {/* Differentiator 2 */}
           <motion.div
-            className="grid md:grid-cols-5 gap-12 items-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto text-center"
           >
-            <div className="md:col-span-3 md:order-1">
-              <div className="h-px w-12 bg-gray-200 mb-6" />
-              <h3 className="text-xl font-light mb-6 tracking-wide">Experiência Personalizada</h3>
-              <p className="text-gray-600 mb-6 font-light leading-relaxed">
-                Entendemos que cada cliente é único. Nossos consultores especializados dedicam tempo para compreender
-                suas necessidades e preferências, oferecendo soluções sob medida.
-              </p>
-              <ul className="space-y-3 text-gray-600 font-light">
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Consultoria individualizada</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Test-drives em locais exclusivos</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Programa de entrega premium</span>
-                </li>
-              </ul>
-            </div>
-            <div className="md:col-span-2 md:order-2">
-              <div className="aspect-[4/3] bg-[url('https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/6c3d4134-b64b-4de3-89bf-32f2ecb862bb/Leonardo_Kino_XL_Photorealistic_image_capturing_an_exclusive_P_1.jpg')] bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" />
-            </div>
-          </motion.div>
-
-          {/* Differentiator 3 */}
-          <motion.div
-            className="grid md:grid-cols-5 gap-12 items-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="md:col-span-2">
-              <div className="aspect-[4/3] bg-[url('https://cdn.leonardo.ai/users/c60a0145-a4a8-4ee5-91cf-76495889e8b2/generations/69533692-5801-4ec0-9617-369725398cdc/Leonardo_Kino_XL_Stylized_image_of_the_Prestige_Motors_custome_3.jpg')] bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" />
-            </div>
-            <div className="md:col-span-3">
-              <div className="h-px w-12 bg-gray-200 mb-6" />
-              <h3 className="text-xl font-light mb-6 tracking-wide">Compromisso Pós-Venda</h3>
-              <p className="text-gray-600 mb-6 font-light leading-relaxed">
-                Nosso relacionamento não termina na entrega das chaves. Oferecemos um programa completo de pós-venda
-                para garantir que sua experiência com o veículo seja tão extraordinária quanto o processo de aquisição.
-              </p>
-              <ul className="space-y-3 text-gray-600 font-light">
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Assistência 24/7</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Programa de manutenção preferencial</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-gray-400 mr-3">—</span>
-                  <span>Eventos exclusivos para clientes</span>
-                </li>
-              </ul>
+            <p className="text-xl md:text-2xl font-light leading-relaxed text-white/90 mb-8">
+              Cada decisão que tomamos, cada processo que implementamos e cada relacionamento que construímos é guiado
+              por nosso compromisso inabalável com a excelência.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+              {[
+                { icon: Star, label: "Qualidade Premium" },
+                { icon: Users, label: "Atendimento Personalizado" },
+                { icon: Award, label: "Reconhecimento de Mercado" },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center group"
+                >
+                  <motion.div
+                    className="inline-flex items-center justify-center w-16 h-16 border border-white/30 rounded-full mb-4 group-hover:border-white transition-colors duration-300"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <item.icon size={24} strokeWidth={1} className="text-white/70 group-hover:text-white" />
+                  </motion.div>
+                  <div className="w-16 h-px bg-white/30 mx-auto mb-4 group-hover:w-24 group-hover:bg-white transition-all duration-300" />
+                  <h4 className="text-lg font-light tracking-wide">{item.label}</h4>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Team CTA - Minimal and elegant */}
-      <section className="py-24 bg-zinc-950 text-white">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <motion.h2
-            className="text-2xl font-light mb-8 tracking-wide"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Conheça Nossa Equipe
-          </motion.h2>
+      {/* CTA Section */}
+      <section ref={ctaRef} className="py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.div
-            className="h-px w-16 bg-gray-700 mx-auto mb-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          />
+            initial={{ opacity: 0, y: 50 }}
+            animate={ctaIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="mb-20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={ctaIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="h-px bg-black mb-8 mx-auto max-w-16"
+            />
+            <h2 className="text-4xl md:text-6xl font-thin tracking-wider text-black mb-4">CONHEÇA NOSSA EQUIPE</h2>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={ctaIsInView ? { width: "100%" } : {}}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="h-px bg-black mt-8 mx-auto max-w-16"
+            />
+          </motion.div>
+
           <motion.p
-            className="text-lg mb-12 text-gray-400 font-light max-w-xl mx-auto"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={ctaIsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-xl md:text-2xl font-light leading-relaxed text-gray-700 mb-12 max-w-2xl mx-auto"
           >
             Por trás da Prestige Motors está um time de especialistas apaixonados por automóveis e comprometidos com a
             excelência.
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            whileHover={{ scale: 1.02 }}
-          >
-            <button className="border border-white text-white px-10 py-3 font-light tracking-wide hover:bg-white hover:text-gray-900 transition-colors duration-300 flex items-center mx-auto group">
-              <span>Ver Equipe</span>
-              <ArrowRight className="ml-3 transition-transform duration-300 group-hover:translate-x-1" size={18} />
-            </button>
-          </motion.div>
+
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-16 border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="text-2xl font-thin tracking-[0.3em] mb-8">PRESTIGE MOTORS</div>
+            <div className="w-16 h-px bg-white mx-auto mb-8" />
+            <div className="text-sm font-light tracking-widest text-gray-400 mb-4">NOSSA RAZÃO DE EXISTIR</div>
+          </motion.div>
+        </div>
+      </footer>
     </div>
   )
 }
-
-export default OurMissionPage

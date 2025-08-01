@@ -54,7 +54,7 @@ export function Baseboard() {
         animate={{ height: "auto", opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="border-b border-gray-100 dark:border-gray-900 bg-zinc-950 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-950 overflow-hidden"
+        className="border-b border-gray-100 dark:border-gray-900 bg-black dark:bg-zinc-100 text-zinc-50 dark:text-zinc-950 overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         >

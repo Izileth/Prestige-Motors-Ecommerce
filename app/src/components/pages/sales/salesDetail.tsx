@@ -13,16 +13,13 @@ interface SaleDetailProps {
 
 const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
     const { updateSale, loadingStates, currentSale, fetchSaleById } = useSale()
-
    
     const displaySale = currentSale || sale
 
     const handleStatusChange = async (newStatus: string) => {
         try {
-            // Atualizar no Redux
             const updatedSale = await updateSale(sale.id, { status: newStatus })
-            
-            // Opcional: Refetch para garantir sincronização
+ 
             if (updatedSale) {
                 await fetchSaleById(sale.id)
             }
@@ -61,10 +58,10 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
     const currentYear = new Date().getFullYear()
 
     return (
-        <div className="w-full max-w-full mx-auto p-4">
-        <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200 hover:shadow-md">
-            <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center gap-3">
+        <div className="w-full max-w-full mx-auto px-0 py-4">
+        <Card className=" border-none shadow-none bg-white transition-all duration-200 px-0 py-4 ">
+            <CardHeader className="border-none border-gray-100 bg-gray-50/30 px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex items-center gap-2">
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
                 <Tag className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
                 </div>
@@ -80,9 +77,9 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
             </div>
             </CardHeader>
 
-            <CardContent className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <CardContent className="px-0 py-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Vehicle Section */}
-            <div className="space-y-4 border-b lg:border-b-0 lg:border-r border-gray-100 pb-6 lg:pb-0 lg:pr-8">
+            <div className="space-y-4 border-none lg:border-b-0 lg:border-r border-gray-100 pb-6 lg:pb-0 lg:pr-8">
                 <h3 className="text-lg font-medium text-gray-900 tracking-tight flex items-center gap-2">
                 <Car className="h-5 w-5 text-gray-600" strokeWidth={1.5} />
                 Veículo
@@ -131,11 +128,11 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                     <dl className="space-y-1 text-sm text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{displaySale.comprador?.nome || "Oculto"}</dd>
+                        <dd className="font-light">{displaySale.comprador?.nome || "Não informado"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light text-sm">{displaySale.comprador?.email || "Oculto"}</dd>
+                        <dd className="font-light text-sm">{displaySale.comprador?.email || "Não informado"}</dd>
                     </div>
                     </dl>
                 </div>
@@ -145,11 +142,11 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
                     <dl className="space-y-1 text-xs text-gray-700">
                     <div>
                         <dt className="font-semibold text-gray-800">Nome:</dt>
-                        <dd className="font-light">{displaySale.vendedor?.nome || "Oculto"}</dd>
+                        <dd className="font-light">{displaySale.vendedor?.nome || "Não informado"}</dd>
                     </div>
                     <div>
                         <dt className="font-semibold text-gray-800">Email:</dt>
-                        <dd className="font-light">{displaySale.vendedor?.email || "Oculto"}</dd>
+                        <dd className="font-light">{displaySale.vendedor?.email || "Não informado"}</dd>
                     </div>
                     </dl>
                 </div>
@@ -229,12 +226,7 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
             </CardFooter>
         </Card>
 
-        {/* Copyright Notice */}
-        <div className="mt-6 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-            © {currentYear} Prestige Motors | Todos os Direitos Reservados
-            </p>
-        </div>
+   
         </div>
   )
 }

@@ -187,9 +187,9 @@ const SalesDashboard = () => {
 
   return (
     <div className="w-full max-w-full mx-auto p-4 space-y-6">
-      <Card className="border border-gray-200 shadow-sm bg-white transition-all duration-200">
-        <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5 flex items-center gap-3">
-          <div className="p-2 bg-white border border-gray-200 rounded-lg">
+      <Card className=" bg-white transition-all duration-200 shadow-none border-none">
+        <CardHeader className=" px-6 py-5 flex items-center gap-3">
+          <div className="border-none bg-white border ">
             <LayoutDashboard
               className="h-4 w-4 text-gray-600"
               strokeWidth={1.5}
@@ -202,16 +202,16 @@ const SalesDashboard = () => {
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="px-0 rounded-none shadow-none">
           <div className="mb-8">
             <SalesStats stats={stats.user} />
           </div>
 
           <Tabs defaultValue="transactions" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 h-auto p-1 bg-gray-100 border border-gray-200 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 h-auto p-1 bg-transparent border-none rounded-none">
               <TabsTrigger
                 value="transactions"
-                className="flex items-center gap-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:font-medium transition-all duration-200 py-2.5"
+                className="flex items-center gap-2 text-gray-700 rounded-none shadow-none data-[state=active]:bg-white  data-[state=active]:shadow-none data-[state=active]:text-gray-900  data-[state=active]:border data-[state=active]:border-b-zinc-950 data-[state=active]:font-medium transition-all duration-200 py-2.5"
               >
                 <ListOrdered className="h-4 w-4" strokeWidth={1.5} />
                 Minhas Transações
@@ -220,7 +220,7 @@ const SalesDashboard = () => {
               {isAdmin && (
                 <TabsTrigger
                   value="global-stats"
-                  className="flex items-center gap-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:font-medium transition-all duration-200 py-2.5"
+                  className="flex items-center gap-2 text-gray-700 rounded-none shadow-none data-[state=active]:bg-white  data-[state=active]:shadow-none data-[state=active]:text-gray-900  data-[state=active]:border data-[state=active]:border-b-zinc-950 data-[state=active]:font-medium transition-all duration-200 py-2.5"
                 >
                   <BarChart2 className="h-4 w-4" strokeWidth={1.5} />
                   Estatísticas Globais
@@ -229,7 +229,7 @@ const SalesDashboard = () => {
 
               <TabsTrigger
                 value="create"
-                className="flex items-center gap-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:font-medium transition-all duration-200 py-2.5"
+                className="flex items-center gap-2 text-gray-700 rounded-none shadow-none data-[state=active]:bg-white  data-[state=active]:shadow-none data-[state=active]:text-gray-900  data-[state=active]:border data-[state=active]:border-b-zinc-950 data-[state=active]:font-medium transition-all duration-200 py-2.5"
               >
                 <PlusCircle className="h-4 w-4" strokeWidth={1.5} />
                 Criar Nova Venda
@@ -239,37 +239,37 @@ const SalesDashboard = () => {
             <TabsContent value="transactions" className="mt-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1">
-                  <Card className="border border-gray-200 shadow-sm bg-white">
-                    <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-4">
+                  <Card className="border-none shadow-none bg-white">
+                    <CardHeader className="border-none shadow-none bg-white/5 px-6 py-4">
                       <CardTitle className="text-gray-900 font-medium text-lg tracking-tight">
                         Minhas Transações
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                      <Tabs defaultValue="purchases" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 h-auto p-1 bg-gray-100 border-b border-gray-200 rounded-none">
+                      <Tabs defaultValue="purchases" className="w-full bg-transparent">
+                        <TabsList className="grid w-full grid-cols-2 h-auto p-1 border-none rounded-none bg-white">
                           <TabsTrigger
                             value="purchases"
-                            className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:font-medium transition-all duration-200 py-2.5"
+                            className="flex items-center gap-2 text-gray-700 rounded-none shadow-none data-[state=active]:bg-white  data-[state=active]:shadow-none data-[state=active]:text-gray-900  data-[state=active]:border data-[state=active]:border-b-zinc-950 data-[state=active]:font-medium transition-all duration-200 py-2.5"
                           >
                             Compras
                           </TabsTrigger>
                           <TabsTrigger
                             value="sales"
-                            className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200 data-[state=active]:font-medium transition-all duration-200 py-2.5"
+                            className="flex items-center gap-2 text-gray-700 rounded-none shadow-none data-[state=active]:bg-white  data-[state=active]:shadow-none data-[state=active]:text-gray-900  data-[state=active]:border data-[state=active]:border-b-zinc-950 data-[state=active]:font-medium transition-all duration-200 py-2.5"
                           >
                             Vendas
                           </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="purchases" className="mt-0 p-4">
+                        <TabsContent value="purchases" className="mt-0 px-0 py-4">
                           <SalesList
                             sales={transactions.asBuyer}
                             onSelectSale={setCurrentSale}
                             title="Minhas Compras"
                           />
                         </TabsContent>
-                        <TabsContent value="sales" className="mt-0 p-4">
+                        <TabsContent value="sales" className="mt-0 px-0 py-4">
                           <SalesList
                             sales={transactions.asSeller}
                             onSelectSale={setCurrentSale}
@@ -285,8 +285,8 @@ const SalesDashboard = () => {
                   {currentSale ? (
                     <SaleDetail sale={currentSale} />
                   ) : (
-                    <Card className="border border-gray-200 shadow-sm bg-white h-full flex items-center justify-center">
-                      <CardContent className="text-center py-16 px-6 bg-gray-50/50 rounded-lg border border-gray-200 text-gray-600">
+                    <Card className="border-none shadow-none  bg-white h-full flex items-center justify-center">
+                      <CardContent className="text-center py-16 px-6 rounded-none border-none  text-gray-600">
                         <ListOrdered
                           className="w-12 h-12 text-gray-400 mx-auto mb-4"
                           strokeWidth={1.5}
@@ -315,12 +315,6 @@ const SalesDashboard = () => {
           </Tabs>
         </CardContent>
       </Card>
-
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-          © {currentYear} Sales Dashboard. All rights reserved.
-        </p>
-      </div>
     </div>
   );
 };

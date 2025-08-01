@@ -14,7 +14,7 @@ export const FormHeader = ({ formProgress, isSubmitting, onSave }: FormHeaderPro
   const navigate = useNavigate();
 
   return (
-    <div className="sticky top-0 z-10 bg-zinc-50 dark:bg-gray-950/95 backdrop-blur-sm shadow-none py-4">
+    <div className="sticky top-0 z-10 bg-transparent dark:bg-gray-950/95 backdrop-blur-sm shadow-none py-4">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <Button

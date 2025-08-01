@@ -13,9 +13,7 @@ export default [
     route("about/amg", "routes/about/brands/amg.tsx"),
 
     route("history", "routes/about/mission/mission.tsx"),
-    route("support", "routes/about/support/support.tsx"),
 
-    route("polities/ecological", "routes/about/ecological/ecological.tsx"),
     
     route("newsletter", "routes/newsletter/newsletter.tsx"),
 

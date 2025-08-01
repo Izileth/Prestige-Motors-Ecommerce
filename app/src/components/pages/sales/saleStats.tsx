@@ -40,9 +40,9 @@ const SalesStats: React.FC<SalesStatsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-full mx-auto p-4">
-        <Card className="border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5">
+      <div className="w-full max-w-full mx-auto ">
+        <Card className=" bg-white">
+          <CardHeader className=" py-5">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white border border-gray-200 rounded-lg">
                 <TrendingUp className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
@@ -61,11 +61,11 @@ const SalesStats: React.FC<SalesStatsProps> = ({
 
   if (!stats) {
     return (
-      <div className="w-full max-w-full mx-auto p-4">
-        <Card className="border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-6 py-5">
+      <div className="w-full max-w-full mx-auto py-4 ">
+        <Card className=" bg-white shadow-none border-none">
+          <CardHeader className="py-2">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white border border-gray-200 rounded-lg">
+              <div className="py-2 bg-white border-none shadow-none">
                 <TrendingUp className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
               </div>
               <CardTitle className="text-gray-900 font-medium text-xl tracking-tight">{title}</CardTitle>
@@ -73,7 +73,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
             <CardDescription className="text-gray-600 font-light text-sm">{description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-16 px-6 bg-gray-50/50 rounded-lg border border-gray-200 text-gray-600">
+            <div className="text-center py-16 px-6  rounded-lg border-none text-gray-600">
               <Info className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={1.5} />
               <h3 className="text-lg font-medium mb-2 text-gray-900 tracking-tight">
                 Nenhum dado estatístico disponível
@@ -84,11 +84,6 @@ const SalesStats: React.FC<SalesStatsProps> = ({
             </div>
           </CardContent>
         </Card>
-        <div className="mt-6 pt-4 border-t border-gray-100">
-          <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-            © {currentYear} Sales Analytics. All rights reserved.
-          </p>
-        </div>
       </div>
     )
   }
@@ -106,15 +101,6 @@ const SalesStats: React.FC<SalesStatsProps> = ({
     total,
   }))
 
-  const sellerStatusData = Object.entries(stats.asSeller.byStatus).map(([name, count]) => ({
-    name: name.replace(/_/g, " "),
-    count,
-  }))
-
-  const buyerStatusData = Object.entries(stats.asBuyer.byStatus).map(([name, count]) => ({
-    name: name.replace(/_/g, " "),
-    count,
-  }))
 
   const monthlySalesData = stats.asSeller.monthlySales.map((item) => ({
     name: item.month,
@@ -137,8 +123,8 @@ const SalesStats: React.FC<SalesStatsProps> = ({
   return (
     <div className="w-full max-w-full mx-auto  space-y-6">
       {/* User Info Card */}
-      <Card className="border border-gray-200 shadow-sm bg-white">
-        <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
+      <Card className="border-none shadow-none bg-white">
+        <CardHeader className=" px-2 py-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white border border-gray-200 rounded-lg">
               <User className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
@@ -158,10 +144,10 @@ const SalesStats: React.FC<SalesStatsProps> = ({
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* As Seller Overview */}
-        <Card className="border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
+        <Card className="border-none shadow-none bg-white">
+          <CardHeader className=" px-2 py-4">
             <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
-              <div className="p-2 bg-white border border-gray-200 rounded-lg">
+              <div className="p-2 bg-white border-none rounded-none">
                 <TrendingUp className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
               </div>
               Como Vendedor
@@ -204,7 +190,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
         </Card>
 
         {/* As Buyer Overview */}
-        <Card className="border border-gray-200 shadow-sm bg-white">
+        <Card className="border-none shadow-none bg-white">
           <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
             <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
               <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -257,7 +243,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Seller Payment Methods */}
         {sellerPaymentMethodData.length > 0 && (
-          <Card className="border border-gray-200 shadow-sm bg-white">
+          <Card className="border-none shadow-none bg-white">
             <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
               <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -310,7 +296,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
 
         {/* Buyer Payment Methods */}
         {buyerPaymentMethodData.length > 0 && (
-          <Card className="border border-gray-200 shadow-sm bg-white">
+          <Card className="border-none shadow-none bg-white">
             <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
               <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -366,7 +352,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Sales */}
         {monthlySalesData.length > 0 && (
-          <Card className="border border-gray-200 shadow-sm bg-white">
+          <Card className="border-none shadow-none bg-white">
             <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
               <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -420,7 +406,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
 
         {/* Monthly Purchases */}
         {monthlyPurchasesData.length > 0 && (
-          <Card className="border border-gray-200 shadow-sm bg-white">
+          <Card className="border-none shadow-none bg-white">
             <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
               <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
                 <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -476,7 +462,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
       {/* Recent Transactions Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Sales */}
-        <Card className="border border-gray-200 shadow-sm bg-white">
+        <Card className="border-none shadow-none bg-white">
           <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
             <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
               <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -530,7 +516,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
         </Card>
 
         {/* Recent Purchases */}
-        <Card className="border border-gray-200 shadow-sm bg-white">
+        <Card className="border-none shadow-none bg-white">
           <CardHeader className="border-b border-gray-100 bg-gray-50/30 px-2 py-4">
             <CardTitle className="flex items-center gap-3 text-gray-900 font-medium text-lg tracking-tight">
               <div className="p-2 bg-white border border-gray-200 rounded-lg">
