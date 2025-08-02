@@ -1,128 +1,131 @@
-# Prestige Motors E-commerce
+<div align="center">
+  <img src="https://raw.githubusercontent.com/MaroLipe/prestige-motors-logo/main/logo-prestige-motors.png" alt="Prestige Motors Logo" width="200"/>
+  <h1>Prestige Motors E-commerce</h1>
+  <p>Uma plataforma de e-commerce para compra e venda de veículos de luxo.</p>
+</div>
 
-Bem-vindo ao Prestige Motors, um moderno template para a construção de aplicações React full-stack usando React Router.
+## 📜 Sobre o Projeto
 
-## Estrutura de Pastas
+O Prestige Motors E-commerce é uma aplicação web completa para a comercialização de veículos de luxo, oferecendo uma experiência de usuário rica e funcionalidades robustas tanto para compradores quanto para vendedores. A plataforma permite que os usuários naveguem por um catálogo de veículos, negociem preços e concluam vendas de forma segura e eficiente.
 
-A estrutura de pastas do projeto foi organizada para promover modularidade, escalabilidade e clareza.
+## ✨ Funcionalidades
 
-| Pasta          | Descrição                                                                              |
-| :------------- | :------------------------------------------------------------------------------------- |
-| **`/app`**     | Contém o núcleo da aplicação React, incluindo rotas e o código-fonte principal.        |
-| **`/build`**   | Armazena os arquivos de produção gerados após o processo de build.                     |
-| **`/public`**  | Contém arquivos estáticos que são servidos diretamente, como `favicon.ico` ou `robots.txt`. |
-| **`.git`**     | Diretório do Git para controle de versão.                                              |
-| **`node_modules`** | Armazena as dependências do projeto.                                                   |
+- **Autenticação de Usuários:** Sistema completo de registro, login e recuperação de senha.
+- **Catálogo de Veículos:** Navegue por uma vasta gama de veículos de luxo com filtros e pesquisa avançada.
+- **Páginas de Detalhes:** Veja informações detalhadas, imagens e vídeos de cada veículo.
+- **Negociações:** Inicie e gerencie negociações diretamente com os vendedores.
+- **Dashboard de Usuário:** Acompanhe suas negociações, compras e vendas em um painel de controle intuitivo.
+- **Gerenciamento de Veículos:** Vendedores podem criar, editar e gerenciar seus anúncios de veículos.
+- **Sistema de Notificações:** Mantenha-se atualizado sobre o status de suas negociações e vendas.
 
----
+## 🔄 Fluxo de Dados
 
-### Diretório `/app`
+### Entradas de Dados
 
-O diretório `app` é o coração da aplicação.
+As entradas de dados são os pontos onde os usuários inserem informações no sistema. As principais entradas são:
 
-| Subpasta    | Descrição                                                                                                    |
-| :---------- | :------------------------------------------------------------------------------------------------------------- |
-| **`/routes`** | Define as rotas da aplicação. Cada arquivo ou pasta aqui corresponde a uma URL, seguindo a convenção do React Router. |
-| **`/src`**    | Contém todo o código-fonte da aplicação, organizado de forma modular.                                          |
+- **Registro de Usuário:**
+  - **Dados:** `nome`, `email`, `senha`, `telefone`, `cpf`, `dataNascimento`
+  - **Endpoint:** `POST /api/users/register`
+- **Login de Usuário:**
+  - **Dados:** `email`, `senha`
+  - **Endpoint:** `POST /api/users/login`
+- **Recuperação de Senha:**
+  - **Dados:** `email`
+  - **Endpoint:** `POST /api/users/forgot-password`
+- **Criação de Veículo:**
+  - **Dados:** `marca`, `modelo`, `ano`, `preço`, `descrição`, `imagens`, `vídeos`
+  - **Endpoint:** `POST /api/vehicles`
+- **Atualização de Veículo:**
+  - **Dados:** `marca`, `modelo`, `ano`, `preço`, `descrição`, `imagens`, `vídeos`
+  - **Endpoint:** `PUT /api/vehicles/:id`
+- **Início de Negociação:**
+  - **Dados:** `vehicleId`, `proposta`
+  - **Endpoint:** `POST /api/negotiations`
+- **Envio de Mensagem na Negociação:**
+  - **Dados:** `mensagem`
+  - **Endpoint:** `POST /api/negotiations/:id/messages`
+- **Criação de Endereço:**
+  - **Dados:** `rua`, `numero`, `cidade`, `estado`, `cep`
+  - **Endpoint:** `POST /api/users/:id/addresses`
 
----
+### Saídas de Dados
 
-### Diretório `/app/src`
+As saídas de dados são as informações que o sistema apresenta aos usuários. As principais saídas são:
 
-Este diretório contém a lógica e os componentes da interface do usuário.
+- **Listagem de Veículos:**
+  - **Descrição:** Exibe uma lista de veículos disponíveis para venda.
+  - **Endpoint:** `GET /api/vehicles`
+- **Detalhes do Veículo:**
+  - **Descrição:** Mostra informações detalhadas de um veículo específico.
+  - **Endpoint:** `GET /api/vehicles/:id`
+- **Dashboard do Usuário:**
+  - **Descrição:** Apresenta um resumo das atividades do usuário, como negociações, compras e vendas.
+  - **Endpoints:** `GET /api/sales/transactions/:userId`, `GET /api/negotiations/user`
+- **Listagem de Negociações:**
+  - **Descrição:** Exibe as negociações em andamento do usuário.
+  - **Endpoint:** `GET /api/negotiations/user`
+- **Detalhes da Negociação:**
+  - **Descrição:** Mostra o histórico de mensagens e o status de uma negociação.
+  - **Endpoint:** `GET /api/negotiations/:id`
 
-| Subpasta        | Descrição                                                                 | Conteúdo Principal                            |
-| :-------------- | :------------------------------------------------------------------------ | :-------------------------------------------- |
-| **`/assets`**     | Ativos estáticos como imagens, fontes e ícones.                           | `*.png`, `*.jpg`, `*.svg`                      |
-| **`/components`** | Componentes React reutilizáveis, divididos por função.                    | `common/`, `layout/`, `pages/`, `ui/`         |
-| **`/data`**       | Dados estáticos ou mockados para desenvolvimento e testes.                | `brands.ts`, `carousel.ts`                    |
-| **`/hooks`**      | Hooks React customizados que encapsulam lógica de estado e efeitos.       | `useAuth.ts`, `useVehicle.ts`                 |
-| **`/lib`**        | Funções utilitárias e bibliotecas auxiliares.                             | `cn.ts` (classnames), `price.ts`              |
-| **`/pages`**      | Componentes que representam páginas completas da aplicação.               | `home/`, `vehicles/`, `profile/`               |
-| **`/schemas`**    | Schemas de validação de dados (usando Zod, Yup, etc.).                    | `schema.ts`                                   |
-| **`/services`**   | Lógica para interagir com APIs externas e serviços de backend.            | `api.ts`, `auth.ts`, `vehicle.ts`             |
-| **`/store`**      | Configuração de gerenciamento de estado global (Redux, Zustand, etc.).    | `global.ts`, `slices/`                        |
-| **`/types`**      | Definições de tipos e interfaces TypeScript para o projeto.               | `vehicle.ts`, `user.ts`, `response.ts`        |
-| **`/utils`**      | Funções utilitárias genéricas.                                            | `format.ts`, `storage.ts`                     |
+## 🚀 Tecnologias Utilizadas
 
-## Features
+- **Frontend:**
+  - [React](https://reactjs.org/)
+  - [React Router](https://reactrouter.com/)
+  - [Redux](https://redux.js.org/)
+  - [Axios](https://axios-http.com/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [Radix UI](https://www.radix-ui.com/)
+  - [Lucide React](https://lucide.dev/)
+- **Backend (inferido):**
+  - Node.js com Express ou similar
+  - Banco de dados relacional (ex: PostgreSQL) ou não relacional (ex: MongoDB)
+- **Ferramentas de Desenvolvimento:**
+  - [Vite](https://vitejs.dev/)
+  - [TypeScript](https://www.typescriptlang.org/)
+  - [Zod](https://zod.dev/)
 
-- 🚀 Renderização no lado do servidor
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Bundling e otimização de ativos
-- 🔄 Carregamento de dados e mutações
-- 🔒 TypeScript por padrão
-- 🎉 TailwindCSS para estilização
-- 📖 [Documentação do React Router](https://reactrouter.com/)
+## ⚙️ Como Executar o Projeto
 
-## Primeiros Passos
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/prestige-motors-ecommerce.git
+   ```
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+3. **Configure as variáveis de ambiente:**
+   - Crie um arquivo `.env` na raiz do projeto.
+   - Adicione a URL da sua API: `VITE_API_URL=http://localhost:4242/api`
+4. **Execute o projeto em modo de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+5. **Acesse a aplicação em:** `http://localhost:3000`
 
-### Instalação
+## 📂 Estrutura do Projeto
 
-Instale as dependências:
+A estrutura do projeto é organizada da seguinte forma:
 
-```bash
-npm install
 ```
-
-### Desenvolvimento
-
-Inicie o servidor de desenvolvimento com HMR:
-
-```bash
-npm run dev
+/
+├── app/
+│   ├── src/
+│   │   ├── components/    # Componentes reutilizáveis
+│   │   ├── data/          # Dados estáticos
+│   │   ├── hooks/         # Hooks personalizados
+│   │   ├── lib/           # Funções utilitárias
+│   │   ├── pages/         # Páginas da aplicação
+│   │   ├── schemas/       # Esquemas de validação com Zod
+│   │   ├── services/      # Serviços para interação com a API
+│   │   ├── store/         # Configuração do Redux
+│   │   └── types/         # Tipos e interfaces do TypeScript
+│   ├── routes/            # Definição das rotas
+│   └── app.css            # Estilos globais
+├── public/                # Arquivos estáticos
+├── package.json           # Dependências e scripts
+└── tsconfig.json          # Configurações do TypeScript
 ```
-
-Sua aplicação estará disponível em `http://localhost:5173`.
-
-## Build para Produção
-
-Crie uma build de produção:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker
-
-Para construir e rodar com Docker:
-
-```bash
-docker build -t my-app .
-
-# Rode o container
-docker run -p 3000:3000 my-app
-```
-
-A aplicação containerizada pode ser deployada em qualquer plataforma que suporte Docker, incluindo:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-Se você está familiarizado com o deploy de aplicações Node, o servidor de aplicação integrado está pronto para produção.
-
-Certifique-se de fazer o deploy do output de `npm run build`:
-
-```
-├── package.json
-├── package-lock.json (ou pnpm-lock.yaml, ou bun.lockb)
-├── build/
-│   ├── client/    # Ativos estáticos
-│   └── server/    # Código do servidor
-```
-
-## Estilização
-
-Este template vem com [Tailwind CSS](https://tailwindcss.com/) pré-configurado. Você pode usar qualquer framework CSS de sua preferência.
-
----
-
-Construído com ❤️ usando React Router.
