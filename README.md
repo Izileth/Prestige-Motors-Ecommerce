@@ -1,8 +1,23 @@
+<p align="center">
+  <img src="https://i.pinimg.com/736x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" alt="Prestige Motors Banner" width="200"/>
+</p>
+
+
+<h1 align="center">Prestige Motors</h1>
+
 <div align="center">
-  <img src="https://raw.githubusercontent.com/MaroLipe/prestige-motors-logo/main/logo-prestige-motors.png" alt="Prestige Motors Logo" width="200"/>
-  <h1>Prestige Motors E-commerce</h1>
   <p>Uma plataforma de e-commerce para compra e venda de veículos de luxo.</p>
 </div>
+
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"/>
+  <img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white" alt="React Router"/>
+  <img src="https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white" alt="Redux"/>
+</p>
 
 ## 📜 Sobre o Projeto
 
