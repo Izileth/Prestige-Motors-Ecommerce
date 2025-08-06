@@ -79,7 +79,7 @@ export function RandomVehicles() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             >
               {Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="space-y-4">
@@ -104,7 +104,7 @@ export function RandomVehicles() {
                   },
                 },
               }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             >
               {vehicles.map((vehicle, index) => (
                 <motion.div

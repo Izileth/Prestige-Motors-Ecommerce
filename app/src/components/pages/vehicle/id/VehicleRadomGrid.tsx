@@ -104,7 +104,7 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6"
       >
         {recommendations.map((vehicle, index) => (
           <div

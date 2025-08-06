@@ -60,7 +60,7 @@ export const VehiclesDestactsListing = ({
       </div>
 
       {/* Listagem */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full max-w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full max-w-full">
         {loading && !hasInitialLoad.current
           ? Array.from({ length: itemCount }).map((_, index) => (
               <VehicleCardSkeleton key={`skeleton-${index}`} />

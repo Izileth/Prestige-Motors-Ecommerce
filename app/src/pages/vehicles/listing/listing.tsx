@@ -380,12 +380,12 @@ const VehicleListingPage = () => {
         {/* Lista de veículos */}
         {!loading && Array.isArray(vehicles) && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 px-2 sm:px-4"
-            >
+              <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 px-2 sm:px-4"
+                >
               {vehicles.map((vehicle, index) => (
                 <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
               ))}
