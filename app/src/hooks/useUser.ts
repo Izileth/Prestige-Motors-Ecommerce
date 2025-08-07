@@ -1,27 +1,14 @@
-import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../store/hooks';
-import { 
-    fetchUserById, 
-    updateUser, 
-    deleteUser,
-    fetchUserAddresses,
-    addAddress,
-    fetchUserStats,
-    updateAddress,
-    deleteAddress,
-    uploadAvatar,
-    resetUserState
-} from '~/src/store/slices/user';
-
-import type { RootState } from '~/src/store/global';
-
+import { useUserStore } from '../store/slices/user';
 import type { UserUpdateData } from '../types/user';
-import type { AddressData } from '~/src/types/address';
-
-import type { UserState } from '../store/slices/user';
-
-interface UseUserStoreReturn extends Omit<UserState, 'loading' | 'error' | 'success'> {
+import type { AddressData, Address } from '~/src/types/address';
+import type { User } from '../types/user';
+import type { UserStats } from '../types/user';
+interface UseUserStoreReturn {
     // Estado
+    currentUser: User | null;
+    users: User[];
+    addresses: Address[];
+    stats: UserStats | null;
     loading: boolean;
     error: string | null;
     success: boolean;
@@ -30,7 +17,7 @@ interface UseUserStoreReturn extends Omit<UserState, 'loading' | 'error' | 'succ
     getUserById: (id: string) => Promise<void>;
     updateUserData: (id: string, userData: UserUpdateData) => Promise<void>;
     removeUser: (id: string) => Promise<void>;
-    getUserStats: (id: string) => Promise<void>
+    getUserStats: (id: string) => Promise<void>;
     getUserAddresses: (userId: string) => Promise<void>;
     createAddress: (userId: string, addressData: AddressData) => Promise<void>;
     modifyAddress: (addressId: string, addressData: AddressData) => Promise<void>;
@@ -41,71 +28,62 @@ interface UseUserStoreReturn extends Omit<UserState, 'loading' | 'error' | 'succ
     // Estado computado
     hasAddresses: boolean;
     isAuthenticated: boolean;
-    }
+}
 
-    const useUserStore = (): UseUserStoreReturn => {
-    const dispatch = useAppDispatch();
-    const state = useSelector((state: RootState) => state.user);
-    
-    // Ações
-    const getUserById = async (id: string) => {
-        await dispatch(fetchUserById(id));
-    };
-    
-    const updateUserData = async (id: string, userData: UserUpdateData) => {
-        await dispatch(updateUser({ id, userData }));
-    };
-    
-    const removeUser = async (id: string) => {
-        await dispatch(deleteUser(id));
-    };
-    const getUserStats = async (id: string) => {
-        await dispatch(fetchUserStats(id));
-    };
-
-    const getUserAddresses = async (userId: string) => {
-        await dispatch(fetchUserAddresses(userId));
-    };
-    
-    const createAddress = async (userId: string, addressData: AddressData) => {
-        await dispatch(addAddress({ userId, addressData }));
-    };
-    
-    const modifyAddress = async (addressId: string, addressData: AddressData) => {
-        await dispatch(updateAddress({ addressId, addressData }));
-    };
-    
-    const removeAddress = async (addressId: string) => {
-        await dispatch(deleteAddress(addressId));
-    };
-    
-    const uploadUserAvatar = async (userId: string, file: File) => {
-        await dispatch(uploadAvatar({ userId, file }));
-    };
-    
-    const resetUserStore = () => {
-        dispatch(resetUserState());
-    };
+const useUserStoreHook = (): UseUserStoreReturn => {
+    const {
+        // Estado
+        currentUser,
+        users,
+        addresses,
+        stats,
+        loading,
+        error,
+        success,
+        
+        // Ações originais
+        fetchUserById,
+        updateUser,
+        deleteUser,
+        fetchUserStats,
+        fetchUserAddresses,
+        addAddress,
+        updateAddress,
+        deleteAddress,
+        uploadAvatar,
+        resetUserState
+    } = useUserStore();
     
     // Estado computado
-    const hasAddresses = state.addresses.length > 0;
-    const isAuthenticated = !!state.currentUser;
+    const hasAddresses = addresses.length > 0;
+    const isAuthenticated = !!currentUser;
     
     return {
-        ...state,
-        getUserById,
-        updateUserData,
-        removeUser,
-        getUserStats,
-        getUserAddresses,
-        createAddress,
-        modifyAddress,
-        removeAddress,
-        uploadUserAvatar,
-        resetUserStore,
+        // Estado
+        currentUser,
+        users,
+        addresses,
+        stats,
+        loading,
+        error,
+        success,
+        
+        // Ações com nomes mantidos para compatibilidade
+        getUserById: fetchUserById,
+        updateUserData: updateUser,
+        removeUser: deleteUser,
+        getUserStats: fetchUserStats,
+        getUserAddresses: fetchUserAddresses,
+        createAddress: addAddress,
+        modifyAddress: updateAddress,
+        removeAddress: deleteAddress,
+        uploadUserAvatar: uploadAvatar,
+        resetUserStore: resetUserState,
+        
+        // Estado computado
         hasAddresses,
         isAuthenticated
     };
 };
 
-export default useUserStore;
+export default useUserStoreHook;

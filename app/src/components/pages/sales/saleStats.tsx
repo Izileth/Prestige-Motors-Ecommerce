@@ -36,8 +36,7 @@ const SalesStats: React.FC<SalesStatsProps> = ({
   title = "Dashboard de Vendas",
   description = "Dados consolidados sobre vendas e compras do usuário",
 }) => {
-  const currentYear = new Date().getFullYear()
-
+  
   if (isLoading) {
     return (
       <div className="w-full max-w-full mx-auto ">

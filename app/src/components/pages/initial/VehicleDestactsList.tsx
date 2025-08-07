@@ -30,7 +30,7 @@ export const VehiclesDestactsListing = ({
   }, [featuredVehicles.length]);
 
   return (
-    <section className="py-12  max-w-full mx-auto px-4 sm:px-6">
+    <section className="py-12  max-w-full mx-auto px-0 sm:px-4">
       {/* Cabeçalho */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>

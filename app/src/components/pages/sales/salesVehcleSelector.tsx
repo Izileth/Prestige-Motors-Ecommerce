@@ -158,7 +158,27 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({
                         />
                     </div>
 
-                    <CommandList className="max-h-[300px]">
+                    <CommandList  className={cn(
+                            "max-h-[300px]",
+                            // Scrollbar customizada
+                            "[&::-webkit-scrollbar]:w-1.5",
+                            "[&::-webkit-scrollbar-track]:bg-transparent",
+                            "[&::-webkit-scrollbar-thumb]:bg-border/60",
+                            "[&::-webkit-scrollbar-thumb]:rounded-full",
+                            "[&::-webkit-scrollbar-thumb]:transition-all",
+                            "[&::-webkit-scrollbar-thumb]:duration-200",
+                            
+                            // Hover effects
+                            "hover:[&::-webkit-scrollbar-thumb]:bg-border",
+                            "hover:[&::-webkit-scrollbar]:w-2",
+                            
+                            // Firefox support
+                            "scrollbar-thin",
+                            "scrollbar-track-transparent", 
+                            "scrollbar-thumb-border/60",
+                            // Smooth scrolling
+                            "scroll-smooth"
+                        )}  >
                         {loading ? (
                             <div className="flex items-center justify-center py-8">
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -171,13 +191,13 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({
                                 {searchValue ? 'Nenhum veículo encontrado' : 'Nenhum veículo cadastrado'}
                             </CommandEmpty>
                         ) : (
-                            <CommandGroup>
+                            <CommandGroup className="px-0 mx-0" >
                                 {filteredVehicles.map((vehicle) => (
-                                    <CommandItem
+                                    <CommandItem 
                                         key={vehicle.id}
                                         value={vehicle.id}
                                         onSelect={() => handleSelect(vehicle.id)}
-                                        className="flex items-center gap-3 p-3 cursor-pointer hover:bg-accent/50"
+                                        className="flex items-center gap-2  cursor-pointer hover:bg-accent/50 px-0 mx-0"
                                     >
                                         <Check
                                             className={cn(
@@ -259,8 +279,9 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = React.memo(({
                                                 <div className="flex items-center gap-1">
                                                     <div className={cn(
                                                         "w-2 h-2 rounded-full",
-                                                        vehicle.status === 'DISPONIVEL' ? "bg-green-500" :
-                                                        vehicle.status === 'RESERVADO' ? "bg-yellow-500" : "bg-red-500"
+                                                        vehicle.status === 'DISPONIVEL' ? "bg-zinc-950" :
+                                                        vehicle.status === 'RESERVADO' ? "bg-yellow-500" :
+                                                        vehicle.status === 'VENDIDO' ? "bg-red-500" : "bg-red-500"
                                                     )} />
                                                     <span className="text-[10px] text-muted-foreground capitalize">
                                                         {vehicle.status.toLowerCase()}

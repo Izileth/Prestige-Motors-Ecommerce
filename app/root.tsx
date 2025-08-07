@@ -11,8 +11,6 @@ import type { Route } from "./+types/root";
 
 import "./app.css";
 
-import { Provider } from "react-redux";
-import { createStore } from "~/src/store/global";
 
 import Navigation from "./src/components/layout/NavigationBar";
 import { Baseboard } from "~/src/components/layout/BottonBanner";
@@ -77,16 +75,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   
-  const store = createStore();
-  
+
   return (
-    <Provider store={store}>
+    <>
       <Banner/>
       <Navigation />
       <Outlet />
       <Baseboard/>
       <Footer />
-    </Provider>
+    </>
   );
 }
 

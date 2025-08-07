@@ -23,7 +23,7 @@ export function RandomVehicles() {
   };
 
   return (
-    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full max-w-full px-4">
+    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full max-w-full px-0 sm:px-4">
       <div className="container mx-auto px-4" ref={containerRef}>
         {/* Cabeçalho */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">

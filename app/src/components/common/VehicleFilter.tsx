@@ -34,14 +34,6 @@ export const VehicleFilters = ({
         <div className="bg-white dark:bg-gray-900 p-6 rounded-none shadow-none border border-none dark:border-gray-800">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-medium">Filtrar veículos</h3>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={onReset}
-                    className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
-                >
-                    <X size={16} className="mr-1" /> Limpar
-                </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

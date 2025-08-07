@@ -1,10 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { saleService } from '~/src/services/sale';
 import type { Sale, SaleData, SaleStats, UpdateSaleData, UserSaleStats } from '~/src/types/sale';
 import type { UserTransactionsResponse } from '~/src/types/transactions';
-
-export interface SaleState {
+interface SaleStoreState {
     sales: Sale[];
     purchases: Sale[];
     sellerSales: Sale[];
@@ -14,7 +13,6 @@ export interface SaleState {
         global: SaleStats | null;
         user: UserSaleStats | null;
     };
-    // ✅ Loading states específicos em vez de um global
     loadingStates: {
         creating: boolean;
         updating: boolean;
@@ -31,7 +29,24 @@ export interface SaleState {
     transactions: UserTransactionsResponse;
 }
 
-const initialState: SaleState = {
+interface SaleStoreActions {
+    createSale: (data: SaleData) => Promise<void>;
+    fetchSaleById: (id: string) => Promise<void>;
+    updateSale: (id: string, data: UpdateSaleData) => Promise<void>;
+    fetchUserTransactions: (userId: string) => Promise<void>;
+    fetchPurchasesByUser: (userId: string) => Promise<void>;
+    fetchSalesBySeller: (userId: string) => Promise<void>;
+    fetchSalesByVehicle: (vehicleId: string) => Promise<void>;
+    fetchGlobalSalesStats: () => Promise<void>;
+    fetchUserSalesStats: (userId: string) => Promise<void>;
+    resetSaleState: () => void;
+    setCurrentSale: (sale: Sale | null) => void;
+    clearStats: () => void;
+    clearError: () => void;
+    clearSuccess: () => void;
+}
+
+const initialState: SaleStoreState = {
     sales: [],
     purchases: [],
     sellerSales: [],
@@ -60,278 +75,245 @@ const initialState: SaleState = {
     success: false,
 };
 
-// Thunks assíncronos (mantidos iguais)
-export const createSale = createAsyncThunk(
-    'sales/create',
-    async (data: SaleData, { rejectWithValue }) => {
-        try {
-            return await saleService.createSale(data);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to create sale');
-        }
-    }
-);
-
-export const fetchSaleById = createAsyncThunk(
-    'sales/fetchById',
-    async (id: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getSaleById(id);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch sale');
-        }
-    }
-);
-
-export const updateSale = createAsyncThunk(
-    'sales/update',
-    async ({ id, data }: { id: string; data: UpdateSaleData }, { rejectWithValue }) => {
-        try {
-            return await saleService.updateSale(id, data);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to update sale');
-        }
-    }
-);
-
-export const fetchUserTransactions = createAsyncThunk(
-    'sales/fetchTransactions',
-    async (userId: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getUserTransactions(userId);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch transactions');
-        }
-    }
-);
-
-export const fetchPurchasesByUser = createAsyncThunk(
-    'sales/fetchPurchases',
-    async (userId: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getPurchasesByUser(userId);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch purchases');
-        }
-    }
-);
-
-export const fetchSalesBySeller = createAsyncThunk(
-    'sales/fetchSellerSales',
-    async (userId: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getSalesBySeller(userId);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch seller sales');
-        }
-    }
-);
-
-export const fetchSalesByVehicle = createAsyncThunk(
-    'sales/fetchByVehicle',
-    async (vehicleId: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getSalesByVehicle(vehicleId);
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch vehicle sales');
-        }
-    }
-);
-
-export const fetchGlobalSalesStats = createAsyncThunk(
-    'sales/fetchGlobalStats',
-    async (_, { rejectWithValue }) => {
-        try {
-            return await saleService.getSalesStats();
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch global stats');
-        }
-    }
-);
-
-export const fetchUserSalesStats = createAsyncThunk(
-    'sales/fetchUserStats',
-    async (userId: string, { rejectWithValue }) => {
-        try {
-            return await saleService.getUserSalesStats(userId); 
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch user stats');
-        }
-    }
-);
-
-const saleSlice = createSlice({
-    name: 'sale',
-    initialState,
-    reducers: {
-        resetSaleState: () => initialState,
-        setCurrentSale: (state, action: PayloadAction<Sale | null>) => {
-            state.currentSale = action.payload;
-        },
-        clearStats: (state) => {
-            state.stats = { global: null, user: null };
-        },
-        clearError: (state) => {
-            state.error = null;
-        },
-        clearSuccess: (state) => {
-            state.success = false;
-        }
-    },
-    extraReducers: (builder) => {
-        builder
+export const useSaleStore = create<SaleStoreState & SaleStoreActions>()(
+    persist(
+        (set, get) => ({
+            ...initialState,
+            
             // ✅ CREATE SALE
-            .addCase(createSale.pending, (state) => {
-                state.loadingStates.creating = true;
-                state.error = null;
-                state.success = false;
-            })
-            .addCase(createSale.fulfilled, (state, action) => {
-                state.sales.push(action.payload);
-                state.success = true;
-                state.loadingStates.creating = false;
-            })
-            .addCase(createSale.rejected, (state, action) => {
-                state.loadingStates.creating = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ FETCH SALE BY ID
-            .addCase(fetchSaleById.pending, (state) => {
-                state.loadingStates.fetchingSale = true;
-                state.error = null;
-            })
-            .addCase(fetchSaleById.fulfilled, (state, action) => {
-                state.currentSale = action.payload;
-                state.loadingStates.fetchingSale = false;
-            })
-            .addCase(fetchSaleById.rejected, (state, action) => {
-                state.loadingStates.fetchingSale = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ UPDATE SALE - MAIS ESPECÍFICO
-            .addCase(updateSale.pending, (state) => {
-                state.loadingStates.updating = true;
-                state.error = null;
-                state.success = false;
-            })
-            .addCase(updateSale.fulfilled, (state, action) => {
-                // Atualizar currentSale se for o mesmo ID
-                if (state.currentSale?.id === action.payload.id) {
-                    state.currentSale = action.payload;
+            createSale: async (data: SaleData) => {
+                set({
+                    loadingStates: { ...get().loadingStates, creating: true },
+                    error: null,
+                    success: false
+                });
+                
+                try {
+                    const sale = await saleService.createSale(data);
+                    set(state => ({
+                        sales: [...state.sales, sale],
+                        success: true,
+                        loadingStates: { ...state.loadingStates, creating: false }
+                    }));
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, creating: false },
+                        error: error instanceof Error ? error.message : 'Failed to create sale'
+                    });
                 }
+            },
+            
+            // ✅ FETCH SALE BY ID
+            fetchSaleById: async (id: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingSale: true },
+                    error: null
+                });
                 
-                // Atualizar em todas as listas onde possa existir
-                state.sales = state.sales.map(sale => 
-                    sale.id === action.payload.id ? action.payload : sale
-                );
+                try {
+                    const sale = await saleService.getSaleById(id);
+                    set({
+                        currentSale: sale,
+                        loadingStates: { ...get().loadingStates, fetchingSale: false }
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingSale: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch sale'
+                    });
+                }
+            },
+            
+            // ✅ UPDATE SALE
+            updateSale: async (id: string, data: UpdateSaleData) => {
+                set({
+                    loadingStates: { ...get().loadingStates, updating: true },
+                    error: null,
+                    success: false
+                });
                 
-                state.purchases = state.purchases.map(sale => 
-                    sale.id === action.payload.id ? action.payload : sale
-                );
+                try {
+                    const updatedSale = await saleService.updateSale(id, data);
+                    set(state => {
+                        const updateInArray = (array: Sale[]) => 
+                            array.map(sale => sale.id === id ? updatedSale : sale);
+                            
+                        return {
+                            currentSale: state.currentSale?.id === id ? updatedSale : state.currentSale,
+                            sales: updateInArray(state.sales),
+                            purchases: updateInArray(state.purchases),
+                            sellerSales: updateInArray(state.sellerSales),
+                            vehicleSales: updateInArray(state.vehicleSales),
+                            success: true,
+                            loadingStates: { ...state.loadingStates, updating: false }
+                        };
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, updating: false },
+                        error: error instanceof Error ? error.message : 'Failed to update sale'
+                    });
+                }
+            },
+            
+            // ✅ FETCH USER TRANSACTIONS
+            fetchUserTransactions: async (userId: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingTransactions: true },
+                    error: null
+                });
                 
-                state.sellerSales = state.sellerSales.map(sale => 
-                    sale.id === action.payload.id ? action.payload : sale
-                );
+                try {
+                    const transactions = await saleService.getUserTransactions(userId);
+                    set({
+                        transactions,
+                        loadingStates: { ...get().loadingStates, fetchingTransactions: false }
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingTransactions: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch transactions'
+                    });
+                }
+            },
+            
+            // ✅ FETCH PURCHASES BY USER
+            fetchPurchasesByUser: async (userId: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingPurchases: true },
+                    error: null
+                });
                 
-                state.vehicleSales = state.vehicleSales.map(sale => 
-                    sale.id === action.payload.id ? action.payload : sale
-                );
-
-                state.success = true;
-                state.loadingStates.updating = false;
-            })
-            .addCase(updateSale.rejected, (state, action) => {
-                state.loadingStates.updating = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ PURCHASES
-            .addCase(fetchPurchasesByUser.pending, (state) => {
-                state.loadingStates.fetchingPurchases = true;
-                state.error = null;
-            })
-            .addCase(fetchPurchasesByUser.fulfilled, (state, action) => {
-                state.purchases = action.payload;
-                state.loadingStates.fetchingPurchases = false;
-            })
-            .addCase(fetchPurchasesByUser.rejected, (state, action) => {
-                state.loadingStates.fetchingPurchases = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ TRANSACTIONS
-            .addCase(fetchUserTransactions.pending, (state) => {
-                state.loadingStates.fetchingTransactions = true;
-                state.error = null;
-            })
-            .addCase(fetchUserTransactions.fulfilled, (state, action) => {
-                state.transactions = action.payload;
-                state.loadingStates.fetchingTransactions = false;
-            })
-            .addCase(fetchUserTransactions.rejected, (state, action) => {
-                state.loadingStates.fetchingTransactions = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ SELLER SALES
-            .addCase(fetchSalesBySeller.pending, (state) => {
-                state.loadingStates.fetchingSellerSales = true;
-                state.error = null;
-            })
-            .addCase(fetchSalesBySeller.fulfilled, (state, action) => {
-                state.sellerSales = action.payload;
-                state.loadingStates.fetchingSellerSales = false;
-            })
-            .addCase(fetchSalesBySeller.rejected, (state, action) => {
-                state.loadingStates.fetchingSellerSales = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ VEHICLE SALES
-            .addCase(fetchSalesByVehicle.pending, (state) => {
-                state.loadingStates.fetchingVehicleSales = true;
-                state.error = null;
-            })
-            .addCase(fetchSalesByVehicle.fulfilled, (state, action) => {
-                state.vehicleSales = action.payload;
-                state.loadingStates.fetchingVehicleSales = false;
-            })
-            .addCase(fetchSalesByVehicle.rejected, (state, action) => {
-                state.loadingStates.fetchingVehicleSales = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ GLOBAL STATS
-            .addCase(fetchGlobalSalesStats.pending, (state) => {
-                state.loadingStates.fetchingStats = true;
-                state.error = null;
-            })
-            .addCase(fetchGlobalSalesStats.fulfilled, (state, action) => {
-                state.stats.global = action.payload;
-                state.loadingStates.fetchingStats = false;
-            })
-            .addCase(fetchGlobalSalesStats.rejected, (state, action) => {
-                state.loadingStates.fetchingStats = false;
-                state.error = action.payload as string;
-            })
-
-            // ✅ USER STATS
-            .addCase(fetchUserSalesStats.pending, (state) => {
-                state.loadingStates.fetchingUserStats = true;
-                state.error = null;
-            })
-            .addCase(fetchUserSalesStats.fulfilled, (state, action) => {
-                state.stats.user = action.payload;
-                state.loadingStates.fetchingUserStats = false;
-            })
-            .addCase(fetchUserSalesStats.rejected, (state, action) => {
-                state.loadingStates.fetchingUserStats = false;
-                state.error = action.payload as string;
-            });
-    },
-});
-
-export const { resetSaleState, setCurrentSale, clearStats, clearError, clearSuccess } = saleSlice.actions;
-export default saleSlice.reducer;
+                try {
+                    const purchases = await saleService.getPurchasesByUser(userId);
+                    set({
+                        purchases,
+                        loadingStates: { ...get().loadingStates, fetchingPurchases: false }
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingPurchases: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch purchases'
+                    });
+                }
+            },
+            
+            // ✅ FETCH SALES BY SELLER
+            fetchSalesBySeller: async (userId: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingSellerSales: true },
+                    error: null
+                });
+                
+                try {
+                    const sales = await saleService.getSalesBySeller(userId);
+                    set({
+                        sellerSales: sales,
+                        loadingStates: { ...get().loadingStates, fetchingSellerSales: false }
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingSellerSales: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch seller sales'
+                    });
+                }
+            },
+            
+            // ✅ FETCH SALES BY VEHICLE
+            fetchSalesByVehicle: async (vehicleId: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingVehicleSales: true },
+                    error: null
+                });
+                
+                try {
+                    const sales = await saleService.getSalesByVehicle(vehicleId);
+                    set({
+                        vehicleSales: sales,
+                        loadingStates: { ...get().loadingStates, fetchingVehicleSales: false }
+                    });
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingVehicleSales: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch vehicle sales'
+                    });
+                }
+            },
+            
+            // ✅ FETCH GLOBAL SALES STATS
+            fetchGlobalSalesStats: async () => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingStats: true },
+                    error: null
+                });
+                
+                try {
+                    const stats = await saleService.getSalesStats();
+                    set(state => ({
+                        stats: { ...state.stats, global: stats },
+                        loadingStates: { ...state.loadingStates, fetchingStats: false }
+                    }));
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingStats: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch global stats'
+                    });
+                }
+            },
+            
+            // ✅ FETCH USER SALES STATS
+            fetchUserSalesStats: async (userId: string) => {
+                set({
+                    loadingStates: { ...get().loadingStates, fetchingUserStats: true },
+                    error: null
+                });
+                
+                try {
+                    const stats = await saleService.getUserSalesStats(userId);
+                    set(state => ({
+                        stats: { ...state.stats, user: stats },
+                        loadingStates: { ...state.loadingStates, fetchingUserStats: false }
+                    }));
+                } catch (error) {
+                    set({
+                        loadingStates: { ...get().loadingStates, fetchingUserStats: false },
+                        error: error instanceof Error ? error.message : 'Failed to fetch user stats'
+                    });
+                }
+            },
+            
+            // ✅ RESET STATE
+            resetSaleState: () => set(initialState),
+            
+            // ✅ SET CURRENT SALE
+            setCurrentSale: (sale: Sale | null) => set({ currentSale: sale }),
+            
+            // ✅ CLEAR STATS
+            clearStats: () => set(state => ({
+                stats: { global: null, user: null }
+            })),
+            
+            // ✅ CLEAR ERROR
+            clearError: () => set({ error: null }),
+            
+            // ✅ CLEAR SUCCESS
+            clearSuccess: () => set({ success: false })
+        }),
+        {
+            name: 'sale-store', // Nome para a persistência
+            partialize: (state) => ({
+                // Defina quais partes do estado devem ser persistidas
+                // Evite persistir estados temporários como loading e error
+                sales: state.sales,
+                purchases: state.purchases,
+                sellerSales: state.sellerSales,
+                vehicleSales: state.vehicleSales,
+                currentSale: state.currentSale,
+                stats: state.stats,
+                transactions: state.transactions
+            }),
+            // Opcional: use um storage diferente (padrão é localStorage)
+            // storage: createJSONStorage(() => sessionStorage),
+        }
+    )
+);

@@ -1,62 +1,75 @@
 import { useCallback } from 'react';
-import { useAppDispatch } from '~/src/store/hooks';
-import vehicleService from '~/src/services/vehicle';
-import { useAddressStore } from '~/src/store/slices/address';
+import { useAddressStore } from '../store/slices/address';
 import type { 
-    VehicleAddress, 
+    VehicleWithAddress,
     AddressUpdatePayload,
-    AddressRemovePayload 
+    AddressRemovePayload,
+    AddressCreatePayload
 } from '~/src/types/vehicle';
+import type { VehicleAddress } from '~/src/types/vehicle';
 
-// Novo tipo para criação de endereço
-interface AddressCreatePayload {
-    vehicleId: string;
-    address: Omit<VehicleAddress, 'id'> & { id?: never };
+interface UseVehicleAddressReturn {
+    // Estados
+    currentAddress: VehicleAddress | null;
+    loading: boolean;
+    error: string | null;
+    success: boolean;
+    
+    // Funções
+    getAddress: (vehicleId: string) => Promise<void>;
+    createAddress: (payload: AddressCreatePayload) => Promise<VehicleWithAddress>;
+    updateAddress: (payload: AddressUpdatePayload) => Promise<VehicleWithAddress>;
+    removeAddress: (payload: AddressRemovePayload) => Promise<VehicleWithAddress>;
+    resetAddressState: () => void;
 }
 
-export const useVehicleAddress = () => {
-    const dispatch = useAppDispatch();
-    
-    // PEGAR OS ESTADOS DO STORE ZUSTAND
+export const useVehicleAddress = (): UseVehicleAddressReturn => {
+    // Acessa o store Zustand
     const {
         currentAddress,
         loading,
         error,
         success,
-        getAddress: getAddressFromStore,
-        createAddress: createAddressFromStore,
-        updateAddress: updateAddressFromStore,
-        removeAddress: removeAddressFromStore,
-        reset: resetAddressState
+        getAddress,
+        createAddress,
+        updateAddress,
+        removeAddress,
+        reset
     } = useAddressStore();
 
-    const createAddress = useCallback(async (payload: AddressCreatePayload) => {
-        return await createAddressFromStore(payload);
-    }, [createAddressFromStore]);
+    // Versão memoizada das funções para garantir referências estáveis
+    const memoizedGetAddress = useCallback(async (vehicleId: string) => {
+        await getAddress(vehicleId);
+    }, [getAddress]);
 
-    const updateAddress = useCallback(async (payload: AddressUpdatePayload) => {
-        return await updateAddressFromStore(payload);
-    }, [updateAddressFromStore]);
+    const memoizedCreateAddress = useCallback(async (payload: AddressCreatePayload) => {
+        return await createAddress(payload);
+    }, [createAddress]);
 
-    const removeAddress = useCallback(async (payload: AddressRemovePayload) => {
-        return await removeAddressFromStore(payload);
-    }, [removeAddressFromStore]);
+    const memoizedUpdateAddress = useCallback(async (payload: AddressUpdatePayload) => {
+        return await updateAddress(payload);
+    }, [updateAddress]);
 
-    const getAddress = useCallback(async (vehicleId: string) => {
-        return await getAddressFromStore(vehicleId);
-    }, [getAddressFromStore]);
+    const memoizedRemoveAddress = useCallback(async (payload: AddressRemovePayload) => {
+        return await removeAddress(payload);
+    }, [removeAddress]);
+
+    const resetAddressState = useCallback(() => {
+        reset();
+    }, [reset]);
 
     return {
-        // ESTADOS
+        // Estados
         currentAddress,
         loading,
         error,
         success,
-        // FUNÇÕES
-        createAddress,
-        updateAddress,
-        removeAddress,
-        getAddress,
+        
+        // Funções
+        getAddress: memoizedGetAddress,
+        createAddress: memoizedCreateAddress,
+        updateAddress: memoizedUpdateAddress,
+        removeAddress: memoizedRemoveAddress,
         resetAddressState
     };
 };

@@ -1,7 +1,9 @@
 import { useState } from "react"
 import useSale from "~/src/hooks/useSale"
+
 import VehicleSelector from "./salesVehcleSelector"
 import UserSelector from "./salesUserSelector"
+
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/src/components/ui/form"
 import { Input } from "~/src/components/ui/input"
 import { Textarea } from "~/src/components/ui/textarea"
@@ -18,7 +20,7 @@ import { Alert, AlertDescription } from "~/src/components/ui/alert"
 import type { SaleData } from "~/src/types/sale"
 import { VehicleCategory } from "~/src/types/enuns"
 import { formSchema } from "~/src/schemas/schema"
-
+import { useSaleStore } from "~/src/store/slices/sales"
 import { useNavigate } from "react-router"
 
 const CreateSaleForm = () => {
@@ -44,9 +46,10 @@ const CreateSaleForm = () => {
 
 
     const navigate = useNavigate()
+ 
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        setIsSubmitting(true)
+        setIsSubmitting(true);
         
         try {
             // Preparar dados para envio
@@ -57,10 +60,10 @@ const CreateSaleForm = () => {
                 formaPagamento: values.formaPagamento,
                 parcelas: values.formaPagamento !== "À Vista" ? values.parcelas : undefined,
                 observacoes: values.observacoes || undefined,
-                categoria: values.categoria // Adiciona a categoria
-            }
+                categoria: values.categoria
+            };
         
-            const createdSale = await createSale(saleData);
+            await createSale(saleData);
             
             // Reset do formulário após sucesso
             form.reset({
@@ -70,21 +73,23 @@ const CreateSaleForm = () => {
                 formaPagamento: "À Vista",
                 parcelas: undefined,
                 observacoes: "",
-                categoria: "HYPERCAR" // Ou qualquer valor padrão que você queira
-            })
+                categoria: "HYPERCAR"
+            });
             
-            toast.success("Venda criada com sucesso!")
+            toast.success("Venda criada com sucesso!");
 
-            if (createdSale && createdSale.id) {
-                navigate(`/sale/details/${createdSale.id}`);
+            // Acessa a venda atual do estado
+            const { currentSale } = useSaleStore.getState();
+            if (currentSale?.id) {
+                navigate(`/sale/details/${currentSale.id}`);
             }
         } catch (error) {
-            console.error("Erro ao criar venda:", error)
-            toast.error("Erro ao criar venda. Tente novamente.")
+            console.error("Erro ao criar venda:", error);
+            toast.error("Erro ao criar venda. Tente novamente.");
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const getPaymentMethodIcon = (method: string) => {
         switch (method) {
@@ -146,7 +151,7 @@ const CreateSaleForm = () => {
                                             <Car className="h-4 w-4 text-gray-500" strokeWidth={1.5} />
                                             Veículo *
                                         </FormLabel>
-                                        <FormControl>
+                                        <FormControl className="p-0 m-0">
                                             <VehicleSelector
                                                 selectedVehicle={field.value}
                                                 onSelectVehicle={(vehicleId) => {
@@ -206,7 +211,7 @@ const CreateSaleForm = () => {
                                             <User className="h-4 w-4 text-gray-500" strokeWidth={1.5} />
                                             Comprador *
                                         </FormLabel>
-                                        <FormControl>
+                                        <FormControl className="p-0 m-0">
                                             <UserSelector
                                                 selectedUser={field.value}
                                                 onSelectUser={(userId) => {
@@ -371,26 +376,7 @@ const CreateSaleForm = () => {
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Preview Card */}
-                            {(selectedVehicle || selectedBuyer) && (
-                                <Alert className="border-blue-200 bg-blue-50/50">
-                                    <AlertCircle className="h-4 w-4 text-blue-600" />
-                                    <AlertDescription className="text-blue-800">
-                                        <strong>Resumo da Venda:</strong>
-                                        <div className="mt-2 text-sm space-y-1">
-                                            {selectedVehicle && <div>• Veículo: {selectedVehicle}</div>}
-                                            {selectedBuyer && <div>• Comprador: {selectedBuyer}</div>}
-                                            {form.watch("precoVenda") > 0 && (
-                                                <div>• Valor: R$ {form.watch("precoVenda").toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                                            )}
-                                            {paymentMethod && <div>• Pagamento: {paymentMethod}</div>}
-                                            {form.watch("parcelas") && <div>• Parcelas: {form.watch("parcelas")}x</div>}
-                                            {form.watch("categoria") && <div>• Categoria: {form.watch("categoria")}</div>} 
-                                        </div>
-                                    </AlertDescription>
-                                </Alert>
-                            )}
+                         
 
                             {/* Form Actions */}
                             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
@@ -425,13 +411,7 @@ const CreateSaleForm = () => {
                     </Form>
                 </CardContent>
             </Card>
-
-            {/* Copyright Notice */}
-            <div className="mt-6 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-                    © {currentYear} Prestige Motors | Todos os Direitos Reservados
-                </p>
-            </div>
+         
         </div>
     )
 }

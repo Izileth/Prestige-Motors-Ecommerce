@@ -162,43 +162,90 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
         if (selectedUserData) {
             const roleInfo = getRoleLabel(selectedUserData.role || 'USER');
             return (
-                <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="flex items-center gap-3 min-w-0 flex-1 py-1">
                     {showAvatar && (
                         <div className="relative shrink-0">
                             {selectedUserData.avatar ? (
                                 <img
                                     src={selectedUserData.avatar}
                                     alt={selectedUserData.nome}
-                                    className={cn("rounded-full object-cover", currentSize.avatar)}
+                                    className={cn(
+                                        "rounded-full object-cover ring-2 ring-background shadow-sm",
+                                        currentSize.avatar
+                                    )}
                                     loading="lazy"
                                 />
                             ) : (
                                 <div className={cn(
-                                    "rounded-full bg-muted flex items-center justify-center",
+                                    "rounded-full bg-zinc-950 text-zinc-50 flex items-center justify-center ring-4 ring-background shadow-sm",
                                     currentSize.avatar
                                 )}>
-                                    <User className="w-1/2 h-1/2 text-muted-foreground" />
+                                    {selectedUserData.nome ? selectedUserData.nome.charAt(0) : "U"}
                                 </div>
+                            )}
+                            
+                            {/* Status indicator */}
+                            {selectedUserData.isOnline && (
+                                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-background shadow-sm"></div>
                             )}
                         </div>
                     )}
-                    <div className="min-w-0 flex-1">
+                    
+                    <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="flex items-center gap-2">
-                            <span className="truncate font-medium text-sm">
+                            <span className="truncate font-semibold text-sm text-foreground">
                                 {selectedUserData.nome}
                             </span>
                             {showRole && (
-                                <Badge variant={roleInfo.variant} className="text-[10px] px-1 py-0 h-auto shrink-0">
-                                    <roleInfo.icon size={8} className="mr-1" />
+                                <Badge 
+                                    variant={roleInfo.variant} 
+                                    className={cn(
+                                        "text-[9px] px-1.5 py-0.5 h-auto shrink-0 font-medium",
+                                        "shadow-sm border-0",
+                                        roleInfo.variant === 'destructive' && "bg-red-500/10 text-red-700 dark:text-red-400",
+                                        roleInfo.variant === 'default' && "bg-blue-500/10 text-blue-700 dark:text-blue-400",
+                                        roleInfo.variant === 'secondary' && "bg-muted/80 text-muted-foreground",
+                                        roleInfo.variant === 'outline' && "bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800"
+                                    )}
+                                >
+                                    <roleInfo.icon size={8} className="mr-0.5" />
                                     {roleInfo.label}
                                 </Badge>
                             )}
                         </div>
+                        
                         {showEmail && selectedUserData.email && size !== 'sm' && (
-                            <p className="text-xs text-muted-foreground truncate">
-                                {selectedUserData.email}
-                            </p>
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Mail size={10} className="shrink-0 opacity-60" />
+                                <span className="truncate font-medium">
+                                    {selectedUserData.email}
+                                </span>
+                            </div>
                         )}
+                        
+                        {/* Informações adicionais baseadas no tamanho */}
+                        {size === 'lg' && selectedUserData.telefone && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Phone size={10} className="shrink-0 opacity-60" />
+                                <span className="font-medium">{selectedUserData.telefone}</span>
+                            </div>
+                        )}
+                        
+                        {size === 'lg' && showStats && selectedUserData._count?.vehicles !== undefined && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Car size={10} className="shrink-0 opacity-60" />
+                                <span className="font-medium">
+                                    {formatStats(selectedUserData._count.vehicles, 'veículo')}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Indicador visual de que há mais informações */}
+                    <div className="shrink-0 flex flex-col items-center justify-center text-muted-foreground/40">
+                        <div className="w-1 h-1 rounded-full bg-current mb-0.5"></div>
+                        <div className="w-1 h-1 rounded-full bg-current mb-0.5"></div>
+                        <div className="w-1 h-1 rounded-full bg-current"></div>
                     </div>
                 </div>
             );
@@ -227,7 +274,7 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                 key={user.id}
                 value={user.id}
                 onSelect={() => handleSelectUser(user.id)}
-                className={cn("flex items-center gap-3 px-0 mx-0 cursor-pointer hover:bg-accent/50", currentSize.item)}
+                className={cn("flex items-center gap-3 cursor-pointer hover:bg-accent/50", currentSize.item)}
             >
                 <Check
                     className={cn(
@@ -247,14 +294,17 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                         />
                     ) : (
                         <div className={cn(
-                            "rounded-full bg-muted flex items-center justify-center",
+                            "rounded-full bg-zinc-950 text-zinc-50 flex items-center justify-center",
                             currentSize.itemAvatar
                         )}>
-                          {user?.nome ? user.nome.charAt(0) : "U"}
+                                {user?.nome ? user.nome.charAt(0) : "U"}
                         </div>
                     )}
                     
                     {/* Online status indicator (if available) */}
+                    {user.isOnline && (
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
+                    )}
                 </div>
                 
                 {/* User info */}
@@ -293,6 +343,11 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                                 <span>{user._count.vehicles}</span>
                             </div>
                         )}
+                        {user.lastLoginAt && (
+                            <span className="text-[10px] text-muted-foreground">
+                                {new Date(user.lastLoginAt).toLocaleDateString('pt-BR')}
+                            </span>
+                        )}
                     </div>
                 )}
             </CommandItem>
@@ -307,9 +362,11 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                        "w-full justify-between",
+                        "w-full justify-between text-left group",
                         currentSize.button,
                         !selectedUserData && "text-muted-foreground",
+                        selectedUserData && "bg-accent/30 border-accent hover:bg-accent/50",
+                        "transition-all duration-200",
                         className
                     )}
                     disabled={disabled}
@@ -342,7 +399,30 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                         )}
                     </div>
 
-                    <CommandList style={{ maxHeight }}>
+                    <CommandList 
+                        style={{ maxHeight }}
+                        className={cn(
+                            // Scrollbar customizada
+                            "[&::-webkit-scrollbar]:w-1.5",
+                            "[&::-webkit-scrollbar-track]:bg-transparent",
+                            "[&::-webkit-scrollbar-thumb]:bg-border/60",
+                            "[&::-webkit-scrollbar-thumb]:rounded-full",
+                            "[&::-webkit-scrollbar-thumb]:transition-all",
+                            "[&::-webkit-scrollbar-thumb]:duration-200",
+                            
+                            // Hover effects
+                            "hover:[&::-webkit-scrollbar-thumb]:bg-border",
+                            "hover:[&::-webkit-scrollbar]:w-2",
+                            
+                            // Firefox support
+                            "scrollbar-thin",
+                            "scrollbar-track-transparent", 
+                            "scrollbar-thumb-border/60",
+                            
+                            // Smooth scrolling
+                            "scroll-smooth"
+                        )}
+                    >
                         {/* Error state */}
                         {error && (
                             <div className="p-4 m-2 text-sm text-destructive border border-destructive/20 bg-destructive/5 rounded-md">
@@ -420,7 +500,16 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                                             <group.icon size={12} />
                                             {group.label} ({group.users.length})
                                         </div>
-                                        <div className="max-h-[200px] overflow-y-auto">
+                                        <div className={cn(
+                                            "max-h-[200px] overflow-y-auto",
+                                            // Scrollbar para cada grupo
+                                            "[&::-webkit-scrollbar]:w-1",
+                                            "[&::-webkit-scrollbar-track]:bg-transparent",
+                                            "[&::-webkit-scrollbar-thumb]:bg-border/50",
+                                            "[&::-webkit-scrollbar-thumb]:rounded-full",
+                                            "[&::-webkit-scrollbar-thumb:hover]:bg-border/80",
+                                            "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/50"
+                                        )}>
                                             {group.users.map(renderUserItem)}
                                         </div>
                                     </CommandGroup>

@@ -15,20 +15,19 @@ const SaleDetail: React.FC<SaleDetailProps> = ({ sale }) => {
     const { updateSale, loadingStates, currentSale, fetchSaleById } = useSale()
    
     const displaySale = currentSale || sale
-
+  
     const handleStatusChange = async (newStatus: string) => {
         try {
-            const updatedSale = await updateSale(sale.id, { status: newStatus })
- 
-            if (updatedSale) {
-                await fetchSaleById(sale.id)
-            }
+            await updateSale(sale.id, { status: newStatus });
             
-            console.log("Status atualizado com sucesso:", newStatus)
+            // Atualiza os dados da venda
+            await fetchSaleById(sale.id);
+            
+            console.log("Status atualizado com sucesso:", newStatus);
         } catch (error) {
-            console.error("Erro ao atualizar status:", error)
+            console.error("Erro ao atualizar status:", error);
         }
-    }
+    };
 
     // Sincronizar currentSale quando o componente monta
     useEffect(() => {

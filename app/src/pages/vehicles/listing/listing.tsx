@@ -158,7 +158,7 @@ const VehicleListingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
       {/* Header de busca com sticky */}
       <div
         className={`z-10 bg-white dark:bg-gray-950 transition-all duration-300 ${
@@ -235,7 +235,7 @@ const VehicleListingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-2 bg-zinc-100 h-18 text-gray-900 dark:text-gray-100"
+            className="text-3xl font-medium mb-2 bg-white h-18 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -305,7 +305,7 @@ const VehicleListingPage = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-gray-50 dark:bg-gray-900 "
+            className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-white dark:bg-gray-900 "
           >
             <div className="flex flex-col items-center gap-6">
               <motion.div
@@ -397,7 +397,7 @@ const VehicleListingPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-center py-16 px-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800"
+                className="text-center py-16 px-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800"
               >
                 <h1 className="text-9xl font-semibold mb-2 text-gray-900 dark:text-gray-100">101!</h1>
                 <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-gray-100">
