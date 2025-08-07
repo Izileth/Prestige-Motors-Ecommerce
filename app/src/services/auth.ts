@@ -18,7 +18,7 @@ export const authService = {
         if (!response?.data) {
             throw new Error("Dados do usuário não retornados pela API");
         }
-
+        console.log("Dados do usuário:", response.data);
         return response.data;
     },
 

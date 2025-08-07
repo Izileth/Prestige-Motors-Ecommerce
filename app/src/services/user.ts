@@ -36,6 +36,7 @@ export const userService = {
 
     async getUserById(id: string) {
         const response = await api.get(`/users/${id}`);
+        console.log("userService - Dados do usuário:", response.data);
         return response.data;
     },
 

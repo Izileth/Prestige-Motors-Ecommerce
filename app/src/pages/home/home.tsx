@@ -1,10 +1,10 @@
-import { Carousel } from "~/src/components/template/RadomCarousel";
+import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
 import { DestactsCars } from "~/src/data/carousel";
-import { Testimonials } from "~/src/components/pages/initial/TestimonialRadom";
-import { PartnerBrands } from "~/src/components/pages/initial/PartinerBrands";
-import { SignupCTA } from "~/src/components/pages/initial/CtaButton";
+import { Testimonials } from "~/src/components/pages/home/TestimonialRadom";
+import { PartnerBrands } from "~/src/components/pages/home/PartinerBrands";
+import { SignupCTA } from "~/src/components/pages/home/CtaButton";
 import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
-import { RandomVehicles } from "~/src/components/pages/initial/VehicleRadonList";
+import { RandomVehicles } from "~/src/components/pages/home/VehicleRadonList";
 
 export function Welcome() {
   return (

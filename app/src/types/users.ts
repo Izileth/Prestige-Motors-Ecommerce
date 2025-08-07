@@ -15,6 +15,12 @@ export interface User {
         addresses?: number;
         orders?: number;
     };
+    
+    isLoggedIn: boolean;
+    lastLoginAt: string | null; // String ISO em vez de Date
+    lastLogoutAt: string | null; // String ISO em vez de Date
+    currentSessionId: string | null;
+    loginCount: number;
 }
 
 export interface GetUsersResponse {

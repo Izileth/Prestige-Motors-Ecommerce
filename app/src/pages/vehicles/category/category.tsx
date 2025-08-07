@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 import { Badge } from "~/src/components/ui/badge";
 
 import { ExpecionalCars } from "~/src/data/carousel";
-import { Carousel } from "~/src/components/template/RadomCarousel";
+import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
 
 export const VehiclesByCategoryPage = () => {
   const location = useLocation();

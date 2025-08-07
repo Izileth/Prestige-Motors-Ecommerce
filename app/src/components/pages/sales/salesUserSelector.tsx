@@ -185,7 +185,7 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                             )}
                             
                             {/* Status indicator */}
-                            {selectedUserData.isOnline && (
+                            {selectedUserData.isLoggedIn && (
                                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-background shadow-sm"></div>
                             )}
                         </div>
@@ -302,7 +302,7 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                     )}
                     
                     {/* Online status indicator (if available) */}
-                    {user.isOnline && (
+                    {user.isLoggedIn && (
                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
                     )}
                 </div>
@@ -343,7 +343,7 @@ const UserSelector: React.FC<UserSelectorProps> = memo(({
                                 <span>{user._count.vehicles}</span>
                             </div>
                         )}
-                        {user.lastLoginAt && (
+                        {user.lastLoginAt    && (
                             <span className="text-[10px] text-muted-foreground">
                                 {new Date(user.lastLoginAt).toLocaleDateString('pt-BR')}
                             </span>

@@ -26,7 +26,7 @@ import type {
 import { motion, AnimatePresence } from "framer-motion";
 
 // Data
-import { Carousel } from "~/src/components/template/RadomCarousel";
+import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
 import { PrincipalCars } from "~/src/data/carousel";
 
 const VehicleListingPage = () => {
