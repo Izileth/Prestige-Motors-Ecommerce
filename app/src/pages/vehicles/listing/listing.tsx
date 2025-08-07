@@ -241,7 +241,7 @@ const VehicleListingPage = () => {
 
         {/* Estado de carregamento */}
         {loading && (
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full p-4">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4 w-full p-4">
             {Array.from({ length: 6 }).map((_, index) => (
               <motion.div
                 key={index}

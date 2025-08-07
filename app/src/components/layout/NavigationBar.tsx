@@ -313,7 +313,7 @@ const Navigation: React.FC<NavigationProps> = ({
 
   // Mobile navigation component with minimalist design
   const MobileNav = () => (
-    <div className="flex md:hidden justify-between items-center w-full px-5 py-4">
+    <div className="flex md:hidden justify-between items-center w-full max-w-full px-5 py-4">
       <Link
         to="/"
         className="text-lg font-extralight tracking-widest uppercase"
@@ -356,7 +356,7 @@ const Navigation: React.FC<NavigationProps> = ({
               <span className="sr-only">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[80%] max-w-[300px] p-0">
+          <SheetContent side="right" className="w-[100%] max-w-full p-0">
             <div className="flex flex-col h-full">
               {isAuthenticated && (
                 <div className="flex items-center gap-3 p-6 border-b border-border">
@@ -385,7 +385,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   {menuItems.map((item, index) =>
                     item.submenu ? (
                       <div key={index} className="space-y-8 ">
-                        <p className="flex flex-row items-center text-xs font-normal uppercase tracking-wider text-muted-foreground">
+                        <p className="flex flex-row items-center text-xl font-normal uppercase tracking-wider text-muted-foreground">
                           {item.name}  <ChevronDown size={14} className="pl-1" />
                         </p>
                         <div className="space-y-4 mt-0 pl-1  border-l-zinc-900 border-l-2 ">
@@ -394,7 +394,7 @@ const Navigation: React.FC<NavigationProps> = ({
                               key={subIndex}
                               to={subItem.href}
                               className={cn(
-                                "block text-xs font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors ml-2",
+                                "block text-xl font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors ml-2",
                                 isActive(subItem.href) && "font-normal"
                               )}
                             >
@@ -408,7 +408,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         key={index}
                         to={item.href}
                         className={cn(
-                          "block text-sm  font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
+                          "block text-xl  font-extralight tracking-wider uppercase text-foreground hover:text-muted-foreground transition-colors",
                           isActive(item.href) && "font-normal"
                         )}
                       >
@@ -424,19 +424,19 @@ const Navigation: React.FC<NavigationProps> = ({
                   <>
                     <Link
                       to="/dashboard"
-                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-xl font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Conta
                     </Link>
                     <Link
                       to="/vehicles/negotiations"
-                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-xl font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Negociações
                     </Link>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm font-extralight tracking-wider uppercase p-0 h-auto hover:bg-transparent hover:text-foreground/80"
+                      className="w-full justify-start text-xl font-extralight tracking-wider uppercase p-0 h-auto hover:bg-transparent hover:text-foreground/80"
                       onClick={handleLogout}
                     >
                       Sair
@@ -446,13 +446,13 @@ const Navigation: React.FC<NavigationProps> = ({
                   <>
                     <Link
                       to="/login"
-                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-xl font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Entrar
                     </Link>
                     <Link
                       to="/register"
-                      className="block text-sm font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
+                      className="block text-xl font-extralight tracking-wider uppercase hover:text-muted-foreground transition-colors"
                     >
                       Registrar
                     </Link>

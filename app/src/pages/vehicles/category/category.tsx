@@ -111,7 +111,7 @@ export const VehiclesByCategoryPage = () => {
 
       <div
         ref={resultsRef}
-        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-4 ${
+        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-0 md:px-4 ${
           scrolled ? "py-4 shadow-none" : "py-8"
         }`}
       >
@@ -292,7 +292,7 @@ export const VehiclesByCategoryPage = () => {
                 </div>
               </motion.div>
             ) : loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[...Array(6)].map((_, i) => (
                   <VehicleCardSkeleton key={i} />
                 ))}
@@ -310,7 +310,7 @@ export const VehiclesByCategoryPage = () => {
                     },
                   },
                 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
               >
                 {vehicles.map((vehicle) => (
                   <motion.div

@@ -36,17 +36,7 @@ const variants: Variants = {
   }),
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
+
 
 export function Carousel({
   items,
@@ -90,7 +80,7 @@ export function Carousel({
       onMouseLeave={() => setIsPaused(false)}
     >
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-        <div className="relative h-[500px] md:h-[600px] lg:h-[800px] overflow-hidden rounded-none">
+        <div className="relative h-[700px] md:h-[600px] lg:h-[800px] overflow-hidden rounded-none">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={page}
