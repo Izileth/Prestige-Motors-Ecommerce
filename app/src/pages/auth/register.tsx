@@ -198,27 +198,9 @@ export default function RegisterPage() {
         transition={{ duration: 0.6 }}
         className="flex min-h-screen w-full max-w-full flex-col items-center justify-center bg-transparent dark:bg-zinc-50 px-10 py-8"
         >
-        <div className="flex min-h-screen w-full max-w-full flex-col lg:flex-row bg-transparent dark:bg-zinc-50 ">
-            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-cover bg-center bg-no-repeat bg-[url('https://i.pinimg.com/1200x/e2/75/db/e275dbf9475bbb5dd3cb2bece8594f1e.jpg')] dark:bg-[url('https://i.pinimg.com/1200x/63/3b/47/633b47a95ebe98379c7c1f59c4a73ac9.jpg')]">
-                {/* Layer de fade em cima e embaixo */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/70"></div>
+        <div className="flex min-h-screen w-full max-w-full flex-col lg:flex-row bg-transparent justify-center items-center dark:bg-zinc-50 ">
 
-                {/* Layer de fade lateral (opcional) */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-transparent to-black/40"></div>
-
-                {/* Branding */}
-                <div className="absolute z-20 bottom-12 left-0 right-0 text-center px-4">
-                    <h2 className="text-4xl uppercase font-light tracking-wider text-white drop-shadow-md">
-                    Prestige<span className="font-bold px-2 ">Motors</span>
-                    </h2>
-                    <p className="mt-2 text-base text-gray-200 font-light drop-shadow-sm">
-                    Sua jornada para o veículo dos sonhos começa aqui
-                    </p>
-                </div>
-            </div>
-
-
-            <div className="w-full max-w-2xl space-y-4 lg:px-14">
+            <div className="w-full max-w-2xl space-y-4 lg:px-14 shadow-xs rounded-xs shadow-zinc-400 p-6">
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

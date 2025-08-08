@@ -179,7 +179,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
                     CPF
                   </p>
                   <p className="text-gray-900 dark:text-gray-100">
-                    {currentUser?.cpf || "Oculto"}
+                    {currentUser?.cpf || "Não Informado"}
                   </p>
                 </div>
               </div>

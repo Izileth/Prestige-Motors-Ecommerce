@@ -44,7 +44,7 @@ const LoginPage = () => {
         transition={{ duration: 0.6 }}
         className="flex justify-center min-h-screen w-full flex-col  max-w-full lg:flex-row-reverse gap-4 items-center  bg-white dark:bg-gray-950 px-4 sm:px-6 lg:px-12"
         >
-        <div className="w-full max-w-2xl  lg:px-14 space-y-10">
+        <div className="w-full max-w-2xl shadow-xs rounded-xs shadow-zinc-400 lg:px-14 space-y-10 p-6">
             <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ const LoginPage = () => {
                 <motion.div
                 className="relative"
                 whileTap={{ scale: 0.995 }}
-                animate={{ borderColor: focusedField === "email" ? "#000000" : "#e5e7eb" }}
+                animate={{ borderColor: focusedField === "email" ? "#000000" : "#fff" }}
                 >
                 <div
                     className={`absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none transition-colors duration-200 ${
@@ -115,7 +115,7 @@ const LoginPage = () => {
                 <motion.div
                 className="relative"
                 whileTap={{ scale: 0.995 }}
-                animate={{ borderColor: focusedField === "password" ? "#000000" : "#e5e7eb" }}
+                animate={{ borderColor: focusedField === "password" ? "#000000" : "#fff" }}
                 >
                 <div
                     className={`absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none transition-colors duration-200 ${
@@ -255,26 +255,6 @@ const LoginPage = () => {
                 </div>
             </motion.div>
             </motion.div>
-        </div>
-        <div className="h-screen w-full hidden  lg:flex lg:flex-1 items-center justify-center relative bg-transparent dark:bg-gray-900 py-6 grayscale-100">
-            <div className="hidden lg:block w-full h-full relative overflow-hidden bg-cover bg-center bg-no-repeat bg-[url('https://i.pinimg.com/1200x/52/53/eb/5253eb778e0397dbe5bacdbae2ac7301.jpg')] dark:bg-[url('https://i.pinimg.com/1200x/63/3b/47/633b47a95ebe98379c7c1f59c4a73ac9.jpg')]">
-                
-                {/* Layer de fade em cima e embaixo */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/70"></div>
-
-                {/* Layer de fade lateral */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-transparent to-black/40"></div>
-
-                {/* Branding */}
-                <div className="absolute z-20 bottom-12 left-0 right-0 text-center px-4">
-                <h2 className="text-4xl uppercase  font-light tracking-wider text-white drop-shadow-md">
-                    Prestige<span className="font-bold  px-2">Motors</span>
-                </h2>
-                <p className="mt-2 text-base text-gray-200 font-light drop-shadow-sm">
-                    Sua jornada para o veículo dos sonhos começa aqui
-                </p>
-                </div>
-            </div>
         </div>
 
         </motion.div>

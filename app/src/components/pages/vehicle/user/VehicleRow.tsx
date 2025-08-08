@@ -10,6 +10,7 @@ import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import { useNavigate } from "react-router";
 import { useState, useCallback } from "react";
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 
 interface VehicleRowProps {
     vehicle: Vehicle;
@@ -36,9 +37,9 @@ export const VehicleRow = ({
     isDeleting,
     isUpdatingStatus
 }: VehicleRowProps) => {
-    const navigate = useNavigate();
-    const [localStatus, setLocalStatus] = useState(vehicle.status);
     
+    const [localStatus, setLocalStatus] = useState(vehicle.status);
+    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
 
     React.useEffect(() => {
         setLocalStatus(vehicle.status);
@@ -64,8 +65,7 @@ export const VehicleRow = ({
     return (
         <>
             <TableCell 
-                onClick={() => navigate(`/vehicles/${vehicle.id}`)} 
-                onMouseEnter={() => setHoveredVehicle(vehicle.id)} 
+                onClick={() => navigateToVehicle(vehicle)}
                 onMouseLeave={() => setHoveredVehicle(null)}
                 className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
             >

@@ -27,6 +27,7 @@ import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import { useNavigate } from "react-router";
 import { useState, useCallback } from "react";
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 
 import { toast } from "sonner";
 
@@ -81,6 +82,10 @@ const formatKilometers = (km: number | undefined | null): string => {
     if (km === null || km === undefined || isNaN(km)) {
         return "0";
     }
+    // Formatação compacta para mobile
+    if (km >= 1000) {
+        return `${Math.round(km / 1000)}k`;
+    }
     return km.toLocaleString("pt-BR");
 };
 
@@ -110,13 +115,15 @@ export const VehicleCard = ({
 }: VehicleCardProps) => {
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const [isChangingStatus, setIsChangingStatus] = useState(false);
-    const navigate = useNavigate();
+   
+      
+    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
 
     const getFuelType = (type: string | undefined): string => {
-        if (!type) return "Não informado";
+        if (!type) return "N/I";
         
         const fuelTypes: Record<string, string> = {
-            GASOLINA: "Gasolina",
+            GASOLINA: "Gas",
             ETANOL: "Etanol",
             FLEX: "Flex",
             DIESEL: "Diesel",
@@ -128,12 +135,12 @@ export const VehicleCard = ({
     };
 
     const getTransmissionType = (type: string | undefined): string => {
-        if (!type) return "Não informado";
+        if (!type) return "N/I";
         
         const transmissionTypes: Record<string, string> = {
             MANUAL: "Manual",
-            AUTOMATICO: "Automático",
-            SEMI_AUTOMATICO: "Semi-automático",
+            AUTOMATICO: "Auto",
+            SEMI_AUTOMATICO: "Semi-auto",
             CVT: "CVT",
         };
         return transmissionTypes[type] || type;
@@ -176,11 +183,12 @@ export const VehicleCard = ({
             key={vehicle.id}
             variants={fadeIn}
             custom={index}
-            className="relative"
-            onMouseEnter={() => setHoveredVehicle(vehicle.id)}
+            className="relative w-full"
             onMouseLeave={() => setHoveredVehicle(null)}
         >
-            <Card className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300 h-full">
+            <Card
+            onClick={() => navigateToVehicle(vehicle)}
+            className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300 h-full cursor-pointer">
                 <div className="relative overflow-hidden group">
                     {vehicle.imagens && vehicle.imagens.length > 0 ? (
                         <div className="overflow-hidden">
@@ -190,50 +198,51 @@ export const VehicleCard = ({
                                     vehicle.imagens[0].url
                                 }
                                 alt={`${vehicle.marca || "Veículo"} ${vehicle.modelo || ""}`}
-                                className="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-700"
+                                className="w-full h-32 sm:h-40 md:h-48 object-cover transform group-hover:scale-105 transition-transform duration-700"
                                 loading="lazy"
                                 onError={(e) => {
                                     e.currentTarget.style.display = 'none';
                                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
                                 }}
                             />
-                            <div className="hidden w-full h-52 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900  items-center justify-center">
-                                <span className="text-gray-500 dark:text-gray-400">
-                                    Imagem não disponível
+                            <div className="hidden w-full h-32 sm:h-40 md:h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 items-center justify-center">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    Imagem indisponível
                                 </span>
                             </div>
                         </div>
                     ) : (
-                        <div className="w-full h-52 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
-                            <span className="text-gray-500 dark:text-gray-400">
-                                Sem imagem disponível
+                        <div className="w-full h-32 sm:h-40 md:h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                Sem imagem
                             </span>
                         </div>
                     )}
 
-                    <div className="absolute bottom-3 left-3 flex gap-2 flex-wrap">
+                    {/* Badges na imagem - layout otimizado para mobile */}
+                    <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap max-w-[calc(100%-60px)]">
                         {vehicle.destaque && (
                             <Badge
                                 variant="default"
-                                className="bg-black text-white dark:bg-white dark:text-black border-0 flex items-center gap-1 shadow-md"
+                                className="bg-black text-white dark:bg-white dark:text-black border-0 flex items-center gap-1 shadow-md text-[10px] px-1.5 py-0.5 h-auto"
                             >
-                                <Zap size={14} /> Destaque
+                                <Zap size={10} /> Destaque
                             </Badge>
                         )}
                         {vehicle.seloOriginal && (
                             <Badge
                                 variant="secondary"
-                                className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                                className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md text-[10px] px-1.5 py-0.5 h-auto"
                             >
-                                <ShieldCheck size={14} /> Original
+                                <ShieldCheck size={10} /> Original
                             </Badge>
                         )}
                         {vehicle.classe && (
                             <Badge
                                 variant="secondary"
-                                className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                                className="bg-white text-black dark:bg-black dark:text-white flex items-center gap-1 shadow-md text-[10px] px-1.5 py-0.5 h-auto"
                             >
-                                <Flame size={14} />
+                                <Flame size={10} />
                                 Classe {vehicle.classe}
                             </Badge>
                         )}
@@ -242,9 +251,9 @@ export const VehicleCard = ({
                     {vehicle.categoria && (
                         <Badge
                             variant="secondary"
-                            className="bg-zinc-950 absolute top-4 left-2 text-zinc-50 dark:bg-black dark:text-white flex items-center gap-1 shadow-md"
+                            className="bg-zinc-950 absolute top-2 left-2 text-zinc-50 dark:bg-black dark:text-white flex items-center gap-1 shadow-md text-[10px] px-1.5 py-0.5 h-auto"
                         >
-                            <Crown size={14} />
+                            <Crown size={10} />
                             {vehicle.categoria}
                         </Badge>
                     )}
@@ -252,7 +261,7 @@ export const VehicleCard = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute top-3 right-3 rounded-full bg-white/90 dark:bg-black/90 hover:bg-white dark:hover:bg-black shadow-sm transition-transform duration-300 transform group-hover:scale-110"
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 dark:bg-black/90 hover:bg-white dark:hover:bg-black shadow-sm transition-transform duration-300 transform group-hover:scale-110"
                         onClick={handleFavoriteToggle}
                         disabled={isTogglingFavorite}
                         aria-label={
@@ -262,10 +271,10 @@ export const VehicleCard = ({
                         }
                     >
                         {isTogglingFavorite ? (
-                            <Loader2 size={18} className="animate-spin text-gray-500" />
+                            <Loader2 size={14} className="animate-spin text-gray-500" />
                         ) : (
                             <Heart
-                                size={18}
+                                size={14}
                                 className={
                                     isFavorite(vehicle.id)
                                         ? "fill-black text-black dark:fill-white dark:text-white"
@@ -276,83 +285,74 @@ export const VehicleCard = ({
                     </Button>
                 </div>
 
-                <CardContent className="p-5 space-y-4">
-                    <div className="flex justify-between items-start">
-                        <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-lg line-clamp-1 text-gray-900 dark:text-gray-100">
-                                {vehicle.marca || "Marca não informada"} {vehicle.modelo || "Modelo não informado"}
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1 flex-wrap">
-                                <Calendar size={14} className="opacity-70 flex-shrink-0" />
+                <CardContent className="p-3 space-y-2.5">
+                    {/* Título e informações básicas */}
+                    <div className="space-y-1">
+                        <h3 className="font-semibold text-sm sm:text-base md:text-lg line-clamp-1 text-gray-900 dark:text-gray-100 leading-tight">
+                            {vehicle.marca || "Marca N/I"} {vehicle.modelo || "Modelo N/I"}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+                            <div className="flex items-center gap-1">
+                                <Calendar size={10} className="opacity-70 flex-shrink-0" />
                                 <span>
                                     {vehicle.anoFabricacao || "0000"}/{vehicle.anoModelo || "0000"}
                                 </span>
-                                <span className="mx-1">•</span>
-                                <Gauge size={14} className="opacity-70 flex-shrink-0" />
+                            </div>
+                            <span className="opacity-50">•</span>
+                            <div className="flex items-center gap-1">
+                                <Gauge size={10} className="opacity-70 flex-shrink-0" />
                                 <span>{formatKilometers(vehicle.quilometragem)} km</span>
-                            </p>
+                            </div>
                         </div>
-
+                        
+                        {/* Localização */}
                         {vehicle.vendedor && vehicle.localizacao?.cidade && (
-                            <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 ml-2 flex-shrink-0">
-                                <MapPin size={14} className="opacity-70" />
-                                <span className="truncate max-w-20">{vehicle.localizacao.cidade}</span>
+                            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                <MapPin size={10} className="opacity-70 flex-shrink-0" />
+                                <span className="truncate">{vehicle.localizacao.cidade}</span>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    {/* Tags - máximo 2 mais importantes */}
+                    <div className="flex gap-1 flex-wrap">
                         <Badge
                             variant="outline"
-                            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300"
+                            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-[10px] px-1.5 py-0.5 h-auto"
                         >
                             {getFuelType(vehicle.tipoCombustivel)}
                         </Badge>
                         <Badge
                             variant="outline"
-                            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300"
+                            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-[10px] px-1.5 py-0.5 h-auto"
                         >
                             {getTransmissionType(vehicle.cambio)}
                         </Badge>
-                        <Badge
-                            variant="outline"
-                            className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300"
-                        >
-                            {vehicle.portas || 0} portas
-                        </Badge>
-                        {vehicle.potencia && (
-                            <Badge
-                                variant="outline"
-                                className="border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300"
-                            >
-                                {vehicle.potencia} cv
-                            </Badge>
-                        )}
                     </div>
 
-                    <div className="mt-2">
-                        <p className="text-xl font-medium text-gray-900 dark:text-white">
+                    {/* Preços */}
+                    <div className="pt-1">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-none">
                             {safeFormatPrice(vehicle.precoPromocional || vehicle.preco)}
                         </p>
                         {vehicle.precoPromocional && vehicle.preco && vehicle.precoPromocional < vehicle.preco && (
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                <p className="text-sm line-through text-gray-500 dark:text-gray-400">
+                                <p className="text-xs line-through text-gray-500 dark:text-gray-400">
                                     {safeFormatPrice(vehicle.preco)}
                                 </p>
                                 <Badge
                                     variant="destructive"
-                                    className="bg-black text-white dark:bg-white dark:text-black border-0 text-xs"
+                                    className="bg-black text-white dark:bg-white dark:text-black border-0 text-[9px] px-1 py-0 h-auto"
                                 >
                                     {Math.round(
                                         (1 - vehicle.precoPromocional / vehicle.preco) * 100
-                                    )}
-                                    % OFF
+                                    )}% OFF
                                 </Badge>
                             </div>
                         )}
                         {vehicle.parcelamento && vehicle.parcelamento > 0 && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                ou {vehicle.parcelamento}x de{" "}
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                {vehicle.parcelamento}x de{" "}
                                 {safeFormatPrice(
                                     (vehicle.precoPromocional || vehicle.preco || 0) /
                                     vehicle.parcelamento
@@ -361,48 +361,52 @@ export const VehicleCard = ({
                         )}
                     </div>
 
+                    {/* Controles administrativos - layout compacto */}
                     <div className="flex justify-between items-center pt-2 gap-2">
                         <Select
                             value={vehicle.status}
                             onValueChange={handleStatusChangeWithLoading}
                             disabled={isChangingStatus}
                         >
-                            <SelectTrigger className="w-[120px] border-gray-200 dark:border-gray-800 focus:ring-gray-900 dark:focus:ring-gray-400">
+                            <SelectTrigger className="w-20 sm:w-24 h-7 text-xs border-gray-200 dark:border-gray-800 focus:ring-gray-900 dark:focus:ring-gray-400">
                                 {isChangingStatus ? (
-                                    <Loader2 size={16} className="animate-spin" />
+                                    <Loader2 size={12} className="animate-spin" />
                                 ) : (
                                     <SelectValue placeholder="Status" />
                                 )}
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="DISPONIVEL">Disponível</SelectItem>
-                                <SelectItem value="RESERVADO">Reservado</SelectItem>
-                                <SelectItem value="VENDIDO">Vendido</SelectItem>
+                                <SelectItem value="DISPONIVEL" className="text-xs">Disponível</SelectItem>
+                                <SelectItem value="RESERVADO" className="text-xs">Reservado</SelectItem>
+                                <SelectItem value="VENDIDO" className="text-xs">Vendido</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <div className="flex gap-2 flex-shrink-0">
+                        <div className="flex gap-1 flex-shrink-0">
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                                className="w-7 h-7 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                                 asChild
                             >
                                 <Link to={`/vehicles/edit/${vehicle.id}`}>
-                                    <Edit className="h-4 w-4" />
+                                    <Edit className="h-3 w-3" />
                                 </Link>
                             </Button>
                             <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => setConfirmDelete(vehicle)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setConfirmDelete(vehicle);
+                                }}
                                 disabled={isDeleting === vehicle.id}
-                                className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-800 dark:hover:bg-red-900/20 dark:text-red-400"
+                                className="w-7 h-7 border-red-200 hover:bg-red-50 text-red-600 dark:border-red-800 dark:hover:bg-red-900/20 dark:text-red-400"
                             >
                                 {isDeleting === vehicle.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <Loader2 className="h-3 w-3 animate-spin" />
                                 ) : (
-                                    <Trash2 className="h-4 w-4" />
+                                    <Trash2 className="h-3 w-3" />
                                 )}
                             </Button>
                         </div>

@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useCallback } from "react";
 import useVehicle from "~/src/hooks/useVehicle";
 import { useAuth } from "~/src/hooks/useAuth";
@@ -18,6 +17,10 @@ import type { StatusFilter } from "~/src/components/pages/vehicle/user";
 
 import type { Vehicle } from "~/src/types/vehicle";
 import { toast } from "sonner";
+
+
+import { useIsMobile } from "~/src/hooks/use-mobile";
+
 const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -28,8 +31,12 @@ const staggerContainer = {
     },
 };
 
+
+
 export function UserVehicleList() {
     const { user } = useAuth();
+    const isMobile = useIsMobile(); // Hook para detectar mobile
+    
     const {
         userVehicles = [],
         loading,
@@ -49,12 +56,13 @@ export function UserVehicleList() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<StatusFilter | null>(null);    
     const [confirmDelete, setConfirmDelete] = useState<Vehicle | null>(null);
-    const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+    
+    // ViewMode é forçado para 'grid' no mobile, caso contrário usa estado normal
+    const [desktopViewMode, setDesktopViewMode] = useState<"table" | "grid">("table");
+    const viewMode = isMobile ? "grid" : desktopViewMode;
+    
     const [showFilters, setShowFilters] = useState(false);
-    
     const [statusUpdating, setStatusUpdating] = useState<Record<string, boolean>>({});
-
-    
     const [vehicleUpdates, setVehicleUpdates] = useState<Record<string, string>>({});
 
     const fetchData = useCallback(async () => {
@@ -63,12 +71,8 @@ export function UserVehicleList() {
             await fetchUserFavorites();
         } catch (error) {
             console.error("Failed to fetch data:", error);
-            // Tratar erro de limite de chamadas aqui
         }
     }, [fetchUserVehicles, fetchUserFavorites]);
-
-
-    // Adicione as funções como dependências do useEffect
 
     useEffect(() => {
         if (user?.id) {
@@ -103,7 +107,6 @@ export function UserVehicleList() {
         }
     };
 
-
     const toggleFavorite = async (vehicleId: string) => {
         try {
             if (isFavorite(vehicleId)) {
@@ -111,19 +114,14 @@ export function UserVehicleList() {
             } else {
                 await addFavorite(vehicleId);
             }
-         
         } catch (error) {
             console.error("Erro ao atualizar favoritos:", error);
         }
     };
 
-
-
-
     const handleStatusChange = async (vehicleId: string, newStatus: string) => {
         setStatusUpdating(prev => ({ ...prev, [vehicleId]: true }));
         
-
         const previousVehicles = [...userVehicles];
         const updatedVehicles = userVehicles.map(vehicle => 
             vehicle.id === vehicleId 
@@ -132,16 +130,11 @@ export function UserVehicleList() {
         );
         
         try {
-      
             await updateStatus(vehicleId, newStatus);
-            
-
             await fetchData();
-            
             toast.success("Status atualizado com sucesso!");
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
-            
             toast.error("Erro ao atualizar status!");
         } finally {
             setTimeout(() => {
@@ -149,7 +142,6 @@ export function UserVehicleList() {
             }, 500);
         }
     };
-
 
     const isFavorite = (vehicleId: string) => {
         return Array.isArray(favorites) && favorites.some((v) => v.id === vehicleId);
@@ -174,42 +166,41 @@ export function UserVehicleList() {
 
     if (error) {
         return (
-        <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900 "
+            <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="max-w-2xl mx-auto text-center p-8 md:p-12 bg-transparent dark:bg-gray-900"
             >
-              <div className="flex flex-col items-center gap-6">
-                {/* Ilustração SVG */}
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-gray-400 dark:text-gray-600"
-                >
-                  <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">
-                    104!
-                  </h1>
-                </motion.div>
+                <div className="flex flex-col items-center gap-6">
+                    <motion.div
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-gray-400 dark:text-gray-600"
+                    >
+                        <h1 className="text-8xl font-semibold text-gray-900 dark:text-gray-100">
+                            104!
+                        </h1>
+                    </motion.div>
 
-                <div className="px-6 gap-4 flex flex-col items-center">
-                  <h3 className="text-lg font-light text-gray-800 dark:text-gray-200">
-                    Falha ao carregar veículos
-                  </h3>
-                  <p className="text-gray-500 text-md dark:text-gray-400 font-light">
-                    Não foi possível carregar os veículos no momento. Por favor,
-                    tente novamente.
-                  </p>
+                    <div className="px-6 gap-4 flex flex-col items-center">
+                        <h3 className="text-lg font-light text-gray-800 dark:text-gray-200">
+                            Falha ao carregar veículos
+                        </h3>
+                        <p className="text-gray-500 text-md dark:text-gray-400 font-light">
+                            Não foi possível carregar os veículos no momento. Por favor,
+                            tente novamente.
+                        </p>
+                    </div>
                 </div>
-              </div>
             </motion.div>
         );
     }
 
     return (
         <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 px-0 md:px-6">
                 <CardHeader>
                     <VehicleListHeader
                         userVehicles={userVehicles}
@@ -221,7 +212,7 @@ export function UserVehicleList() {
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                         viewMode={viewMode}
-                        setViewMode={setViewMode}
+                        setViewMode={setDesktopViewMode} // Passa o setter do desktop
                     />
                 </CardHeader>
                 <CardContent>
