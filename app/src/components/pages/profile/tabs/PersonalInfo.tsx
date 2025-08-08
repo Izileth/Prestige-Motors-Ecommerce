@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/src/components/ui/avatar"
 import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/src/components/ui/dialog";
 import { Edit, Camera, Key, Trash2, AlertCircle } from "lucide-react";
-import type { User, UserUpdateData } from "~/src/types/user";
+import type { User} from "~/src/types/user";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 

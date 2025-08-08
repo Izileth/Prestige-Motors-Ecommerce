@@ -7,6 +7,13 @@ export interface User {
     telefone: string | null;
     cpf: string | null;
     dataNascimento: string | null; // String ISO em vez de Date
+    
+    // Logins
+    isLoggedIn: boolean;
+    lastLoginAt: string | null; // String ISO em vez de Date
+    lastLogoutAt: string | null; // String ISO em vez de Date
+    currentSessionId: string | null;
+    loginCount: number;
 }
 
 export interface UserUpdateData {

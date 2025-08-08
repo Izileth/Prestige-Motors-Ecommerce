@@ -312,7 +312,6 @@ export default function DashboardPage() {
     return <DashboardSkeleton />;
   }
 
-  const transformedUserStats = userStats as UserVehicleStatsResponse | null;
 
   if (!isAuthenticated || !user) {
     return (

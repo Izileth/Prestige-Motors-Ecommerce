@@ -9,7 +9,7 @@ let lastRedirectTime = 0;
 const isDev = process.env.NODE_ENV === 'development';
 const API_BASE_URL = isDev
   ? 'http://localhost:4242/api'
-  : 'https://prestige-motors-api.onrender.com/api';
+  : 'https://prestige-motors-api.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -61,7 +61,7 @@ api.interceptors.response.use(
     return response;
   },
   error => {
-    const currentTime = Date.now();
+ 
     
     // Tratamento específico para timeout
     if (error.code === 'ECONNABORTED') {
