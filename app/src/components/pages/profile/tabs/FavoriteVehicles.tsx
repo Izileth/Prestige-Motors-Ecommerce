@@ -22,7 +22,7 @@ const staggerContainer = {
 
 const FavoriteVehicles: React.FC<FavoriteVehiclesProps> = ({ favorites }) => {
   return (
-    <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+    <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 px-0 mx-0">
       <CardHeader>
         <CardTitle className="text-gray-900 dark:text-gray-100">Meus Veículos Favoritos</CardTitle>
         <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -35,7 +35,7 @@ const FavoriteVehicles: React.FC<FavoriteVehiclesProps> = ({ favorites }) => {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 px-0 mx-0"
           >
             {favorites.map((vehicle, index) => (
               <VehicleCard

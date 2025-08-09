@@ -21,18 +21,21 @@ import {
   ProgressBar
 } from "~/src/components/pages/vehicle/create"
 
+
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 import { TabsContent, Tabs } from "~/src/components/ui/tabs";
 import { Form } from "~/src/components/ui/form";
 
 const CreateVehiclePage = () => {
   const { createVehicle, uploadVehicleImages, loading } = useVehicle();
-  const navigate = useNavigate();
   const [files, setFiles] = useState<File[]>([]);
   const [activeTab, setActiveTab] = useState("basic");
   const [formProgress, setFormProgress] = useState(25);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { navigateToVehicle } = useVehicleNavigation();
 
   // Tipagem explícita para resolver o conflito
   const resolver = zodResolver(
@@ -105,7 +108,7 @@ const CreateVehiclePage = () => {
 
       setFormSuccess("Veículo criado com sucesso!");
       setTimeout(() => {
-        navigate(`/vehicles/${vehicle.id}`);
+        navigateToVehicle(vehicle);
       }, 1500);
     } catch (error) {
       console.error("Erro ao criar veículo:", error);

@@ -212,7 +212,7 @@ export const VehicleRow = ({
                                     className="border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                                     asChild
                                 >
-                                    <Link to={`/vehicles/${vehicle.id}`}>
+                                    <Link onClick={() => navigateToVehicle(vehicle)} to={generateVehicleUrl(vehicle)}>
                                         <Eye className="h-4 w-4" />
                                     </Link>
                                 </Button>

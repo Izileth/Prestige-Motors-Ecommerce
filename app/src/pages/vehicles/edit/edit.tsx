@@ -27,6 +27,10 @@ import type { Resolver } from "react-hook-form";
 import type { VehicleImage } from "~/src/types/vehicle";
 import { ChevronLeft } from "lucide-react";
 
+import type { Vehicle } from "~/src/types/vehicle";
+
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
+
 export function EditVehiclePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -50,6 +54,8 @@ export function EditVehiclePage() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const { navigateToVehicle } = useVehicleNavigation();
 
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(
@@ -172,18 +178,21 @@ export function EditVehiclePage() {
       setFormSuccess(null);
 
       const { imagens, ...vehicleData } = data;
-      await updateVehicle(id, vehicleData);
+      
+      // Atualiza o veículo
+      const updatedVehicle = await updateVehicle(id, vehicleData);
 
+      // Upload de novas imagens se houver
       const newImages = files.filter((file) => file instanceof File);
       if (newImages.length > 0) {
         await uploadVehicleImages(id, newImages);
       }
 
-      const currentImageIds =
-        currentVehicle?.imagens?.map((img) => img.id) || [];
+      // Remove imagens que foram excluídas
+      const currentImageIds = currentVehicle?.imagens?.map((img) => img.id) || [];
       const remainingImageIds = existingImages.map((img) => img.id);
       const imagesToRemove = currentImageIds.filter(
-        (id) => !remainingImageIds.includes(id)
+        (imageId) => !remainingImageIds.includes(imageId)
       );
 
       await Promise.all(
@@ -191,9 +200,37 @@ export function EditVehiclePage() {
       );
 
       setFormSuccess("Veículo atualizado com sucesso!");
+    
       setTimeout(() => {
-        navigate(`/vehicles/${id}`);
+        
+        const vehicleForNavigation = {
+          id: id,
+          marca: vehicleData.marca || currentVehicle?.marca || '',
+          modelo: vehicleData.modelo || currentVehicle?.modelo || '',
+          anoFabricacao: vehicleData.anoFabricacao || currentVehicle?.anoFabricacao,
+          anoModelo: vehicleData.anoModelo || currentVehicle?.anoModelo,
+        };
+        
+      
+
+        if (updatedVehicle && updatedVehicle.marca && updatedVehicle.modelo) {
+          navigateToVehicle(updatedVehicle);
+        } 
+        // Senão, se currentVehicle tem os dados necessários
+        else if (currentVehicle && currentVehicle.marca && currentVehicle.modelo) {
+          // Combina currentVehicle com os novos dados do form
+          const mergedVehicle = {
+            ...currentVehicle,
+            ...vehicleData
+          };
+          navigateToVehicle(mergedVehicle);
+        }
+        // Como última opção, usa o objeto construído manualmente
+        else {
+          navigateToVehicle(vehicleForNavigation as Vehicle);
+        }
       }, 1500);
+      
     } catch (error) {
       console.error("Erro ao atualizar veículo:", error);
       setFormError(
@@ -208,7 +245,7 @@ export function EditVehiclePage() {
     if (form.formState.isDirty || files.length > 0) {
       setConfirmCancel(true);
     } else {
-      navigate(`/vehicles/${id}`);
+      navigate(`/`);
     }
   };
 
@@ -320,7 +357,7 @@ export function EditVehiclePage() {
       <CancelationDialog
         open={confirmCancel}
         onOpenChange={setConfirmCancel}
-        onConfirm={() => navigate(`/vehicles/${id}`)}
+        onConfirm={() => navigate(`/`)}
       />
 
       <ImageViewer

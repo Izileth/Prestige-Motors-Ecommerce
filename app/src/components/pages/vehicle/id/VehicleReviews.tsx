@@ -1,7 +1,7 @@
 import type React from "react";
 import { motion } from "framer-motion";
 import { Textarea } from "~/src/components/ui/textarea";
-import { User, Star, Edit2, Trash2, MessageSquare, Loader2 } from "lucide-react";
+import { User, Star, Edit2, Trash2, MessageSquare, Loader2, Clock } from "lucide-react";
 import type { Review, ReviewCreateInput, ReviewUpdateInput } from "~/src/types/reviews";
 import type { User as UserType } from "~/src/types/user";
 
@@ -34,6 +34,29 @@ const VehicleReviews: React.FC<VehicleReviewsProps> = ({
   onCancelEdit,
   onNavigateToLogin,
 }) => {
+  // Função para verificar se o review ainda pode ser editado (12 minutos = 720000 ms)
+  const canEditReview = (createdAt: string): boolean => {
+    const reviewDate = new Date(createdAt);
+    const now = new Date();
+    const diffInMinutes = (now.getTime() - reviewDate.getTime()) / (1000 * 60);
+    return diffInMinutes <= 12;
+  };
+
+  // Função para calcular tempo restante para edição
+  const getTimeLeftForEdit = (createdAt: string): string => {
+    const reviewDate = new Date(createdAt);
+    const now = new Date();
+    const diffInMinutes = (now.getTime() - reviewDate.getTime()) / (1000 * 60);
+    const timeLeft = 12 - diffInMinutes;
+    
+    if (timeLeft <= 0) return "Tempo esgotado";
+    
+    const minutesLeft = Math.floor(timeLeft);
+    const secondsLeft = Math.floor((timeLeft - minutesLeft) * 60);
+    
+    return `${minutesLeft}m ${secondsLeft}s restantes`;
+  };
+
   return (
     <div className="mt-4 space-y-6">
       <div className="max-w-full  mx-auto ">
@@ -71,81 +94,109 @@ const VehicleReviews: React.FC<VehicleReviewsProps> = ({
 
           <div className="space-y-6">
             {reviews && reviews.length > 0 ? (
-              reviews.map((review, index) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group"
-                >
-                  <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
-                        {review.user?.avatar ? (
-                          <img
-                            src={review.user.avatar}
-                            alt={review.user.nome}
-                            className="w-full h-full rounded-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-white text-sm font-medium">
-                            {review.user?.nome.substring(0, 2).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-gray-900">{review.user?.nome}</h4>
-                          <span className="text-xs text-gray-500">
-                            {new Date(review.createdAt)?.toLocaleDateString("pt-BR")}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-1 mb-3">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={
-                                i < review.rating
-                                  ? "fill-gray-900 text-gray-900"
-                                  : "text-gray-300"
-                              }
+              reviews.map((review, index) => {
+                const isOwner = review.userId === user?.id;
+                const isAdmin = user?.role === 'ADMIN';
+                const canEdit = canEditReview(review.createdAt);
+                const timeLeft = getTimeLeftForEdit(review.createdAt);
+                
+                return (
+                  <motion.div
+                    key={review.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group"
+                  >
+                    <div className="border-t border-gray-200 rounded-none p-6 hover:border-gray-300 transition-colors">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
+                          {review.user?.avatar ? (
+                            <img
+                              src={review.user.avatar}
+                              alt={review.user.nome}
+                              className="w-full h-full rounded-full object-cover"
                             />
-                          ))}
+                          ) : (
+                            <span className="text-white text-sm font-medium">
+                              {review.user?.nome.substring(0, 2).toUpperCase()}
+                            </span>
+                          )}
                         </div>
 
-                        {review.comentario && (
-                          <p className="text-gray-700 leading-relaxed mb-4">
-                            {review.comentario}
-                          </p>
-                        )}
-
-                        {(review.userId === user?.id || user?.role === 'ADMIN') && (
-                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={() => onEditReview(review)}
-                              className="inline-flex items-center gap-1 px-3 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                            >
-                              <Edit2 size={12} />
-                              Editar
-                            </button>
-                            <button
-                              onClick={() => onDeleteReview(review.id)}
-                              className="inline-flex items-center gap-1 px-3 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                            >
-                              <Trash2 size={12} />
-                              Excluir
-                            </button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-gray-900">{review.user?.nome}</h4>
+                            <span className="text-xs text-gray-500">
+                              {new Date(review.createdAt)?.toLocaleDateString("pt-BR")}
+                            </span>
                           </div>
-                        )}
+
+                          <div className="flex items-center gap-1 mb-3">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                size={16}
+                                className={
+                                  i < review.rating
+                                    ? "fill-gray-900 text-gray-900"
+                                    : "text-gray-300"
+                                }
+                              />
+                            ))}
+                          </div>
+
+                          {review.comentario && (
+                            <p className="text-gray-700 leading-relaxed mb-4">
+                              {review.comentario}
+                            </p>
+                          )}
+
+                          {/* Timer de edição para o próprio usuário */}
+                          {isOwner && canEdit && (
+                            <div className="flex items-center gap-1 text-xs text-amber-600 mb-3">
+                              <Clock size={12} />
+                              <span>{timeLeft} para editar</span>
+                            </div>
+                          )}
+
+                          {/* Botões de ação */}
+                          {(isOwner || isAdmin) && (
+                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {/* Botão de editar - só aparece se pode editar OU se for admin */}
+                              {(isAdmin || (isOwner && canEdit)) && (
+                                <button
+                                  onClick={() => onEditReview(review)}
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                                >
+                                  <Edit2 size={12} />
+                                  Editar
+                                </button>
+                              )}
+                              
+                              {/* Botão de excluir - sempre disponível para dono ou admin */}
+                              <button
+                                onClick={() => onDeleteReview(review.id)}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                              >
+                                <Trash2 size={12} />
+                                Excluir
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Aviso quando tempo de edição expirou */}
+                          {isOwner && !canEdit && !isAdmin && (
+                            <div className="text-xs text-gray-400 mt-2">
+                              Tempo para edição expirado (12 minutos)
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))
+                  </motion.div>
+                );
+              })
             ) : (
               <div className="text-center py-16 border border-gray-200 rounded-lg">
                 <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
@@ -158,7 +209,7 @@ const VehicleReviews: React.FC<VehicleReviewsProps> = ({
           </div>
 
           <div id="review-form" className="border-t border-gray-200 pt-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="bg-white border-none border-gray-200 rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-6">
                 {reviewForm.mode === 'edit' ? 'Editar avaliação' : 'Deixe sua avaliação'}
               </h3>
@@ -199,7 +250,7 @@ const VehicleReviews: React.FC<VehicleReviewsProps> = ({
                     onChange={(e) => onReviewFormChange('comentario', e.target.value)}
                     placeholder="Conte sua experiência com este veículo..."
                     rows={4}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm transition-colors"
+                    className="w-full px-0 py-3 border-none border-gray-300 rounded-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm transition-colors"
                   />
                 </div>
 

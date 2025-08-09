@@ -15,7 +15,7 @@ const LoginPage = () => {
         const [showPassword, setShowPassword] = useState(false)
         const [rememberMe, setRememberMe] = useState(false)
         const [focusedField, setFocusedField] = useState<string | null>(null)
-    const [isLoading, setIsLoading] = useState(false)
+        const [isLoading, setIsLoading] = useState(false)
         const handleLogin = async () => {
             if (!email || !password) {
             return // Validação básica

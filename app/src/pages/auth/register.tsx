@@ -357,7 +357,7 @@ export default function RegisterPage() {
               }, 100);
             }}
             onKeyDown={handleKeyDown}
-            className={`w-full bg-transparent border-0 border-b pl-6 pr-8 py-3 md:py-4 text-black placeholder-black/40 focus:outline-none transition-all duration-300 font-light ${
+            className={`w-full bg-transparent border-0 border-b pl-6 pr-8 py-3 md:py-4 text-black placeholder-black/0 focus:outline-none transition-all duration-300 font-light ${
               !isValid ? "border-red-500" : "border-black/20 focus:border-black"
             }`}
             placeholder={placeholder}

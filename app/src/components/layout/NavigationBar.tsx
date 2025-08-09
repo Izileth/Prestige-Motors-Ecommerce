@@ -137,7 +137,6 @@ const Navigation: React.FC<NavigationProps> = ({
       ],
     },
     { name: "Catálogo", href: "/vehicles" },
-    { name: "Divulgar Veículo", href: "/vehicles/create" },
     { name: "Meus Veículos", href: "/vehicles/user" },
     { name: "Vendas & Negócios", href: "/sale/dashboard" },
     { name: "Conversas", href: "/vehicles/negotiations" },
