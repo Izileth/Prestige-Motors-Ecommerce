@@ -3,7 +3,6 @@ import useVehicle from "~/src/hooks/useVehicle";
 import { useAuth } from "~/src/hooks/useAuth";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "~/src/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 import { Skeleton } from "~/src/components/ui/skeleton";
 import {
     VehicleListHeader,

@@ -1,5 +1,5 @@
-import type { Route } from "./+types/forgout";
-import RecoverPasswordPage from "~/src/pages/passwords/forgout";
+import type { Route } from "../../+types/index";
+import ForgotPasswordPage from "~/src/pages/passwords/forgot";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Redefinição de Senha | Prestige Motors" },
@@ -7,8 +7,8 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export default function Register() {
+export default function ForgotPassword() {
     return (
-        <RecoverPasswordPage/>
+        <ForgotPasswordPage/>
     );
 }

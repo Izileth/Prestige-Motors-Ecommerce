@@ -25,8 +25,8 @@ export default [
 
     route("login", "routes/auth/login/login.tsx"),
     route("register", "routes/auth/register/register.tsx"),
-    
-    route("passwords/forgot", "routes/password/forgout/forgout.tsx"),
+
+    route("passwords/forgots", "routes/password/forgots/forgots.tsx"),
     route("passwords/reset", "routes/password/reset/reset.tsx"),
     
     route("dashboard", "routes/user/dashboard.tsx"),

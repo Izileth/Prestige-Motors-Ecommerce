@@ -1,0 +1,17 @@
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+
+export const BackToLoginLink = () => (
+  <motion.div className="text-center">
+    <motion.div whileHover={{ x: -2 }}>
+      <Link
+        to="/login"
+        className="inline-flex items-center text-sm text-black/60 font-light hover:text-black transition-colors duration-300 border-b border-transparent hover:border-black/20"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to sign in
+      </Link>
+    </motion.div>
+  </motion.div>
+);

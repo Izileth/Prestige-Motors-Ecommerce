@@ -7,7 +7,7 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export default function Register() {
+export default function ResetPassword() {
     return (
         <ResetPasswordPage/>
     );
