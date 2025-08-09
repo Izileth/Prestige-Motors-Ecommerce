@@ -114,7 +114,7 @@ export const NegotiationForm = ({ vehicle, messagesEndRef }: NegotiationFormProp
     }, []);
 
     return (
-        <div className="p-6 space-y-4" ref={messagesEndRef}>
+        <div className="p-6 space-y-4 bg-white rounded-sm" ref={messagesEndRef}>
             <h4 className="text-sm font-light text-gray-500 dark:text-gray-400">
                 {currentNegotiation ? "Continue a negociação" : "Inicie uma negociação"}
             </h4>

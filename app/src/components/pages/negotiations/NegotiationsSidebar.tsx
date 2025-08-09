@@ -11,12 +11,12 @@ const tabVariants = {
 
 type ActiveTab = "favorites" | "negotiations";
 
-// Interface para as props do componente
+
 interface NegotiationsSidebarProps {
     activeTab: ActiveTab;
     setActiveTab: (tab: ActiveTab) => void;
     favoritesCount: number;
-    // Removemos negotiationsCount das props já que vamos buscar do hook
+
     handleProfile: () => void;
 }
 
@@ -26,14 +26,11 @@ export const NegotiationsSidebar = ({
     favoritesCount, 
     handleProfile 
 }: NegotiationsSidebarProps) => {
-    // Hook para buscar a contagem de negociações
+
     const negotiationsCounts = useNegotiationsCount();
     
-    // Você pode escolher qual contagem usar:
-    // negotiationsCounts.total - todas as negociações
-    // negotiationsCounts.active - apenas ativas (ABERTA + CONTRA_OFERTA)
-    // negotiationsCounts.pending - apenas pendentes (ABERTA)
-    const negotiationsCount = negotiationsCounts.active; // Usando negociações ativas
+
+    const negotiationsCount = negotiationsCounts.active; 
 
     return (
         <motion.div
@@ -126,28 +123,7 @@ export const NegotiationsSidebar = ({
                     </motion.div>
                 </div>
             </div>
-
-            <div>
-                <h2 className="text-sm font-light text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
-                    Minha Conta
-                </h2>
-                <div className="space-y-1">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start py-2 px-3 rounded-none text-base font-light text-gray-500 dark:text-gray-400"
-                        onClick={handleProfile}
-                    >
-                        Perfil
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start py-2 px-3 rounded-none text-base font-light text-gray-500 dark:text-gray-400"
-                        onClick={handleProfile}
-                    >
-                        Configurações
-                    </Button>
-                </div>
-            </div>
+        
         </motion.div>
     );
 };
