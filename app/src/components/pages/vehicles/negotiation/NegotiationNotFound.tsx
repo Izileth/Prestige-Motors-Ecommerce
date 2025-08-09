@@ -1,6 +1,6 @@
 import { Button } from "~/src/components/ui/button";
 import { ArrowLeft, AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const NegotiationNotFound = () => {
   const navigate = useNavigate();

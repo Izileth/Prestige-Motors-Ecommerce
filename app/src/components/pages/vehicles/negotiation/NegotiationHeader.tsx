@@ -2,7 +2,7 @@ import { Button } from "~/src/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { NegotiationHeader as Header } from "~/src/components/pages/negotiations/NegotiationHeader";
 import { NegotiationStatusBadge } from "./NegotiationStatusBadge";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const NegotiationHeader = ({ negotiation }: { negotiation: any }) => {
   const navigate = useNavigate();

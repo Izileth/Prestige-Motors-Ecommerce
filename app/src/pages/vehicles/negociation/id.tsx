@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useNegotiations } from '~/src/hooks/useNegociation';
 import { useAuth } from '~/src/hooks/useAuth';
 import { useEffect, useState } from 'react';

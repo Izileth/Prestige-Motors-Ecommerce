@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Checkbox } from "~/src/components/ui/check-box";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export const RememberMe = ({
   rememberMe,

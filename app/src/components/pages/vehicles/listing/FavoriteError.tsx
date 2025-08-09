@@ -2,8 +2,7 @@ import { motion } from "framer-motion";
 import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 import { Button } from "~/src/components/ui/button";
 import { X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router";
 export const FavoriteError = ({
   error,
   setError,

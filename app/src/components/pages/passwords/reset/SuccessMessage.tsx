@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export const SuccessMessage = ({
   itemVariants,

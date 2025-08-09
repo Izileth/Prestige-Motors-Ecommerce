@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
 import { VehicleFilters } from "~/src/components/common/VehicleFilter";
@@ -8,7 +8,7 @@ import { Button } from "~/src/components/ui/button";
 import { ChevronUp } from "lucide-react";
 import { usePersistentFilters } from "~/src/hooks/usePersistFilters";
 import type { Vehicle, VehicleSearchParams } from "~/src/types/vehicle";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
 import { ExpecionalCars } from "~/src/data/carousel";
 import {

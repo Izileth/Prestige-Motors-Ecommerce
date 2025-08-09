@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import {
   BackgroundAnimations,
   Copyright,
