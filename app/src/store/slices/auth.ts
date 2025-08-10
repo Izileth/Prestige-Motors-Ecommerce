@@ -31,7 +31,7 @@ interface AuthState {
   logoutUser: () => Promise<void>;
   checkSession: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (data: { token: string; senha: string; confirmaSenha: string }) => Promise<void>;
+  resetPassword: (data: { token: string; password: string; confirmPassword: string }) => Promise<void>;
   logout: () => void;
   clearResetPasswordStatus: () => void;
   setUser: (user: User | null) => void;
@@ -223,7 +223,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      resetPassword: async ({ token, senha , confirmaSenha}) => {
+      resetPassword: async ({ token, password, confirmPassword }) => {
         set({ 
           resetPasswordState: { 
             status: 'loading', 
@@ -231,7 +231,7 @@ export const useAuthStore = create<AuthState>()(
           } 
         });
         try {
-          await authService.resetPassword({ token, senha, confirmaSenha });
+          await authService.resetPassword({ token, password, confirmPassword });
           set({ 
             resetPasswordState: { 
               status: 'succeeded', 
