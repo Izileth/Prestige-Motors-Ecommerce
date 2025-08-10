@@ -32,6 +32,7 @@ interface VehicleState {
   loading: boolean;
   error: string | null;
   success: boolean;
+  messagesError: string | null;
 
 
   fetchVehicles: (params?: VehicleSearchParams) => Promise<void>;
@@ -63,6 +64,7 @@ interface VehicleState {
 
   resetVehicleState: () => void;
   setCurrentVehicle: (vehicle: Vehicle | null) => void;
+  clearErrors: () => void;
 }
 
 export const useVehicleStore = create<VehicleState>()(
@@ -82,7 +84,7 @@ export const useVehicleStore = create<VehicleState>()(
       loading: false,
       error: null,
       success: false,
-
+      messagesError: null,
       // Implementação das ações
       fetchVehicles: async (params = {}) => {
         set({ loading: true, error: null });
@@ -644,6 +646,12 @@ export const useVehicleStore = create<VehicleState>()(
       setCurrentVehicle: (vehicle) => {
         set({ currentVehicle: vehicle });
       },
+      clearErrors: () => {
+            set({ 
+                error: null,
+                messagesError: null,
+            });
+        }
     }),
     {
       name: "vehicle-storage",

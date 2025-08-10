@@ -9,13 +9,13 @@ const VehicleImages = ({ imageUrl }: { imageUrl?: string }) => {
     }
 
     return (
-        <div className="w-16 h-12 rounded overflow-hidden">
+        <div className="w-full h-full rounded-none overflow-hidden">
         <img
             src={imageUrl}
             alt="Veículo"
             width={64}
             height={48}
-            className="object-cover w-full h-full"
+             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
             loading="lazy"
         />
         </div>

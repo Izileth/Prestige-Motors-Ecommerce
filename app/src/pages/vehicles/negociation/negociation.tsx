@@ -15,6 +15,10 @@ const NegotiationsPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     
+    // ✨ Refs para controlar toasts
+    const hasShownNegotiationError = useRef(false);
+    const lastActiveTab = useRef<"favorites" | "negotiations">("favorites");
+    
     // Stores
     const {
         favorites,
@@ -27,7 +31,8 @@ const NegotiationsPage = () => {
         createNegotiation,
         clearErrors: clearNegotiationError,
         isLoading: negotiationLoading,
-        error: negotiationError
+        error: negotiationError,
+        hasInitialized // ✨ NOVO estado do store
     } = useNegotiationStore();
 
     // Estados da UI
@@ -35,12 +40,48 @@ const NegotiationsPage = () => {
     const [expandedVehicle, setExpandedVehicle] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // 🐛 DEBUG: Monitora mudanças no estado
+    // ✨ Controla quando mostrar toast de erro para negociações
     useEffect(() => {
-        console.log("🔍 DEBUG - expandedVehicle changed:", expandedVehicle);
-        console.log("🔍 DEBUG - typeof expandedVehicle:", typeof expandedVehicle);
-        console.log("🔍 DEBUG - favorites count:", favorites.length);
-    }, [expandedVehicle, favorites.length]);
+        // Só mostra toast se:
+        // 1. Há erro
+        // 2. A aba de negociações está ativa
+        // 3. Não foi mostrado antes
+        // 4. O store foi inicializado (teve pelo menos uma tentativa)
+        if (
+            negotiationError && 
+            activeTab === "negotiations" && 
+            !hasShownNegotiationError.current &&
+            hasInitialized
+        ) {
+            // ✨ Pequeno delay para garantir que não seja um erro temporário
+            const timeoutId = setTimeout(() => {
+                if (negotiationError) { // Verifica se ainda há erro após delay
+                    toast.error(negotiationError);
+                    hasShownNegotiationError.current = true;
+                }
+            }, 500);
+
+            return () => clearTimeout(timeoutId);
+        }
+        
+        // Reset do flag quando o erro é limpo
+        if (!negotiationError) {
+            hasShownNegotiationError.current = false;
+        }
+    }, [negotiationError, activeTab, hasInitialized]);
+
+    // ✨ Reset do flag de erro quando muda de aba
+    useEffect(() => {
+        if (lastActiveTab.current !== activeTab) {
+            hasShownNegotiationError.current = false;
+            lastActiveTab.current = activeTab;
+            
+            // Limpa erros quando sai da aba de negociações
+            if (activeTab !== "negotiations") {
+                clearNegotiationError();
+            }
+        }
+    }, [activeTab, clearNegotiationError]);
 
     // Carrega favoritos quando o usuário está disponível
     useEffect(() => {
@@ -48,14 +89,6 @@ const NegotiationsPage = () => {
             fetchUserFavorites();
         }
     }, [user, fetchUserFavorites]);
-
-    // Tratamento de erros
-    useEffect(() => {
-        if (negotiationError) {
-            toast.error(negotiationError);
-            clearNegotiationError();
-        }
-    }, [negotiationError, clearNegotiationError]);
 
     const handleRemoveFavorite = async (vehicleId: string) => {
         console.log("🗑️ Removing favorite:", vehicleId);
@@ -115,6 +148,11 @@ const NegotiationsPage = () => {
         }
     };
 
+    // ✨ Função para mudar aba com limpeza de estados
+    const handleTabChange = (tab: "favorites" | "negotiations") => {
+        setActiveTab(tab);
+    };
+
     // Scroll para o formulário quando expandido
     useEffect(() => {
         if (expandedVehicle && messagesEndRef.current) {
@@ -157,7 +195,7 @@ const NegotiationsPage = () => {
                 <div className="flex flex-col lg:flex-row gap-12">
                     <NegotiationsSidebar
                         activeTab={activeTab}
-                        setActiveTab={setActiveTab}
+                        setActiveTab={handleTabChange} // ✨ Usa função personalizada
                         favoritesCount={favorites.length}
                         handleProfile={handleProfile}
                     />
@@ -166,7 +204,7 @@ const NegotiationsPage = () => {
                         <AnimatePresence mode="wait">
                             {activeTab === "favorites" ? (
                                 <FavoritesTab
-                                    key="favorites" // 🔧 Força re-render
+                                    key="favorites"
                                     loading={favoritesLoading}
                                     favorites={favorites}
                                     expandedVehicle={expandedVehicle}
@@ -182,13 +220,6 @@ const NegotiationsPage = () => {
                         </AnimatePresence>
                     </div>
                 </div>
-            </div>
-            
-            {/* 🐛 DEBUG INFO - Remover em produção */}
-            <div className="fixed bottom-4 right-4 bg-black text-white p-2 rounded text-xs font-mono">
-                <div>Expanded: {expandedVehicle || 'null'}</div>
-                <div>Favorites: {favorites.length}</div>
-                <div>Loading: {favoritesLoading ? 'true' : 'false'}</div>
             </div>
         </div>
     );

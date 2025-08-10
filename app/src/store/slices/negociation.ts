@@ -14,6 +14,8 @@ interface NegotiationStore {
     error: string | null;
     messagesError: string | null;
     historyError: string | null;
+      
+    hasInitialized: boolean;
 
     createNegotiation: (payload: CreateNegotiationPayload) => Promise<Negotiation>;
     fetchNegotiations: (status?: NegotiationStatus) => Promise<void>;
@@ -25,6 +27,7 @@ interface NegotiationStore {
     fetchHistory: (negotiationId: string) => Promise<void>;
     resetCurrentNegotiation: () => void;
     clearErrors: () => void;
+    resetErrorsOnNavigation: () => void;
 }
 
 export const useNegotiationStore = create<NegotiationStore>()(
@@ -41,6 +44,7 @@ export const useNegotiationStore = create<NegotiationStore>()(
         error: null,
         messagesError: null,
         historyError: null,
+        hasInitialized: false, // ✨ NOVO
 
         // Ações
 
@@ -65,19 +69,32 @@ export const useNegotiationStore = create<NegotiationStore>()(
         },
         
         // Busca Negociação
+
         fetchNegotiations: async (status) => {
+            const { hasInitialized } = get();
+            
             set({ isLoading: true, error: null });
+            
             try {
                 const negotiations = await negotiationService.getAll(status);
-                set({ negotiations, isLoading: false });
-            } catch (error) {
                 set({ 
-                    error: error instanceof Error ? error.message : 'Erro ao buscar negociações',
+                    negotiations, 
                     isLoading: false,
-                    negotiations: [] // Reset para evitar mostrar dados inconsistentes
+                    hasInitialized: true // ✨ Marca como inicializado após sucesso
+                });
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'Erro ao buscar negociações';
+                
+                set({ 
+                    error: errorMessage,
+                    isLoading: false,
+                    negotiations: [],
+                    // ✨ Só marca como inicializado se não foi a primeira tentativa
+                    hasInitialized: hasInitialized || false
                 });
             }
         },
+
     
         // Busca Negociação por ID
         fetchNegotiationById: async (id) => {
@@ -241,7 +258,15 @@ export const useNegotiationStore = create<NegotiationStore>()(
                 messagesError: null,
                 historyError: null 
             });
-        }
+        },
+
+        resetErrorsOnNavigation: () => {
+            set({ 
+                error: null,
+                messagesError: null,
+                historyError: null 
+            });
+        },
         }),
         { name: 'NegotiationStore' }
     )
