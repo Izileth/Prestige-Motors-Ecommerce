@@ -29,7 +29,7 @@ export default [
     route("passwords/forgots", "routes/password/forgots/forgots.tsx"),
     
     route("passwords/reset/:token", "routes/password/reset/reset.tsx"),
-    route("passwords/reset", "routes/password/reset/reset.tsx"),
+
     
     route("dashboard", "routes/user/dashboard.tsx"),
     route("vehicles/user", "routes/vehicle/user/list.tsx"),
