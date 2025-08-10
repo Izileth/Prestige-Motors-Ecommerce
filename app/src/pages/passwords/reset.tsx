@@ -133,7 +133,7 @@ const ResetPasswordContent = () => {
       await confirmPasswordReset({
         token: token!,
         senha: password,
-        confirmaSenha: confirmPassword,
+        confirmaSenha: confirmPassword
       });
       console.log("Password reset successful");
     } catch (error: any) {
