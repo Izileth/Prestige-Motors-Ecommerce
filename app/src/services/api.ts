@@ -116,8 +116,8 @@ api.interceptors.response.use(
 // Funções auxiliares
 function shouldRedirectToLogin() {
   const currentPath = window.location.pathname;
-  const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password'];
-  
+  const authRoutes = ['/login', '/register', '/passwords/forgots', '/passwords/reset'];
+
   return (
     !authRoutes.some(route => currentPath.includes(route)) &&
     !isRedirecting &&
@@ -133,7 +133,7 @@ function handleUnauthorizedRedirect() {
     const currentPath = window.location.pathname;
     const redirectUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
     window.location.href = redirectUrl;
-    setTimeout(() => isRedirecting = false, 1000);
+    setTimeout(() => isRedirecting = false, 15000);
   }, 100);
 }
 

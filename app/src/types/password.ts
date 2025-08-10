@@ -5,6 +5,6 @@ export interface ForgotPasswordData {
 
 export interface ResetPasswordData {
     token: string;
-    senha: string;
-    confirmaSenha: string;
+    password: string;
+    confirmPassword: string;
 }
