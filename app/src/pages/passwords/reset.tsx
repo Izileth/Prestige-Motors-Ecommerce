@@ -1,7 +1,7 @@
 import type React from "react";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "react-router";
+import { useParams, useNavigate } from "react-router"; // ou useParams do Remix se usando Remix
 import {
   BackgroundAnimations,
   Copyright,
@@ -10,25 +10,62 @@ import {
   ResetHeader,
   SuccessMessage,
 } from "~/src/components/pages/passwords/reset";
+import { useAuth } from "~/src/hooks/useAuth";
 
 const ResetPasswordContent = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+  // Pegar o token dos parâmetros da URL
+  const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
 
+  // Estados locais do componente
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [localError, setLocalError] = useState<string | null>(null);
 
+  // Estados do hook de autenticação
+  const {
+    resetPasswordState,
+    confirmPasswordReset,
+    clearPasswordResetStatus,
+    isInitialized
+  } = useAuth();
+
+  // Derivar estados do hook
+  const isLoading = resetPasswordState?.status === 'loading';
+  const hookError = resetPasswordState?.error || null;
+  const isSuccess = resetPasswordState?.status === 'succeeded';
+
+  // Combinar erros
+  const error = localError || hookError;
+
+  // Validar formato do token
+  const validateTokenFormat = useCallback((token: string | undefined): boolean => {
+    if (!token) return false;
+    
+    // Token deve ter 64 caracteres hexadecimais (baseado no seu exemplo)
+    const tokenRegex = /^[a-f0-9]{64}$/i;
+    return tokenRegex.test(token);
+  }, []);
+
+  // Validar token na inicialização
   useEffect(() => {
     if (!token) {
-      setError("Invalid or missing reset token");
+      setLocalError("Reset link is invalid or has been corrupted");
+      return;
     }
-  }, [token]);
 
+    if (!validateTokenFormat(token)) {
+      setLocalError("Invalid reset token format");
+      return;
+    }
+
+    // Token válido, limpar erros
+    setLocalError(null);
+  }, [token, validateTokenFormat]);
+
+  // Calcular força da senha
   useEffect(() => {
     if (!password) {
       setPasswordStrength(0);
@@ -44,43 +81,101 @@ const ResetPasswordContent = () => {
     setPasswordStrength(strength);
   }, [password]);
 
-  const handleReset = async () => {
-    if (!token) {
-      setError("Invalid reset token");
-      return;
+  // Limpar estados quando o componente é desmontado
+  useEffect(() => {
+    return () => {
+      clearPasswordResetStatus();
+    };
+  }, [clearPasswordResetStatus]);
+
+  // Função de validação local
+  const validateInputs = useCallback((): string | null => {
+    if (!token || !validateTokenFormat(token)) {
+      return "Invalid reset token";
     }
 
     if (!password || !confirmPassword) {
-      setError("Please fill in all fields");
-      return;
+      return "Please fill in all fields";
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
+      return "Password must be at least 6 characters";
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      return "Passwords do not match";
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+
+    if (!/[0-9]/.test(password)) {
+      return "Password must contain at least one number";
+    }
+
+    return null;
+  }, [token, password, confirmPassword, validateTokenFormat]);
+
+  const handleReset = async () => {
+    // Limpar erros anteriores
+    setLocalError(null);
+    clearPasswordResetStatus();
+
+    // Validar inputs localmente primeiro
+    const validationError = validateInputs();
+    if (validationError) {
+      setLocalError(validationError);
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-    }, 2000);
+    try {
+      await confirmPasswordReset({
+        token: token!,
+        senha: password,
+        confirmaSenha: confirmPassword,
+      });
+      console.log("Password reset successful");
+    } catch (error: any) {
+      console.error("Error resetting password:", error);
+      
+      // Tratar erros específicos do backend
+      if (error?.message?.includes('TOKEN_EXPIRED') || error?.message?.includes('expired')) {
+        setLocalError("This reset link has expired. Please request a new one.");
+      } else if (error?.message?.includes('TOKEN_INVALID') || error?.message?.includes('invalid')) {
+        setLocalError("This reset link is invalid. Please request a new one.");
+      }
+      // Outros erros serão tratados pelo hook automaticamente
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isLoading) {
       handleReset();
     }
   };
 
+  // Limpar erro local quando os campos mudam
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (localError) {
+      setLocalError(null);
+    }
+  };
+
+  const handleConfirmPasswordChange = (value: string) => {
+    setConfirmPassword(value);
+    if (localError) {
+      setLocalError(null);
+    }
+  };
+
+  // Redirecionar para página de solicitar reset se não tem token válido
+  const handleRequestNewReset = () => {
+    navigate("/passwords/forgot");
+  };
+
+  // Variantes de animação
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -119,6 +214,48 @@ const ResetPasswordContent = () => {
     },
   };
 
+  // Aguardar inicialização do hook
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div
+          className="w-8 h-8 border-2 border-black/20 border-t-black rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        />
+      </div>
+    );
+  }
+
+  // Renderizar tela de erro para token inválido
+  if (!token || !validateTokenFormat(token)) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
+        <BackgroundAnimations />
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-md relative z-10 text-center"
+        >
+          <div className="border border-red-200 bg-white relative p-8 md:p-12">
+            <h1 className="text-2xl font-light mb-4 text-red-600">Invalid Reset Link</h1>
+            <p className="text-gray-600 mb-6">
+              This password reset link is invalid or has expired.
+            </p>
+            <button
+              onClick={handleRequestNewReset}
+              className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+            >
+              Request New Reset Link
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Renderizar tela de sucesso
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
@@ -160,11 +297,11 @@ const ResetPasswordContent = () => {
             <ErrorMessage error={error} />
             <ResetForm
               password={password}
-              setPassword={setPassword}
+              setPassword={handlePasswordChange}
               confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
+              setConfirmPassword={handleConfirmPasswordChange}
               error={error}
-              setError={setError}
+              setError={() => {}}
               focusedField={focusedField}
               setFocusedField={setFocusedField}
               passwordStrength={passwordStrength}
