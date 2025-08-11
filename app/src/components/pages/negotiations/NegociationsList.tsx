@@ -1,11 +1,10 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "~/src/components/ui/card";
+import { Card, CardContent, CardFooter } from "~/src/components/ui/card";
 import { Button } from "~/src/components/ui/button";
 import { Badge } from "~/src/components/ui/badge";
 import VehicleImages from "./VehicleImageTranform";
 import type { Negotiation } from "~/src/types/negociation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { NegotiationStatusBadge } from "./NegociationStatusBadge";
 import { countByStatus } from "~/src/utils/negotiation.count";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
@@ -99,7 +98,7 @@ export const NegotiationList = ({
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full px-0 mx-0">
                     {negotiations.map((negotiation, index) => (
                         <motion.div
                             key={negotiation.id}

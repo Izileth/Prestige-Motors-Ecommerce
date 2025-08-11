@@ -7,6 +7,8 @@ import { useState, useCallback, useEffect } from "react";
 import { EmptyState } from "./EmpyState";
 import type { NegotiationStatus } from "~/src/types/negociation";
 
+import { Skeleton } from "../../ui/skeleton";
+
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -73,11 +75,11 @@ export const NegotiationsTab = () => {
             animate="visible"
             exit={{ opacity: 0, y: 20 }}
             variants={containerVariants}
-            className="space-y-8"
+            className="space-y-8 px-0 mx-0 w-full"
         >
             <motion.div 
                 variants={itemVariants}
-                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full px-0 mx-0"
             >
                 <h2 className="text-2xl font-light text-gray-900 dark:text-gray-100">
                     Minhas Negociações
@@ -120,9 +122,27 @@ export const NegotiationsTab = () => {
 
             <motion.div variants={itemVariants}>
                 {isLoading ? (
-                    <div className="flex justify-center py-12">
-                        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                    </div>
+                    <div className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {[...Array(8)].map((_, index) => (
+                        <motion.div
+                            key={index}
+                            variants={itemVariants}
+                            className="border  border-zinc-200 dark:border-gray-800 rounded-lg overflow-hidden"
+                        >
+                            <Skeleton className="w-full h-48 bg-zinc-200 dark:bg-gray-900" />
+                            <div className="p-4 space-y-3">
+                                <Skeleton className="h-6 w-3/4 bg-zinc-200 dark:bg-gray-900" />
+                                <Skeleton className="h-4 w-1/2 bg-zinc-200 dark:bg-gray-900" />
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-6 w-16 bg-zinc-200 dark:bg-gray-900" />
+                                    <Skeleton className="h-6 w-16 bg-zinc-200 dark:bg-gray-900" />
+                                </div>
+                                <Skeleton className="h-8 w-1/3 bg-zinc-200 dark:bg-gray-900" />
+                                <Skeleton className="h-10 w-full bg-zinc-200 dark:bg-gray-900" />
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
                 ) : error ? (
                     <div className="py-12 text-center space-y-4">
                         <div className="text-red-500 mb-4">

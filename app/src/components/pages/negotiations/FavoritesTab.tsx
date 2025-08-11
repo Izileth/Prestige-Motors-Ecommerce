@@ -1,4 +1,4 @@
-import { useRef } from "react";
+
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 import { Button } from "~/src/components/ui/button";
@@ -62,9 +62,6 @@ export const FavoritesTab = ({
     messagesEndRef
 }: FavoritesTabProps) => {
 
-    // Debug: log para verificar o estado
-    console.log("FavoritesTab - expandedVehicle:", expandedVehicle);
-
     return (
         <motion.div
             key="favorites"
@@ -93,18 +90,18 @@ export const FavoritesTab = ({
                         <motion.div
                             key={index}
                             variants={itemVariants}
-                            className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden"
+                            className="border bg-zinc-200 border-zinc-200 dark:border-gray-800 rounded-lg overflow-hidden"
                         >
-                            <Skeleton className="w-full h-48 bg-gray-100 dark:bg-gray-900" />
+                            <Skeleton className="w-full h-48 bg-zinc-200 dark:bg-gray-900" />
                             <div className="p-4 space-y-3">
-                                <Skeleton className="h-6 w-3/4 bg-gray-100 dark:bg-gray-900" />
-                                <Skeleton className="h-4 w-1/2 bg-gray-100 dark:bg-gray-900" />
+                                <Skeleton className="h-6 w-3/4 bg-zinc-200 dark:bg-gray-900" />
+                                <Skeleton className="h-4 w-1/2 bg-zinc-200 dark:bg-gray-900" />
                                 <div className="flex gap-2">
-                                    <Skeleton className="h-6 w-16 bg-gray-100 dark:bg-gray-900" />
-                                    <Skeleton className="h-6 w-16 bg-gray-100 dark:bg-gray-900" />
+                                    <Skeleton className="h-6 w-16 bg-zinc-200 dark:bg-gray-900" />
+                                    <Skeleton className="h-6 w-16 bg-zinc-200 dark:bg-gray-900" />
                                 </div>
-                                <Skeleton className="h-8 w-1/3 bg-gray-100 dark:bg-gray-900" />
-                                <Skeleton className="h-10 w-full bg-gray-100 dark:bg-gray-900" />
+                                <Skeleton className="h-8 w-1/3 bg-zinc-200   dark:bg-gray-900" />
+                                <Skeleton className="h-10 w-full bg-zinc-200 dark:bg-gray-900" />
                             </div>
                         </motion.div>
                     ))}
@@ -131,7 +128,7 @@ export const FavoritesTab = ({
             ) : (
                 <motion.div 
                     variants={gridVariants}
-                    className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                    className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-auto"
                 >
                     {favorites.map((vehicle, index) => (
                         <motion.div

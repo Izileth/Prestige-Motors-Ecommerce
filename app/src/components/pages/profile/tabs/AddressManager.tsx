@@ -101,7 +101,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
 
   return (
     <div className="w-full max-w-full mx-auto p-1">
-      <Card className="bg-white transition-all duration-200">
+      <Card className="bg-white shadow-none border-0 rounded-none transition-all duration-200">
         <CardHeader className=" bg-gray-50/30 px-6 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
@@ -134,7 +134,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
           </div>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="p-6 border-none shadow-none rounded-none">
           <AnimatePresence>
             {showAddressForm && (
               <motion.div
@@ -144,7 +144,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
                 exit="exit"
                 className="overflow-hidden"
               >
-                <Card className="border bg-gray-50/20">
+                <Card className=" bg-gray-50/20 border-0 rounded-none shadow-none">
                   <CardHeader className="border-b border-gray-100 px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-white border border-gray-200 rounded-lg">
@@ -322,8 +322,8 @@ const AddressManager: React.FC<AddressManagerProps> = ({
               <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-3">
                 {addresses.map((address, index) => (
                   <motion.div key={address.id} variants={fadeIn} custom={index}>
-                    <Card className=" transition-all duration-200 bg-white">
-                      <CardContent className="p-5">
+                    <Card className=" transition-all duration-200 bg-white shadow-none rounded-none border-0">
+                      <CardContent className="p-5 border-t border-zinc-200">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div className="flex-1 space-y-1">
                             <div className="flex items-start gap-3">
@@ -394,13 +394,6 @@ const AddressManager: React.FC<AddressManagerProps> = ({
           </div>
         </CardContent>
       </Card>
-
-      {/* Copyright Notice */}
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-400 text-center font-light tracking-wide">
-          © {new Date().getFullYear()} Address Management System. All rights reserved.
-        </p>
-      </div>
     </div>
   )
 }

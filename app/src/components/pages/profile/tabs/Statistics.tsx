@@ -215,7 +215,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
             {/* Primeira coluna */}
             <div className="space-y-4">
               {/* Total de Veículos com destaque */}
-              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+              <div className="border-t  rounded-none   dark:bg-gray-800 p-4 ">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Veículos</p>
@@ -230,7 +230,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
               </div>
 
               {/* Faixa de Preços com mini gráfico */}
-              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+              <div className="border-t dark:bg-gray-800 p-4 rounded-none">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Faixa de Preços</p>
                 <div className="flex items-end h-12 gap-1 mb-2">
                   <div className="bg-zinc-950 dark:bg-gray-600 w-1/4 h-1/3 rounded-t-sm"></div>
@@ -252,7 +252,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
             {/* Segunda coluna */}
             <div className="space-y-4">
               {/* Valor Total com variação */}
-              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+              <div className="border-t dark:bg-gray-800 p-4 rounded-none">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Valor Total</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
                   {formatCurrency(safeStats.valorTotalInventario)}
@@ -264,7 +264,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
               </div>
 
               {/* Preço Médio com comparação */}
-              <div className="bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+              <div className="border-t dark:bg-gray-800 p-4 rounded-none">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Preço Médio</p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
                   {formatCurrency(safeStats.precoMedio)}
@@ -277,7 +277,7 @@ const Statistics: React.FC<StatisticsProps> = ({ userStats }) => {
             </div>
 
             {/* Anos - linha completa */}
-            <div className="md:col-span-2 bg-zinc-50 dark:bg-gray-800 p-4 rounded-lg">
+            <div className="md:col-span-2 border-t dark:bg-gray-800 p-4 rounded-none">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Média de Anos</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center">

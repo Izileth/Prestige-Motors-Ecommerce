@@ -14,12 +14,11 @@ import { toast } from "sonner";
 const NegotiationsPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    
-    // ✨ Refs para controlar toasts
+
     const hasShownNegotiationError = useRef(false);
     const lastActiveTab = useRef<"favorites" | "negotiations">("favorites");
     
-    // Stores
+   
     const {
         favorites,
         loading: favoritesLoading,
@@ -35,27 +34,21 @@ const NegotiationsPage = () => {
         hasInitialized // ✨ NOVO estado do store
     } = useNegotiationStore();
 
-    // Estados da UI
+   
     const [activeTab, setActiveTab] = useState<"favorites" | "negotiations">("favorites");
     const [expandedVehicle, setExpandedVehicle] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // ✨ Controla quando mostrar toast de erro para negociações
+
     useEffect(() => {
-        // Só mostra toast se:
-        // 1. Há erro
-        // 2. A aba de negociações está ativa
-        // 3. Não foi mostrado antes
-        // 4. O store foi inicializado (teve pelo menos uma tentativa)
         if (
             negotiationError && 
             activeTab === "negotiations" && 
             !hasShownNegotiationError.current &&
             hasInitialized
         ) {
-            // ✨ Pequeno delay para garantir que não seja um erro temporário
             const timeoutId = setTimeout(() => {
-                if (negotiationError) { // Verifica se ainda há erro após delay
+                if (negotiationError) { 
                     toast.error(negotiationError);
                     hasShownNegotiationError.current = true;
                 }
@@ -63,27 +56,25 @@ const NegotiationsPage = () => {
 
             return () => clearTimeout(timeoutId);
         }
-        
-        // Reset do flag quando o erro é limpo
+      
         if (!negotiationError) {
             hasShownNegotiationError.current = false;
         }
     }, [negotiationError, activeTab, hasInitialized]);
-
-    // ✨ Reset do flag de erro quando muda de aba
+ 
     useEffect(() => {
         if (lastActiveTab.current !== activeTab) {
             hasShownNegotiationError.current = false;
             lastActiveTab.current = activeTab;
             
-            // Limpa erros quando sai da aba de negociações
+          
             if (activeTab !== "negotiations") {
                 clearNegotiationError();
             }
         }
     }, [activeTab, clearNegotiationError]);
 
-    // Carrega favoritos quando o usuário está disponível
+
     useEffect(() => {
         if (user) {
             fetchUserFavorites();
@@ -97,7 +88,7 @@ const NegotiationsPage = () => {
             await removeFavorite(vehicleId);
             toast.success("Veículo removido dos favoritos");
             
-            // Se o veículo removido estava expandido, fecha o formulário
+      
             if (expandedVehicle === vehicleId) {
                 console.log("🔄 Closing expanded vehicle after removal");
                 setExpandedVehicle(null);
@@ -141,19 +132,19 @@ const NegotiationsPage = () => {
             console.log("✅ Negotiation successful, closing expanded vehicle");
             setExpandedVehicle(null);
             
-            // Atualiza a lista de favoritos para refletir possíveis mudanças
+
             fetchUserFavorites();
         } catch (error) {
             console.error("❌ Erro ao iniciar negociação:", error);
         }
     };
 
-    // ✨ Função para mudar aba com limpeza de estados
+
     const handleTabChange = (tab: "favorites" | "negotiations") => {
         setActiveTab(tab);
     };
 
-    // Scroll para o formulário quando expandido
+
     useEffect(() => {
         if (expandedVehicle && messagesEndRef.current) {
             console.log("📜 Scrolling to expanded vehicle form");
@@ -163,7 +154,7 @@ const NegotiationsPage = () => {
         }
     }, [expandedVehicle]);
 
-    // 🐛 DEBUG: Verifica se há duplicatas nos favoritos
+ 
     useEffect(() => {
         const ids = favorites.map(v => v.id);
         const uniqueIds = new Set(ids);
