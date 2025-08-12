@@ -252,8 +252,8 @@ const VehicleDetailsPage = () => {
       toast.error("Erro ao excluir avaliação");
     }
   };
-
-   const handleShare = async () => {
+  
+  const handleShare = async () => {
     if (!currentVehicle) return;
 
     const { 
@@ -266,18 +266,15 @@ const VehicleDetailsPage = () => {
       quilometragem 
     } = currentVehicle;
 
-
     const shareUrl = window.location.href;
     const shareTitle = `${marca} ${modelo} (${anoFabricacao}/${anoModelo})`;
-    
-    const shareText = `🚗 ${marca} ${modelo} (${anoFabricacao}/${anoModelo})
-    
-      Principais informações:
-      ${preco ? `R$ ${preco.toLocaleString('pt-BR')}` : 'Preço sob consulta'}
-      ${quilometragem ? `${quilometragem.toLocaleString('pt-BR')} km` : 'KM não informada'}
-      Cor: ${cor || 'Não especificada'}
-
-      Ver mais detalhes: ${shareUrl}`;
+    const shareText = `
+    ${marca} ${modelo} (${anoFabricacao}/${anoModelo})
+    Informações:
+    - Preço: ${preco ? `R$ ${preco.toLocaleString('pt-BR')}` : 'Sob consulta'}
+    - Quilometragem: ${quilometragem ? `${quilometragem.toLocaleString('pt-BR')} km` : 'Não informada'}
+    - Cor: ${cor || 'Não especificada'}
+    Mais detalhes: ${shareUrl}`.trim();
 
     const shareData: ShareData = {
       title: shareTitle,
@@ -289,14 +286,14 @@ const VehicleDetailsPage = () => {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(`${shareText}`);
-        toast.success("Informações do veículo copiadas para a área de transferência!");
+        await navigator.clipboard.writeText(shareText);
+        toast.success("Informações do veículo copiadas!");
       }
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
       prompt("Copie as informações do veículo:", shareText);
-      toast.error("Falha ao compartilhar, copiado para área de transferência!");
-    }
+      toast.error("Falha ao compartilhar, informações copiadas!");
+  }
   };
 
 

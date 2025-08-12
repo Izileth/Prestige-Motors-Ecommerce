@@ -8,11 +8,11 @@ import { NegotiationPageSkeleton } from '~/src/components/layout/skeleton/Negoti
 import { toast } from 'sonner';
 import {
     NegotiationHeader,
-    NegotiationActions,
-    PriceOfferChart,
+   NegotiationActions,
     ErrorMessage,
     NegotiationNotFound,
     ProcessingIndicator,
+    PriceOfferChart,
     NegotiationInfo,
     CancelNegotiationDialog
 } from '~/src/components/pages/vehicles/negotiation';

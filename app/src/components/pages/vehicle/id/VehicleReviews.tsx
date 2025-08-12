@@ -260,7 +260,7 @@ const VehicleReviews: React.FC<VehicleReviewsProps> = ({
                     onChange={(e) => onReviewFormChange('comentario', e.target.value)}
                     placeholder="Conte sua experiência com este veículo..."
                     rows={4}
-                    className="w-full px-0 py-3 border-none border-zinc-100 rounded-none focus:ring-2 focus:ring-zinc-50 focus:border-transparent resize-none text-sm transition-colors"
+                    className="w-full px-2 py-3 border border-zinc-200 rounded-xs focus:ring-2 focus:ring-zinc-950 focus:border-transparent resize-none text-sm transition-colors"
                   />
                 </div>
 

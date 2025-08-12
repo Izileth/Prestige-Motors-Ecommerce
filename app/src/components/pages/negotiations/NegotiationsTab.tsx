@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MessageSquare, Filter, Loader2, RefreshCw } from "lucide-react";
+import { MessageSquare, Filter, RefreshCw } from "lucide-react";
 import { NegotiationList } from "./NegociationsList";
 import { useNegotiations } from "~/src/hooks/useNegociation";
 import { Button } from "../../ui/button";

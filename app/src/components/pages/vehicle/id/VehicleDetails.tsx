@@ -203,11 +203,11 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
               exit="exit"
             >
               <motion.div variants={cardVariants}>
-                <Card className="border-0 rounded-none shadow-none bg-transparent dark:bg-gray-900">
-                  <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">
+                <Card className="border-0 rounded-none shadow-none bg-transparent dark:bg-gray-900 px-0 mx-0">
+                  <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100 px-4">
                     Descrição
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-4">
                     {vehicle.descricao ? (
                       <TruncatedText
                         text={vehicle.descricao}

@@ -1,6 +1,6 @@
 import type React from "react";
 import { motion } from "framer-motion";
-import { Car, ArrowRight } from "lucide-react";
+import { Gem } from "lucide-react";
 import { Badge } from "~/src/components/ui/badge";
 import { useVehicleRecommendations } from "~/src/hooks/useRadomVehicles";
 import { VehicleCard } from "~/src/components/common/VehiclesCard";
@@ -28,9 +28,9 @@ const VehicleRecommendationsGrid: React.FC<VehicleRecommendationsGridProps> = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 text-center ${className}`}
+        className={`bg-white dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 text-center ${className}`}
       >
-        <Car className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <Gem className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
           Nenhuma recomendação encontrada
         </h3>

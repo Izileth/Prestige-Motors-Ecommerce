@@ -1,4 +1,5 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts"
 import type { Negotiation, NegotiationMessage } from "~/src/types/negociation"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -11,6 +12,7 @@ interface PriceOfferChartProps {
 
 export const PriceOfferChart = ({ negotiation, messages }: PriceOfferChartProps) => {
   const [isMobile, setIsMobile] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,20 +27,11 @@ export const PriceOfferChart = ({ negotiation, messages }: PriceOfferChartProps)
   const getChartData = () => {
     const offerMessages = messages.filter((m) => m.tipo === "OFERTA" || m.tipo === "CONTRA_OFERTA")
 
-    // Função melhorada para extrair preço
     const extractPrice = (content: string): number => {
-      // Remove tudo exceto números, vírgulas e pontos
       const cleanContent = content.replace(/[^\d.,]/g, "")
-
-      // Converte vírgula para ponto se necessário
       const normalizedContent =
         cleanContent.includes(",") && !cleanContent.includes(".") ? cleanContent.replace(",", ".") : cleanContent
-
       const price = Number.parseFloat(normalizedContent)
-
-      // Debug para verificar extração
-      console.log("Extraindo preço:", { content, cleanContent, normalizedContent, price })
-
       return isNaN(price) ? 0 : price
     }
 
@@ -66,7 +59,6 @@ export const PriceOfferChart = ({ negotiation, messages }: PriceOfferChartProps)
       })),
     ].sort((a, b) => a.date.getTime() - b.date.getTime())
 
-    // Filtrar pontos com preço válido
     const validDataPoints = dataPoints.filter((point) => point.price > 0)
 
     return validDataPoints.map((point, index) => ({
@@ -82,105 +74,221 @@ export const PriceOfferChart = ({ negotiation, messages }: PriceOfferChartProps)
 
   const chartData = getChartData()
 
+  const getColorByType = (type: string) => {
+    switch (type) {
+      case "ORIGINAL":
+        return "hsl(var(--muted-foreground))" // Light gray
+      case "OFERTA":
+      case "OFERTA_INICIAL":
+        return "hsl(var(--foreground))" // Dark gray
+      case "CONTRA_OFERTA":
+        return "hsl(var(--muted-foreground))" // Medium gray
+      default:
+        return "hsl(var(--muted-foreground))"
+    }
+  }
+
+  const CustomLabel = (props: any) => {
+    const { x, y, width, height, value, index } = props
+    const isHovered = hoveredIndex === index
+
+    return (
+      <text
+        x={x + width / 2}
+        y={y - 8}
+        textAnchor="middle"
+        fill="hsl(var(--foreground))"
+        fontSize={isMobile ? 10 : 11}
+        fontWeight={isHovered ? "600" : "400"}
+        className="transition-all duration-200"
+      >
+        {new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+          notation: isMobile ? "compact" : "standard",
+          maximumFractionDigits: 0,
+        }).format(value)}
+      </text>
+    )
+  }
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div className="bg-background border border-border rounded-md p-3 shadow-lg">
+          <div className="space-y-2">
+            <p className="font-medium text-sm">{data.name}</p>
+            <div className="space-y-1 text-xs text-muted-foreground">
+              <p>
+                {label} • {data.autor}
+              </p>
+              <p className="font-semibold text-foreground text-base">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(data.price)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    }
+    return null
+  }
+
   if (chartData.length < 2) {
     return (
-      <div className="bg-card rounded-lg border p-4 z-50">
-        <h3 className="text-lg font-semibold mb-4">Evolução da Negociação</h3>
-        <div className="h-[200px] sm:h-[300px] flex items-center justify-center text-gray-500">
-          <div className="text-center">
-            <p className="text-sm">Dados insuficientes para gerar o gráfico</p>
-            <p className="text-xs mt-1">Pontos de dados: {chartData.length} (mínimo: 2)</p>
+      <div className="bg-card rounded-lg border p-6">
+        <h3 className="text-xl font-semibold mb-6">Evolução da Negociação</h3>
+        <div className="h-[300px] flex items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <p>Dados insuficientes para gerar o gráfico</p>
+            <p className="text-sm mt-1">Pontos de dados: {chartData.length} (mínimo: 2)</p>
           </div>
         </div>
       </div>
     )
   }
 
+  // Calculate key statistics
+  const maxPrice = Math.max(...chartData.map((d) => d.price))
+  const minPrice = Math.min(...chartData.map((d) => d.price))
+  const latestPrice = chartData[chartData.length - 1].price
+  const priceChange = ((latestPrice - chartData[0].price) / chartData[0].price) * 100
+
   return (
-    <div className="bg-card rounded-lg border p-4 z-50">
-      <h3 className="text-lg font-semibold mb-4">Evolução da Negociação</h3>
-      <div className="h-[250px] sm:h-[350px] z-10">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            layout={isMobile ? "vertical" : "horizontal"}
-            margin={{
-              top: 20,
-              right: 30,
-              left: isMobile ? 0 : 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" opacity={0.6} />
-
-            {isMobile ? (
-              // Layout vertical para mobile
-              <>
-                <XAxis
-                  type="number"
-                  tickFormatter={(value) =>
-                    new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                      maximumFractionDigits: 0,
-                    }).format(value)
-                  }
-                  tick={{ fontSize: 10 }}
-                />
-                <YAxis type="category" dataKey="dateLabel" tick={{ fontSize: 10 }} width={80} />
-              </>
-            ) : (
-              // Layout horizontal para desktop
-              <>
-                <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-                <YAxis
-                  tickFormatter={(value) =>
-                    new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(value)
-                  }
-                  tick={{ fontSize: 12 }}
-                />
-              </>
-            )}
-
-            <Tooltip
-              formatter={(value: number) => [
-                new Intl.NumberFormat("pt-BR", {
+    <div className="bg-card rounded-lg border">
+      <div className="p-6 border-b">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-semibold">Evolução da Negociação</h3>
+            <p className="text-sm text-muted-foreground mt-1">{chartData.length} ofertas registradas</p>
+          </div>
+          <div className="flex gap-6 text-sm">
+            <div>
+              <p className="text-muted-foreground">Atual</p>
+              <p className="font-semibold">
+                {new Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
-                }).format(Number(value)),
-                "Valor",
-              ]}
-              labelFormatter={(label) => `Data: ${label}`}
-              contentStyle={{
-                background: "hsl(var(--background))",
-                borderColor: "hsl(var(--border))",
-                borderRadius: "var(--radius)",
-                fontSize: isMobile ? 12 : 14,
+                  maximumFractionDigits: 0,
+                }).format(latestPrice)}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Variação</p>
+              <p className={`font-semibold ${priceChange >= 0 ? "text-foreground" : "text-muted-foreground"}`}>
+                {priceChange >= 0 ? "+" : ""}
+                {priceChange.toFixed(1)}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="md:p-6">
+        <div className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{
+                top: 30,
+                right: 20,
+                left: 20,
+                bottom: 60,
               }}
-            />
-
-            <Legend
-              wrapperStyle={{
-                paddingTop: isMobile ? "10px" : "0",
+              onMouseMove={(state) => {
+                if (state && state.activeTooltipIndex !== undefined) {
+                  setHoveredIndex(state.activeTooltipIndex)
+                }
               }}
-            />
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <CartesianGrid strokeDasharray="2 2" opacity={0.2} />
 
-            <Bar dataKey="price" name="Valor da Oferta" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>
-              {chartData.map((entry, index) => {
-                let fillColor = "hsl(var(--primary))"
+              <XAxis
+                dataKey="dateLabel"
+                tick={{ fontSize: isMobile ? 10 : 11, fill: "hsl(var(--muted-foreground))" }}
+                angle={isMobile ? -45 : -30}
+                textAnchor="end"
+                height={60}
+                interval={0}
+                axisLine={false}
+                tickLine={false}
+              />
 
-                if (entry.type === "ORIGINAL") fillColor = "hsl(var(--muted-foreground))"
-                else if (entry.type === "OFERTA") fillColor = "hsl(var(--success))"
-                else if (entry.type === "CONTRA_OFERTA") fillColor = "hsl(var(--warning))"
+              <YAxis
+                tickFormatter={(value) =>
+                  new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                    notation: isMobile ? "compact" : "standard",
+                    maximumFractionDigits: 0,
+                  }).format(value)
+                }
+                tick={{ fontSize: isMobile ? 10 : 11, fill: "hsl(var(--muted-foreground))" }}
+                width={isMobile ? 70 : 90}
+                axisLine={false}
+                tickLine={false}
+              />
 
-                return <rect key={`bar-${index}`} fill={fillColor} stroke="white" strokeWidth={1} />
-              })}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+              <Tooltip content={<CustomTooltip />} />
+
+              <Bar dataKey="price" radius={[2, 2, 0, 0]} stroke="none">
+                <LabelList content={<CustomLabel />} />
+
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={getColorByType(entry.type)}
+                    opacity={hoveredIndex !== null ? (hoveredIndex === index ? 0.9 : 0.6) : 0.8}
+                    style={{ transition: "all 0.2s ease" }}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="mt-6 pt-6 border-t">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Máximo</p>
+              <p className="text-sm font-semibold mt-1">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                  maximumFractionDigits: 0,
+                }).format(maxPrice)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Mínimo</p>
+              <p className="text-sm font-semibold mt-1">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                  maximumFractionDigits: 0,
+                }).format(minPrice)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Diferença</p>
+              <p className="text-sm font-semibold mt-1">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                  maximumFractionDigits: 0,
+                }).format(maxPrice - minPrice)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Ofertas</p>
+              <p className="text-sm font-semibold mt-1">{chartData.length}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
