@@ -132,7 +132,7 @@ export const NegotiationActions = ({
     const isDisabled = disabled || isLoading || actionLoading;
 
     return (
-        <Card className="w-full">
+        <Card className="w-full border-0 shadow-none px-0 mx-0">
         <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Ações da Negociação</h3>

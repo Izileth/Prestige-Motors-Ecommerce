@@ -101,7 +101,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
 
   if (loadingStates.fetchingStats) {
     return (
-      <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+      <Card className="border-0 shadow-none  bg-white dark:bg-gray-900">
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-gray-100">Minhas Compras</CardTitle>
         </CardHeader>
@@ -113,7 +113,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
   }
 
   return (
-    <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+    <Card className="border-0 shadow-none bg-white dark:bg-gray-900 px-0 mx-0">
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -125,7 +125,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
           <div className="flex flex-col md:flex-row gap-2">
             <Input
               placeholder="Buscar veículo ou pagamento..."
-              className="max-w-xs"
+              className="max-w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -152,11 +152,11 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
       </CardHeader>
       <CardContent>
         {filteredPurchases && filteredPurchases.length > 0 ? (
-          <div className="rounded-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+          <div className="rounded-lg border-none shadow-none border-gray-100 dark:border-gray-800 overflow-hidden">
             {isMobile ? (
-              <div className="space-y-4">
+              <div className="space-y-4 border-t border-gray-200">
                 {filteredPurchases.map((sale) => (
-                  <Card key={sale.id} className="p-4">
+                  <Card key={sale.id} className="p-4 border-0 shadow-none dark:bg-gray-900">
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-medium text-gray-900 dark:text-gray-100">
@@ -207,7 +207,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({ userId, initialPurcha
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="mt-3 w-full"
+                      className="mt-3 w-full bg-zinc-950 text-white"
                       onClick={() => router(`/sale/details/${sale.id}`)}
                     >
                       Ver Detalhes

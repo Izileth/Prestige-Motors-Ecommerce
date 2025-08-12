@@ -56,8 +56,8 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
   handleDeleteAccount,
 }) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <Card className="lg:col-span-2 border-0 shadow-sm bg-white dark:bg-gray-900">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 border-t border-zinc-100">
+      <Card className="lg:col-span-2 border-0 shadow-none bg-white dark:bg-gray-900">
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-gray-100">Informações Pessoais</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -254,7 +254,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </CardFooter>
       </Card>
 
-      <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+      <Card className="border-0 shadow-none bg-white dark:bg-gray-900">
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-gray-100">Foto de Perfil</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -294,7 +294,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
       </Card>
       
 
-        <Card className=" max-w-full border-0 shadow-sm bg-white dark:bg-gray-900 lg:w-7xl" >
+        <Card className=" max-w-full border-0 shadow-none bg-white dark:bg-gray-900 lg:w-7xl" >
           
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-gray-100">Alterar Senha</CardTitle>
@@ -397,7 +397,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
           </CardFooter>
         </Card>
 
-        <Card className="w-full border-0 shadow-sm bg-white dark:bg-gray-900" >
+        <Card className="w-full border-0 shadow-none bg-white dark:bg-gray-900" >
           <CardHeader>
             <CardTitle className="text-red-600 dark:text-red-400">Excluir Conta</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
