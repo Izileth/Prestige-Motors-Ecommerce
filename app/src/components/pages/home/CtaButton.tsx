@@ -13,7 +13,7 @@ export function SignupCTA() {
 
     return (
         <section className="py-24 md:py-32 bg-white dark:bg-gray-950 w-full max-w-full border-t border-b border-gray-100 dark:border-gray-900">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6 lg:px-6">
             <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}

@@ -305,8 +305,7 @@ export const NegotiationForm = ({ vehicle, messagesEndRef }: NegotiationFormProp
                         )}
                     </AnimatePresence>
                 </motion.div>
-
-                {/* Botões de contato
+                
                 <motion.div
                     whileHover={{ y: -2 }}
                     whileTap={{ y: 0 }}
@@ -366,9 +365,7 @@ export const NegotiationForm = ({ vehicle, messagesEndRef }: NegotiationFormProp
                         transition={{ duration: 0.2 }}
                     />
                 </motion.div>
-                */}
 
-                {/* Botão WhatsApp 
                 <motion.div
                     whileHover={{ y: -2 }}
                     whileTap={{ y: 0 }}
@@ -401,7 +398,7 @@ export const NegotiationForm = ({ vehicle, messagesEndRef }: NegotiationFormProp
                         transition={{ duration: 0.2 }}
                     />
                 </motion.div>
-                */}
+
             </div>
         </div>
     );
