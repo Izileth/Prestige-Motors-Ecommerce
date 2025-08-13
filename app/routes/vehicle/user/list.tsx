@@ -3,7 +3,7 @@ import { UserVehicleList } from "~/src/pages/vehicles/user/user.list";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Meus Veículos | Prestige Motors" },
-    { name: "description", content: "Welcome to React Router!" },
+    { name: "description", content: "Veja a lista de todos os seus veículos anunciados na Prestige Motors. Gerencie seus anúncios em um só lugar." },
   ];
 }
 

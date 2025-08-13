@@ -88,7 +88,7 @@ export const formSchema = z.object({
     categoria: z.nativeEnum(VehicleCategory),
     observacoes: z.string().optional(),
 }).refine((data) => {
-    // Se não for à vista, parcelas é obrigatório
+
     if (data.formaPagamento !== "À Vista" && !data.parcelas) {
         return false;
     }

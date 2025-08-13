@@ -25,7 +25,6 @@ import {
 import { formatPrice } from "~/src/lib/price";
 import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
-import { useNavigate } from "react-router";
 import { useState, useCallback } from "react";
 import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 
@@ -47,35 +46,10 @@ interface VehicleCardProps {
 }
 
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
-const getStatusBadgeVariant = (status: Vehicle["status"]): string => {
-    switch (status) {
-        case "DISPONIVEL":
-            return "bg-black text-white dark:bg-white dark:text-black border-0";
-        case "RESERVADO":
-            return "bg-gray-500 text-white border-0";
-        case "VENDIDO":
-            return "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border-0";
-        default:
-            return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 border-0";
-    }
-};
-
-const getStatusLabel = (status: Vehicle["status"]): string => {
-    switch (status) {
-        case "DISPONIVEL":
-            return "Disponível";
-        case "RESERVADO":
-            return "Reservado";
-        case "VENDIDO":
-            return "Vendido";
-        default:
-            return status;
-    }
-};
 
 // Função auxiliar para formatar quilometragem com segurança
 const formatKilometers = (km: number | undefined | null): string => {
@@ -105,7 +79,6 @@ const safeFormatPrice = (price: number | undefined | null): string => {
 export const VehicleCard = ({
     vehicle,
     index,
-    hoveredVehicle,
     setHoveredVehicle,
     isFavorite,
     toggleFavorite,
@@ -115,8 +88,7 @@ export const VehicleCard = ({
 }: VehicleCardProps) => {
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const [isChangingStatus, setIsChangingStatus] = useState(false);
-   
-      
+    
     const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
 
     const getFuelType = (type: string | undefined): string => {

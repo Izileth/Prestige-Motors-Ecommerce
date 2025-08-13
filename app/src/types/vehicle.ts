@@ -126,6 +126,17 @@ export type VehicleError = {
 
 
 // Stats User & Global Interfaces
+
+
+export type VehicleGlobalStatsSummary = {
+    marcas: { marca: string; quantidade: number }[];
+    estatisticas: {
+        precoMedio: number;
+        quilometragemMedia: number;
+        anoFabricacaoMedio: number;
+        anoModeloMedio: number;
+    };
+};
 export interface VehicleStatsSummary {
     totalVehicles: number;
     totalViews: number;
@@ -135,6 +146,7 @@ export interface VehicleStatsSummary {
     totalFavorites: number;
     statusDistribution: Record<'VENDIDO' | 'DISPONIVEL' | 'RESERVADO', number>;
 }
+
 
 export interface TopPerformerVehicle {
     id: string;
@@ -163,7 +175,7 @@ export interface VehicleStatsResponse {
     viewsTrend: Array<{
         date: string;
         views: number;
-    }>; // Pode ser mais específico conforme seus dados
+    }>; 
     timeRange: TimeRange;
 }
 
@@ -173,8 +185,9 @@ export interface UserVehicleStatsResponse extends VehicleStatsResponse {
 export type VehicleGlobalStats = VehicleStatsResponse;
 export type VehicleUserStats = UserVehicleStatsResponse
 
-//Address Interface
 
+
+// Vehicle Address Interface
 export interface VehicleAddress {
     id?: string;
     cep: string;
@@ -220,3 +233,4 @@ export interface AddressCreatePayload {
     vehicleId: string;
     address: Omit<VehicleAddress, 'id'> & { id?: never }; // Endereço sem ID para criação
 }
+

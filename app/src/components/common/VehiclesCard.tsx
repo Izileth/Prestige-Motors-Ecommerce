@@ -28,12 +28,7 @@ interface VehicleCardProps {
 }
 
 export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
-    const navigate = useNavigate();
     const {
-        vehicles,
-        loading,
-        error,
-        fetchVehicles,
         addFavorite,
         removeFavorite,
         fetchUserFavorites,

@@ -3,7 +3,7 @@ import DashboardPage from "~/src/pages/profile/profile";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Dashboard | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Acesse seu dashboard na Prestige Motors para gerenciar seus anúncios, negociações, favoritos e informações de perfil." },
     ];
 }
 

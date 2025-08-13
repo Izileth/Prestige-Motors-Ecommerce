@@ -1,15 +1,13 @@
-// src/utils/vehicleStatsUtils.ts
-import type { VehicleStatsData } from '~/types/vehicle';
 
-// Calcula o total de veículos a partir do objeto stats
-export const getTotalVehicles = (stats: VehicleStatsData | null | undefined): number => {
+import type { VehicleGlobalStatsSummary } from "../types/vehicle";
+export const getTotalVehicles = (stats: VehicleGlobalStatsSummary| null | undefined): number => {
     return stats?.marcas?.reduce((total, marca) => total + (marca.quantidade || 0), 0) || 0;
 };
 
 // Calcula a porcentagem em relação ao total do catálogo
 type PercentageParams = {
-    userStats: VehicleStatsData | null | undefined;
-    catalogStats: VehicleStatsData | null | undefined;
+    userStats: VehicleGlobalStatsSummary | null | undefined;
+    catalogStats: VehicleGlobalStatsSummary | null | undefined;
 };
 
 export const getCatalogPercentage = ({ userStats, catalogStats }: PercentageParams): string => {

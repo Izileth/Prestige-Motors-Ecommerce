@@ -3,7 +3,7 @@ import ResetPasswordPage from "~/src/pages/passwords/reset";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Criação de Senha | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Crie uma nova senha para sua conta na Prestige Motors e volte a acessar nossos serviços exclusivos." },
     ];
 }
 

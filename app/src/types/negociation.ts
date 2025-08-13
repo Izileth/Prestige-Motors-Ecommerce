@@ -94,7 +94,7 @@ export interface NegotiationHistory {
     usuarioId: string;
     createdAt: Date;
     
-    // Relacionamentos
+   
     usuario?: Pick<User, 'id' | 'nome' | 'avatar'>;
 }
 

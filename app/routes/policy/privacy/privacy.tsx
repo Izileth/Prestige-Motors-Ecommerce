@@ -3,7 +3,7 @@ import PrivacyPolicyPage from "~/src/pages/polities/privacy/privacy";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Política de Privacidade | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Conheça nossa política de privacidade e saiba como a Prestige Motors protege e utiliza seus dados pessoais." },
     ];
 }
 

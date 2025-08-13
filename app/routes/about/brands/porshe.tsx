@@ -3,7 +3,7 @@ import PorshePage from "~/src/pages/about/brands/porshe.brand";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Porshe | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Encontre o equilíbrio perfeito entre luxo e esportividade com os veículos Porsche na Prestige Motors. Descubra nossos modelos." },
     ];
 }
 

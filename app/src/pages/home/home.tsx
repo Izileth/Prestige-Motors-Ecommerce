@@ -6,7 +6,7 @@ import { SignupCTA } from "~/src/components/pages/home/CtaButton";
 import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
 import { RandomVehicles } from "~/src/components/pages/home/VehicleRadonList";
 
-export function Welcome() {
+export function Home() {
   return (
     <main className="flex flex-col max-w-full w-full">
       <Carousel items={DestactsCars} />

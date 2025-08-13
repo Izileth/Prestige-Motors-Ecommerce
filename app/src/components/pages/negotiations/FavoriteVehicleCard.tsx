@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import {  useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
 import { Badge } from "~/src/components/ui/badge";
@@ -15,11 +15,19 @@ import {
     Flame,
     MessageSquare
 } from "lucide-react";
+
 import { NegotiationForm } from "./NegotiationForm";
+
 import type { Vehicle } from "~/src/types/vehicle";
+
 import { useNegotiationStore } from "~/src/store/slices/negociation";
+
+import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
+
 import { useAuth } from "~/src/hooks/useAuth";
 import { formatPrice } from "~/src/lib/price";
+
+
 
 interface FavoriteVehicleCardProps {
     vehicle: Vehicle;
@@ -56,14 +64,15 @@ export const FavoriteVehicleCard = ({
 }: FavoriteVehicleCardProps) => {
     const { user } = useAuth();
     const { createNegotiation, isLoading, error, clearErrors } = useNegotiationStore();
-      
+
     const [localMessage, setLocalMessage] = useState("");
     const [messageSent, setMessageSent] = useState(false);
     const [hoveredButton, setHoveredButton] = useState<"message" | "phone" | "email" | "whatsapp" | null>(null);
     const [localError, setLocalError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-  
+
+    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
 
     const getFuelType = (type: string) => {
         const fuelTypes: Record<string, string> = {
@@ -140,7 +149,10 @@ export const FavoriteVehicleCard = ({
             transition={{ duration: 0.3, delay: 0.05 * index }}
             className="w-full h-full "
         >
-            <Card className="overflow-hidden border-none bg-white dark:bg-gray-900 shadow-none hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
+            <Card 
+                onClick={() => navigateToVehicle(vehicle)} 
+                className="overflow-hidden border-none bg-white dark:bg-gray-900 shadow-none hover:shadow-lg transition-all duration-300 h-full flex flex-col group"
+            >
                 {/* Header da imagem com badges sobrepostos */}
                 <div className="relative overflow-hidden mt-0 pt-0">
                     {vehicle.imagens && vehicle.imagens.length > 0 ? (
@@ -254,6 +266,7 @@ export const FavoriteVehicleCard = ({
                         >
                             {getTransmissionType(vehicle.cambio)}
                         </Badge>
+                   
                         {vehicle.aceitaNegociacao && (
                             <Badge
                                 variant="outline"
@@ -321,7 +334,6 @@ export const FavoriteVehicleCard = ({
 
                 {/* Formulário de negociação expandido */}
                 <AnimatePresence>
-              
                     {expandedVehicle === vehicle.id && (
                     <>
                         {/* Backdrop */}

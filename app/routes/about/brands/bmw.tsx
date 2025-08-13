@@ -3,7 +3,7 @@ import BmwPage from "~/src/pages/about/brands/bmw.brand";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "BMW | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Descubra a elegância e a potência dos veículos BMW na Prestige Motors. Veja nosso catálogo de modelos BMW e encontre o seu." },
     ];
 }
 

@@ -6,7 +6,7 @@ import useUserStore from "~/src/hooks/useUser";
 import useVehicle from "~/src/hooks/useVehicle";
 import useSale from "~/src/hooks/useSale";
 import { motion, AnimatePresence } from "framer-motion";
-import { getTotalVehicles } from "~/src/lib/sumstats";
+import { getTotalVehicles } from "~/src/utils/globalstats";
 import DashboardSkeleton from "~/src/components/layout/skeleton/DashboardSkeleton";
 import ProfileHeader from "~/src/components/pages/profile/ProfileHeader";
 import StatsCards from "~/src/components/pages/profile/StatsCards";

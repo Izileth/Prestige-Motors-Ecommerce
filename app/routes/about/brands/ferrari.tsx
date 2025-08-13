@@ -3,7 +3,7 @@ import FearriPage from "~/src/pages/about/brands/ferrari.brand";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Ferrari | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Sinta a paixão e a exclusividade da Ferrari na Prestige Motors. Conheça os icônicos modelos superesportivos da marca italiana." },
     ];
 }
 

@@ -3,7 +3,7 @@ import DestactsPage from "~/src/pages/featureds/featureds";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Destaques | Prestige Motors" },
-        { name: "description", content: "Welcome to React Router!" },
+        { name: "description", content: "Confira os veículos em destaque na Prestige Motors. Uma seleção especial dos carros mais desejados e exclusivos do mercado." },
     ];
 }
 
