@@ -5,6 +5,7 @@ import useVehicle from "~/src/hooks/useVehicle";
 import { motion, AnimatePresence } from "framer-motion";
 import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
 import { PrincipalCars } from "~/src/data/carousel";
+import VehicleStatistics from "~/src/components/common/VehicleStatistics";
 import {
   SearchBar,
   FilterPanel,
@@ -141,35 +142,17 @@ const VehicleListingPage = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div
-        className={`z-10 bg-white dark:bg-gray-950 transition-all duration-300 ${scrolled ? "shadow-md py-3" : "py-6"}`}
-      >
-        <SearchBar
-          searchParams={searchParams}
-          handleSearchChange={handleSearchChange}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-        />
+      <div className="flex flex-row w-full  max-w-full items-center justify-center content-center px-4">
+        <VehicleStatistics />
       </div>
 
-      <AnimatePresence>
-        {showFilters && (
-          <FilterPanel
-            filtersRef={filtersRef}
-            searchParams={searchParams}
-            handleFilterChange={handleFilterChange}
-            resetFilters={resetFilters}
-          />
-        )}
-      </AnimatePresence>
-
       <div className="container mx-auto px-0 py-0">
-        <div className="mb-8">
+        <div className="mb-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-2 text-gray-900 dark:text-gray-100"
+            className="text-3xl font-medium mb-0 text-gray-900 dark:text-gray-100"
           >
             <Carousel items={PrincipalCars} className="w-full max-w-full" />
           </motion.div>
@@ -177,10 +160,34 @@ const VehicleListingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-2 bg-white h-18 text-gray-900 dark:text-gray-100"
+            className="text-3xl font-medium mb-0 bg-white h-18 text-gray-900 dark:text-gray-100"
           />
         </div>
 
+        <div className="mb-12">
+          <div
+          className={`z-10 mt-0 space-y-0 bg-white dark:bg-gray-950 transition-all duration-300 ${scrolled ? "shadow-none py-0" : "py-0"}`}
+        >
+          <SearchBar
+            searchParams={searchParams}
+            handleSearchChange={handleSearchChange}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+            
+          />
+        </div>
+        <AnimatePresence>
+          {showFilters && (
+            <FilterPanel
+              filtersRef={filtersRef}
+              searchParams={searchParams}
+              handleFilterChange={handleFilterChange}
+              resetFilters={resetFilters}
+            />
+          )}
+        </AnimatePresence>
+
+        </div>
         {loading && <LoadingSkeleton />}
 
         {error && (

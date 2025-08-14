@@ -1,7 +1,7 @@
 import { Input } from "~/src/components/ui/input";
 import { Button } from "~/src/components/ui/button";
 import { Filter, Search, X } from "lucide-react";
-import VehicleStatistics from "~/src/components/common/VehicleStatistics";
+
 
 export const SearchBar = ({
   searchParams,
@@ -40,9 +40,6 @@ export const SearchBar = ({
           Filtros
           {showFilters && <X size={16} className="ml-2" />}
         </Button>
-      </div>
-      <div className="flex flex-row w-full  max-w-full items-center justify-center content-center">
-        <VehicleStatistics />
       </div>
     </div>
   </div>

@@ -24,8 +24,6 @@ import { Check, AlertCircle, X } from "lucide-react";
 import type { UserUpdateData } from "~/src/types/user";
 import type { Address } from "~/src/types/address";
 
-import type { UserVehicleStatsResponse } from "~/src/types/vehicle";
-
 export default function DashboardPage() {
   const { user, logout, isAuthenticated, status: authStatus } = useAuth();
   const {
@@ -294,10 +292,48 @@ export default function DashboardPage() {
     }
   };
 
+
+  
+
   const handleUploadAvatar = async () => {
     if (selectedFile && user?.id) {
-      await uploadUserAvatar(user.id, selectedFile);
-      setSelectedFile(null);
+      try {
+        // Mostrar loading se necessário
+        setLoading((prev) => ({ ...prev, profile: true }));
+        
+        // Fazer o upload
+        await uploadUserAvatar(user.id, selectedFile);
+        
+        // Mostrar toast de sucesso
+        setNotification({
+          show: true,
+          message: "Avatar atualizado com sucesso! Redirecionando...",
+          type: "success",
+        });
+        
+        // Limpar arquivo selecionado
+        setSelectedFile(null);
+        
+        // Aguardar um pouco para o usuário ver o toast
+        setTimeout(() => {
+          // Fazer logout (isso vai limpar os dados em cache)
+          logout();
+          
+          // Redirecionar para login com parâmetro indicando sucesso
+          navigate("/login?avatar_updated=true");
+        }, 1500); // 2 segundos para ver a mensagem
+        
+      } catch (error) {
+        setNotification({
+          show: true,
+          message: `Erro ao atualizar avatar: ${
+            error instanceof Error ? error.message : "Tente novamente."
+          }`,
+          type: "error",
+        });
+      } finally {
+        setLoading((prev) => ({ ...prev, profile: false }));
+      }
     }
   };
 

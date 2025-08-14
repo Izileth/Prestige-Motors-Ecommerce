@@ -4,8 +4,8 @@ import { VehicleCard } from "../../common/VehiclesCard";
 import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
-import { ArrowRight, RefreshCw } from "lucide-react";
-import { useNavigate } from "react-router";
+import { RefreshCw } from "lucide-react";
+
 interface VehicleListingProps {
   title?: string;
   subtitle?: string;
@@ -33,8 +33,8 @@ export const VehiclesDestactsListing = ({
     <section className="py-12  max-w-full mx-auto px-0 sm:px-4">
       {/* Cabeçalho */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-light">{title}</h2>
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl md:text-3xl font-light">{title}</h2>
           {subtitle && (
             <p className="text-neutral-600 font-extralight dark:text-neutral-400 mt-2">
               {subtitle}

@@ -6,7 +6,9 @@ export default function DestactsPage() {
   return (
     <main>
       <Carousel items={FeaturedCars} className="max-w-full w-full" />
-      <VehiclesDestactsListing />
+      <div className="container mx-auto w-full max-w-full p-4 space-y-6">
+        <VehiclesDestactsListing />
+      </div>
     </main>
   );
 }
