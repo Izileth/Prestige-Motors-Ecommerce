@@ -18,7 +18,6 @@ import {
   NoVehiclesFound,
   LoadingSkeleton,
   ErrorState,
-  ShowMoreButton,
 } from "~/src/components/pages/vehicles/category";
 
 export const VehiclesByCategoryPage = () => {

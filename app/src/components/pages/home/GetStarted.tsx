@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle } from "lucide-react"
 import { Button } from "../../ui/button"
 import { useNavigate } from "react-router"
 
-export function GetStartedHero() {
+export function GetStartedCTA() {
     const navigate = useNavigate()
 
     const handleGetStarted = () => {

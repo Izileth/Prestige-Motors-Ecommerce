@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFeaturedVehicles } from "~/src/hooks/useFeaturedVehicles";
-import { VehicleCard } from "../../common/VehiclesCard";
+import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import { VehicleCardSkeleton } from "~/src/components/layout/skeleton/VehicleCardSkeleton";
 import { motion } from "framer-motion";
 import { Button } from "~/src/components/ui/button";
@@ -22,7 +22,7 @@ export const VehiclesDestactsListing = ({
   const { featuredVehicles, loading, refresh } = useFeaturedVehicles(itemCount);
   const hasInitialLoad = useRef(false);
 
-  // Só atualiza o ref uma vez quando os veículos são carregados
+
   useEffect(() => {
     if (!hasInitialLoad.current && featuredVehicles.length > 0) {
       hasInitialLoad.current = true;
