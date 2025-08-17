@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CategoryGrid } from "~/src/components/template/grid/CategoryGrid";
+import { CategoryGrid } from "~/src/components/pages/home/CategoryGrid";
 import { VehicleFilters } from "~/src/components/common/VehicleFilter";
 import useVehicle from "~/src/hooks/useVehicle";
 import { Button } from "~/src/components/ui/button";
@@ -112,7 +112,9 @@ export const VehiclesByCategoryPage = () => {
 
       <div
         ref={resultsRef}
-        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-0 md:px-4 ${scrolled ? "py-4 shadow-none" : "py-8"}`}
+        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-0 md:px-4 ${
+          scrolled ? "py-4 shadow-none" : "py-8"
+        }`}
       >
         <div className="container mx-auto w-full max-w-full px-4 mt-4">
           <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-2">
@@ -201,7 +203,6 @@ export const VehiclesByCategoryPage = () => {
   );
 };
 
-
 const formatCategoryName = (id: string) => {
   const map: Record<string, string> = {
     SUV: "SUV",
@@ -212,11 +213,11 @@ const formatCategoryName = (id: string) => {
     CLASSIC: "Clássicos",
     RETRO_SUPER: "Retro Super",
   };
-  
+
   // Remove underlines e formata para título
-  const formatted = map[id] || id.replace(/_/g, ' ');
+  const formatted = map[id] || id.replace(/_/g, " ");
   return formatted
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 };

@@ -1,29 +1,37 @@
 import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
-import {CustomerTestimonials} from "~/src/data/testmonial"
+import { CustomerTestimonials } from "~/src/data/testmonial"
 
 export function Testimonials() {
     const containerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(containerRef, { once: true, amount: 0.2 })
 
     return (
-        <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
-        <div className="container mx-auto px-4" ref={containerRef}>
-            <div className="text-center mb-16">
+        <section className="py-32 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-6 max-w-7xl" ref={containerRef}>
+            <div className="text-center mb-20">
+            <motion.div
+                initial={{ width: 0 }}
+                animate={isInView ? { width: "60px" } : { width: 0 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="h-px bg-gray-900 dark:bg-gray-100 mx-auto mb-6"
+            />
             <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="text-3xl font-extralight tracking-tight text-gray-900 dark:text-gray-100"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="text-4xl md:text-5xl font-light tracking-wide text-gray-900 dark:text-gray-100 mb-4"
             >
                 DEPOIMENTOS
             </motion.h2>
-            <motion.div
-                initial={{ width: 0 }}
-                animate={isInView ? { width: "40px" } : { width: 0 }}
-                transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="h-0.5 bg-black dark:bg-white mx-auto mt-4"
-            />
+            <motion.p
+                initial={{ opacity: 0 }}
+                animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-gray-600 dark:text-gray-400 font-light text-lg max-w-md mx-auto"
+            >
+                O que nossos clientes dizem sobre nós
+            </motion.p>
             </div>
 
             <motion.div
@@ -33,37 +41,36 @@ export function Testimonials() {
                 hidden: {},
                 visible: {
                 transition: {
-                    staggerChildren: 0.1,
+                    staggerChildren: 0.15,
                 },
                 },
             }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
             >
             {CustomerTestimonials.map((testimonial, index) => (
                 <motion.div
                 key={testimonial.id}
                 variants={{
-                    hidden: { opacity: 0, y: 30 },
+                    hidden: { opacity: 0, y: 40 },
                     visible: {
                     opacity: 1,
                     y: 0,
                     transition: {
-                        duration: 0.6,
+                        duration: 0.8,
                         ease: [0.22, 1, 0.36, 1],
-                        delay: index * 0.05,
                     },
                     },
                 }}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -12 }}
                 transition={{ duration: 0.4 }}
-                className="group border border-transparent dark:border-gray-800 p-8 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300"
+                className="group bg-white dark:bg-gray-800 p-8 lg:p-10 border border-gray-200 dark:border-gray-700 hover:border-gray-900 dark:hover:border-gray-300 transition-all duration-500"
                 >
-                <div className="flex items-center mb-6">
+                <div className="flex items-center mb-8">
                     {[...Array(5)].map((_, i) => (
                     <svg
                         key={i}
-                        className={`w-4 h-4 mr-1 ${
-                        i < testimonial.rating ? "text-black dark:text-white" : "text-gray-200 dark:text-gray-800"
+                        className={`w-5 h-5 mr-1 ${
+                        i < testimonial.rating ? "text-gray-900 dark:text-gray-100" : "text-gray-300 dark:text-gray-600"
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
@@ -73,44 +80,26 @@ export function Testimonials() {
                     ))}
                 </div>
 
-                <div className="relative mb-8">
-                    <motion.div
-                    initial={{ width: "20%" }}
-                    whileInView={{ width: "40%" }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="absolute top-0 left-0 h-px bg-gray-200 dark:bg-gray-800"
-                    />
-                    <p className="text-lg font-light italic text-gray-600 dark:text-gray-300 leading-relaxed pt-6">
+                <div className="mb-10">
+                    <p className="text-xl font-light text-gray-700 dark:text-gray-300 leading-relaxed">
                     "{testimonial.text}"
                     </p>
-                    <motion.div
-                    initial={{ width: "20%" }}
-                    whileInView={{ width: "40%" }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="absolute bottom-0 right-0 h-px bg-gray-200 dark:bg-gray-800"
-                    />
                 </div>
 
-                <div className="flex items-center">
-                    <div className="relative mr-4">
-                    <div className="w-12 h-12 border border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-black dark:group-hover:border-white transition-colors duration-300">
-                        <span className="text-sm font-light text-gray-900 dark:text-gray-100">
+                <div className="flex items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="relative mr-5">
+                    <div className="w-14 h-14 border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center group-hover:border-gray-900 dark:group-hover:border-gray-300 transition-colors duration-300">
+                        <span className="text-lg font-light text-gray-900 dark:text-gray-100">
                         {testimonial.name
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </span>
                     </div>
-                    <motion.div
-                        className="absolute bottom-0 left-0 h-0.5 w-0 bg-black dark:bg-white"
-                        initial={{ width: 0 }}
-                        whileHover={{ width: "100%" }}
-                        transition={{ duration: 0.3 }}
-                    />
                     </div>
                     <div>
-                    <h4 className="font-light text-gray-900 dark:text-gray-100 tracking-wide">{testimonial.name}</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{testimonial.role}</p>
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100 text-lg mb-1">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-light">{testimonial.role}</p>
                     </div>
                 </div>
                 </motion.div>

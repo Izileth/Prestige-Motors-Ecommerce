@@ -16,8 +16,8 @@ export function RandomVehicles() {
   };
 
   return (
-    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full max-w-full px-0 sm:px-4">
-      <div className="container mx-auto px-4" ref={containerRef}>
+    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full px-0 sm:px-4">
+      <div className="container max-w-7xl mx-auto px-4" ref={containerRef}>
         {/* Cabeçalho */}
         <div className="flex flex-col  md:flex-row justify-between items-center md:items-center mb-16 gap-6">
           <div className="space-y-4 flex flex-col items-center md:items-start">
@@ -25,7 +25,7 @@ export function RandomVehicles() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="text-3xl font-extralight tracking-tight text-gray-900 dark:text-gray-100"
+              className="text-3xl md:text-6xl font-extralight text-center md:text-left tracking-tight text-gray-900 dark:text-gray-100"
             >
               SELEÇÃO ESPECIAL
             </motion.h2>

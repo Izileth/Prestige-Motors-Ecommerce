@@ -1,28 +1,30 @@
-
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useNavigate } from "react-router"
-import { ArrowRight, ChevronDown, ChevronUp, Search } from "lucide-react"
-import { useIsMobile } from "~/src/hooks/use-mobile"
-import { categories } from "./category.d"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router";
+import { ArrowRight, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { useIsMobile } from "~/src/hooks/use-mobile";
+import { categories } from "./category.d";
 
 export const CategoryGrid = () => {
-  const navigate = useNavigate()
-  const isMobile = useIsMobile()
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showAllMobile, setShowAllMobile] = useState(false)
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAllMobile, setShowAllMobile] = useState(false);
 
   // Filter categories based on search query
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      category.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // For mobile, limit initial display to 4 categories unless "Show All" is clicked
-  const displayedCategories = isMobile && !showAllMobile ? filteredCategories.slice(0, 4) : filteredCategories
+  const displayedCategories =
+    isMobile && !showAllMobile
+      ? filteredCategories.slice(0, 4)
+      : filteredCategories;
 
   const handleCategoryClick = (categoryId: string) => {
     if (isMobile && expandedCategory === categoryId) {
@@ -35,11 +37,11 @@ export const CategoryGrid = () => {
         {
           replace: true,
           state: { fromCategoryGrid: true },
-        },
-      )
+        }
+      );
     } else if (isMobile) {
       // On mobile, toggle expansion instead of immediate navigation
-      setExpandedCategory(expandedCategory === categoryId ? null : categoryId)
+      setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
     } else {
       // On desktop, navigate immediately
       navigate(
@@ -50,13 +52,13 @@ export const CategoryGrid = () => {
         {
           replace: true,
           state: { fromCategoryGrid: true },
-        },
-      )
+        }
+      );
     }
-  }
+  };
 
   return (
-    <section className="container mx-auto px-4 py-12 overflow-hidden">
+    <section className="container mx-auto max-w-7xl w-full px-4 py-12 overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -67,7 +69,7 @@ export const CategoryGrid = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-3xl font-extralight tracking-tight text-gray-900 dark:text-gray-100 mb-3"
+          className="text-3xl md:text-6xl font-extralight tracking-tight text-gray-900 dark:text-gray-100 mb-3"
         >
           NAVEGUE POR CATEGORIAS
         </motion.h2>
@@ -111,7 +113,9 @@ export const CategoryGrid = () => {
                   <div className="p-3 rounded-full border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                     {category.icon}
                   </div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{category.name}</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                    {category.name}
+                  </h3>
                 </div>
                 {expandedCategory === category.id ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -130,14 +134,16 @@ export const CategoryGrid = () => {
                     className="overflow-hidden border-t border-gray-200 dark:border-gray-800"
                   >
                     <div className="p-4 bg-gray-50 dark:bg-gray-800">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{category.description}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                        {category.description}
+                      </p>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation()
+                          e.stopPropagation();
                           navigate({
                             pathname: "/vehicles/category",
                             search: `?categoria=${category.id}`,
-                          })
+                          });
                         }}
                         className="flex items-center text-sm font-medium text-black dark:text-white"
                       >
@@ -166,7 +172,9 @@ export const CategoryGrid = () => {
                 </>
               ) : (
                 <>
-                  <span>Mostrar mais {filteredCategories.length - 4} categorias</span>
+                  <span>
+                    Mostrar mais {filteredCategories.length - 4} categorias
+                  </span>
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -253,5 +261,5 @@ export const CategoryGrid = () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};

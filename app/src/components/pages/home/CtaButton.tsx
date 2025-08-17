@@ -1,108 +1,81 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-
-import { useNavigate } from "react-router"
-
+import { toast } from "sonner"
 export function SignupCTA() {
     const [isHovered, setIsHovered] = useState(false)
-    const navigate = useNavigate()
 
     const handleSignIn = () => {
-        navigate('/vehicles/create');
+        toast.success("Redirecionando para página de cadastro...")
     }
 
     return (
-        <section className="py-24 md:py-32 bg-white dark:bg-gray-950 w-full max-w-full border-t border-b border-gray-100 dark:border-gray-900">
-        <div className="container mx-auto px-6 lg:px-6">
+        <section className="py-32 md:py-40 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-6 max-w-4xl">
             <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true, margin: "-100px" }}
-            className="max-w-3xl mx-auto"
+            className="text-center"
             >
-            <div className="space-y-12 md:space-y-16">
-                {/* Heading with animated line */}
-                <div className="text-center space-y-3">
+            <div className="space-y-16">
+                <div className="space-y-8">
                 <motion.div
                     initial={{ width: 0 }}
-                    whileInView={{ width: "40px" }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    whileInView={{ width: "80px" }}
+                    transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                     viewport={{ once: true }}
-                    className="h-px bg-black dark:bg-white mx-auto"
+                    className="h-px bg-gray-900 dark:bg-gray-100 mx-auto"
                 />
                 <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     viewport={{ once: true }}
-                    className="text-3xl md:text-4xl font-extralight tracking-tight text-gray-900 dark:text-gray-100"
+                    className="text-5xl md:text-6xl font-light tracking-wide text-gray-900 dark:text-gray-100"
                 >
-                    JUNTE-SE À NOSSA PLATAFORMA
+                    JUNTE-SE À NOSSA
+                    <br />
+                    PLATAFORMA
                 </motion.h2>
                 </div>
 
-                {/* Description */}
                 <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 viewport={{ once: true }}
-                className="text-base md:text-lg font-light text-gray-600 dark:text-gray-300 text-center max-w-2xl mx-auto leading-relaxed"
+                className="text-xl font-light text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
                 >
                 Cadastre-se gratuitamente e tenha acesso a ofertas exclusivas, alertas de novos veículos e muito mais.
                 </motion.p>
 
-                {/* Button */}
                 <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 viewport={{ once: true }}
-                className="flex justify-center"
+                className="pt-8"
                 >
-                <motion.div
+                <motion.button
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
-                    className="relative"
-                >
-                    <motion.button
-                    whileHover={{ y: -4 }}
+                    whileHover={{ y: -6 }}
                     whileTap={{ y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="relative bg-black dark:bg-white text-white dark:text-black py-2 px-4 md:px-4 text-sm md:text-base font-light tracking-wider z-10 overflow-hidden group"
+                    className="relative bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 py-4 px-12 text-lg font-light tracking-widest border-2 border-gray-900 dark:border-gray-100 hover:bg-transparent hover:text-gray-900 dark:hover:bg-transparent dark:hover:text-gray-100 transition-all duration-500"
                     onClick={handleSignIn}
-                    >
-                    <span className="relative z-10">Anunciar Meu Veículo</span>
-                    <motion.div
-                        className="absolute inset-0 bg-gray-800 dark:bg-gray-200"
-                        initial={{ x: "-100%" }}
-                        animate={{ x: isHovered ? 0 : "-100%" }}
-                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                    </motion.button>
-                    <motion.div
-                    className="absolute -inset-px border border-black dark:border-white"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.6 }}
-                    viewport={{ once: true }}
-                    animate={{
-                        x: isHovered ? 4 : 0,
-                        y: isHovered ? 4 : 0,
-                        opacity: isHovered ? 0.3 : 1,
-                    }}
-                    />
-                </motion.div>
+                >
+                    ANUNCIAR MEU VEÍCULO
+                </motion.button>
                 </motion.div>
 
-                {/* Note */}
                 <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.6, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
                 viewport={{ once: true }}
-                className="text-xs md:text-sm text-gray-500 dark:text-gray-400 text-center font-light"
+                className="text-sm text-gray-500 dark:text-gray-400 font-light pt-6"
                 >
                 Leva menos de um minuto para se cadastrar
                 </motion.p>
