@@ -17,7 +17,7 @@ export function GetStartedCTA() {
     return (
         <section className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-24 sm:py-32">
         <div className="mx-auto max-w-full px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl text-center">
+            <div className="mx-auto max-w-full text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                 <h1 className="text-4xl uppercase font-light tracking-tight text-gray-900 sm:text-6xl">
                     Cadastre-se em 5

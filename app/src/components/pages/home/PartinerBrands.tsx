@@ -9,7 +9,7 @@ export function PartnerBrands() {
 
     return (
         <section className="py-32 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-6 max-w-7xl" ref={containerRef}>
+        <div className="container mx-auto px-6 max-w-full" ref={containerRef}>
             <div className="text-center mb-24">
             <motion.div
                 initial={{ width: 0 }}

@@ -4,7 +4,7 @@ import { useRandomVehicles } from "~/src/hooks/useRandomVehicle";
 import { Button } from "~/src/components/ui/button";
 import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import { Skeleton } from "~/src/components/ui/skeleton";
-import { ArrowRight, RefreshCw } from "lucide-react";
+import {  RefreshCw } from "lucide-react";
 
 export function RandomVehicles() {
   const { vehicles, loading, refresh } = useRandomVehicles(12);
@@ -17,7 +17,7 @@ export function RandomVehicles() {
 
   return (
     <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full px-0 sm:px-4">
-      <div className="container max-w-7xl mx-auto px-4" ref={containerRef}>
+      <div className="container max-w-full mx-auto px-4" ref={containerRef}>
         {/* Cabeçalho */}
         <div className="flex flex-col  md:flex-row justify-between items-center md:items-center mb-16 gap-6">
           <div className="space-y-4 flex flex-col items-center md:items-start">

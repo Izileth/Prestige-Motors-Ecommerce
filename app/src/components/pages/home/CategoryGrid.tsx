@@ -58,7 +58,7 @@ export const CategoryGrid = () => {
   };
 
   return (
-    <section className="container mx-auto max-w-7xl w-full px-4 py-12 overflow-hidden">
+    <section className="container mx-auto max-h-full w-full px-4 py-12 overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

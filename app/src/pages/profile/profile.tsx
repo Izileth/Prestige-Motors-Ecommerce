@@ -24,6 +24,8 @@ import { Check, AlertCircle, X } from "lucide-react";
 import type { UserUpdateData } from "~/src/types/user";
 import type { Address } from "~/src/types/address";
 
+import { toast } from "sonner";
+
 export default function DashboardPage() {
   const { user, logout, isAuthenticated, status: authStatus } = useAuth();
   const {
@@ -186,20 +188,10 @@ export default function DashboardPage() {
           throw new Error("Nenhum dado para atualizar");
         await updateUserData(user.id, updateData);
         setIsEditing(false);
-        setNotification({
-          show: true,
-          message: "Perfil atualizado com sucesso!",
-          type: "success",
-        });
+        toast.success("Perfil atualizado com sucesso!");
         if (user?.id) getUserById(user.id);
       } catch (error) {
-        setNotification({
-          show: true,
-          message: `Erro ao atualizar perfil: ${
-            error instanceof Error ? error.message : "Tente novamente."
-          }`,
-          type: "error",
-        });
+        toast.error("Erro ao atualizar perfil.");
       } finally {
         setLoading((prev) => ({ ...prev, profile: false }));
       }
@@ -212,11 +204,7 @@ export default function DashboardPage() {
       return;
     }
     if (!passwordData.senhaAtual || !passwordData.novaSenha) {
-      setNotification({
-        show: true,
-        message: "Senhas atuais e novas são obrigatórias",
-        type: "error",
-      });
+      toast.error("Por favor, preencha todos os campos.");
       return;
     }
     setLoading((prev) => ({ ...prev, password: true }));
@@ -227,11 +215,7 @@ export default function DashboardPage() {
         senha: passwordData.novaSenha,
       };
       await updateUserData(user.id, updateData);
-      setNotification({
-        show: true,
-        message: "Senha alterada com sucesso!",
-        type: "success",
-      });
+      toast.success("Senha atualizada com sucesso!");
       setPasswordData({ senhaAtual: "", novaSenha: "", confirmarSenha: "" });
       setShowPasswordAlert(false);
     } catch (error) {
@@ -239,7 +223,7 @@ export default function DashboardPage() {
       if (error instanceof Error && error.message.includes("senha atual")) {
         errorMessage = "Senha atual incorreta. Por favor, verifique.";
       }
-      setNotification({ show: true, message: errorMessage, type: "error" });
+      toast.error(errorMessage);
     } finally {
       setLoading((prev) => ({ ...prev, password: false }));
     }
@@ -305,11 +289,7 @@ export default function DashboardPage() {
         await uploadUserAvatar(user.id, selectedFile);
         
         // Mostrar toast de sucesso
-        setNotification({
-          show: true,
-          message: "Avatar atualizado com sucesso! Redirecionando...",
-          type: "success",
-        });
+        toast.success("Avatar atualizado com sucesso!");
         
         // Limpar arquivo selecionado
         setSelectedFile(null);
@@ -324,13 +304,7 @@ export default function DashboardPage() {
         }, 1500); // 2 segundos para ver a mensagem
         
       } catch (error) {
-        setNotification({
-          show: true,
-          message: `Erro ao atualizar avatar: ${
-            error instanceof Error ? error.message : "Tente novamente."
-          }`,
-          type: "error",
-        });
+        toast.error("Erro ao atualizar avatar.");
       } finally {
         setLoading((prev) => ({ ...prev, profile: false }));
       }
@@ -403,9 +377,7 @@ export default function DashboardPage() {
               )}
               <p>{notification.message}</p>
               <button
-                onClick={() =>
-                  setNotification({ ...notification, show: false })
-                }
+                onClick={() => toast.success(notification.message)}
                 className="ml-2 text-white dark:text-black"
               >
                 <X size={18} />
