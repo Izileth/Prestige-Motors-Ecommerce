@@ -9,6 +9,7 @@ import { X, ChevronLeft } from "lucide-react";
 
 import useVehicle from "~/src/hooks/useVehicle";
 import { useReviews } from "~/src/hooks/useReview";
+
 import { useAuth } from "~/src/hooks/useAuth";
 
 import type { ReviewCreateInput, ReviewUpdateInput, Review } from "~/src/types/reviews";
@@ -22,6 +23,7 @@ import VehicleSidebar from "~/src/components/pages/vehicle/id/VehicleSidebar";
 import VehicleReviews from "~/src/components/pages/vehicle/id/VehicleReviews";
 import VehicleRecommendationsGrid from "~/src/components/pages/vehicle/id/VehicleRadomGrid";
 
+import SEO from "~/src/components/template/helmet/HelmetSeo";
 import { toast } from "sonner";
 
 import { createSlug, extractIdFromSlug } from "~/src/utils/slugify";
@@ -30,6 +32,7 @@ const VehicleDetailsPage = () => {
   const { slug } = useParams<{ slug: string }>(); 
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+
 
   const {
     currentVehicle,
@@ -307,7 +310,7 @@ const VehicleDetailsPage = () => {
       navigate(`/vehicles/${newSlug}`);
     };
 
-    // ✅ HELPER FUNCTION - cancelEditMode
+
     const cancelEditMode = () => {
       if (!vehicleId) return;
       
@@ -405,6 +408,19 @@ const VehicleDetailsPage = () => {
   }
 
   return (
+   <>
+   <SEO
+        title={`${currentVehicle.slug} ${currentVehicle.marca} ${currentVehicle.modelo} ${currentVehicle.anoFabricacao}`}
+        description={`${currentVehicle.marca} ${currentVehicle.modelo} ${currentVehicle.anoModelo} - ${currentVehicle.descricao}`}
+        image={currentVehicle.imagens[0]?.url || 'https://prestigemotors.online/default-image.jpg'}
+        url={`https://prestigemotors.online/veiculos/${currentVehicle.slug}`}
+        type="product"
+        price={currentVehicle.preco?.toString()}
+        currency="BRL"
+        availability={currentVehicle.avaliacoes?.length ? "InStock" : "OutOfStock"}
+        brand={currentVehicle.marca}
+        model={`${currentVehicle.modelo} ${currentVehicle.anoModelo}`}
+      />
     <div className="min-h-screen bg-white dark:bg-gray-950 pb-16 md:px-6">
       <VehicleHeader
         isFavorite={isFavorite(currentVehicle.id)}
@@ -455,6 +471,7 @@ const VehicleDetailsPage = () => {
         </div>
       </div>
     </div>
+   </>
   );
 };
 
