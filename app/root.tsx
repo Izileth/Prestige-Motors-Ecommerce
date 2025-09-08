@@ -20,7 +20,7 @@ import Footer from "./src/components/layout/FooterBar";
 import { Toaster } from "sonner";
 
 
-import { HelmetProvider } from "react-helmet-async";
+
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -112,8 +112,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <HelmetProvider>
-       
           
           <Banner />
           <Navigation />
@@ -124,7 +122,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Footer />
           
           <Toaster />
-        </HelmetProvider>
         
         <ScrollRestoration />
         <Scripts />
