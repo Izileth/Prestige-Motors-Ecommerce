@@ -59,8 +59,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="language" content="Portuguese" />
         
         {/* Favicon */}
-        <link rel="icon" href="https://i.pinimg.com/1200x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" sizes="48x48" />
-        <link rel="apple-touch-icon" href="https://i.pinimg.com/1200x/61/68/da/6168dad52605b78d08badb29d067a71a.jpg" />
+        <link rel="icon" href="/favicon.svg" sizes="48x48" />
+        <link rel="icon" type="image/svg+xml" sizes="32x32" href="/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" sizes="16x16" href="/favicon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+        <link rel="manifest" href="/manifest.json" />
         
         {/* Theme */}
         <meta name="theme-color" content="#1a1a1a" />
