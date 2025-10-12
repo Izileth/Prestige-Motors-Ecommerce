@@ -1,5 +1,5 @@
 import { Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
-import { FooterLinkGroup, SocialLink } from './types';
+import type { FooterLinkGroup, SocialLink } from './types';
 
 export const defaultLinkGroups: FooterLinkGroup[] = [
     {

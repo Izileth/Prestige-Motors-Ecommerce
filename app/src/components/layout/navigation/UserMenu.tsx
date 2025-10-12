@@ -1,5 +1,5 @@
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '~/src/components/ui/avatar';
 import { Button } from '~/src/components/ui/button';
 import {

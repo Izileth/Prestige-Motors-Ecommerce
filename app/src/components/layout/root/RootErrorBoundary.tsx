@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration } from "react-router-dom";
+import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration } from "react-router";
 import type { Route } from "../../../../+types/root";
 
 export function RootErrorBoundary({ error }: Route.ErrorBoundaryProps) {

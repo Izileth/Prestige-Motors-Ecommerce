@@ -1,4 +1,4 @@
-import { Meta, Links } from "react-router-dom";
+import { Meta, Links } from "react-router";
 
 export const Head = () => {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FooterProps } from './types';
+import type { FooterProps } from './types';
 import { FooterInfo } from './FooterInfo';
 import { FooterLinks } from './FooterLinks';
 import { NewsletterForm } from './NewsletterForm';

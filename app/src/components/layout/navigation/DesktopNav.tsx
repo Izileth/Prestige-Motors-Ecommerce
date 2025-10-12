@@ -1,5 +1,5 @@
 // app/src/components/layout/navigation/DesktopNav.tsx
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { cn } from '~/src/lib/cn';
 import {
   NavigationMenu,

@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { FooterProps } from './types';
+import { Link } from 'react-router';
+import type { FooterProps } from './types';
 import { defaultLinkGroups } from './data';
 
 export const FooterLinks: React.FC<FooterProps> = ({ customLinkGroups }) => {

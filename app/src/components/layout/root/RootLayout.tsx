@@ -1,4 +1,4 @@
-import { Scripts, ScrollRestoration } from "react-router-dom";
+import { Scripts, ScrollRestoration } from "react-router";
 import { Head } from "./Head";
 import Navigation from "../navigation";
 import { Baseboard } from "../BottonBanner";

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button } from '~/src/components/ui/button';
 import { Input } from '~/src/components/ui/input';
 import { toast } from 'sonner';
 import { CheckCircle, Mail, ChevronRight } from 'lucide-react';
-import { FooterProps } from './types';
+import type { FooterProps } from './types';
 
 export const NewsletterForm: React.FC<FooterProps> = ({
     newsletterTitle = "Se increva em nosso Grupo Especial",
