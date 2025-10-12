@@ -12,7 +12,7 @@ import type { Route } from "./+types/root";
 
 import "./app.css";
 
-import Navigation from "./src/components/layout/NavigationBar";
+import Navigation from "./src/components/layout/navigation";
 import { Baseboard } from "~/src/components/layout/BottonBanner";
 import { Banner } from "~/src/components/layout/TopBanner";
 import Footer from "./src/components/layout/FooterBar";
