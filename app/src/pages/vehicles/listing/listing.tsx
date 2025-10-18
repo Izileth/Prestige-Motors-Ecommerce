@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import useVehicle from "~/src/hooks/useVehicle";
 import { motion, AnimatePresence } from "framer-motion";
 import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
