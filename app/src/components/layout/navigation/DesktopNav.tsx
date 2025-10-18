@@ -11,7 +11,7 @@ import {
 } from '~/src/components/ui/navigation-menu';
 import { Badge } from '~/src/components/ui/badge';
 import { useAuth } from '~/src/hooks/useAuth';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Search } from 'lucide-react';
 import { useNegotiationsCount } from '~/src/hooks/useNegotiationsCount';
 import { UserMenu } from './UserMenu';
 import { defaultMenuItems } from './menu-items';
@@ -91,6 +91,9 @@ export const DesktopNav: React.FC<NavigationProps> = ({
       </NavigationMenu>
 
       <div className="flex items-center gap-8">
+        <Link to="/vehicles/search">
+          <Search className="h-5 w-5 stroke-1" />
+        </Link>
         <UserMenu />
         {showNegotiations && (
           <Link to="/vehicles/negotiations" className="relative group">

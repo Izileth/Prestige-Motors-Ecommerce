@@ -1,11 +1,8 @@
+import type React from "react";
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useVehicle from "~/src/hooks/useVehicle";
-import { motion, AnimatePresence } from "framer-motion";
-import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
-import { PrincipalCars } from "~/src/data/carousel";
-import VehicleStatistics from "~/src/components/common/VehicleStatistics";
-
+import { AnimatePresence } from "framer-motion";
 import {
   FilterPanel,
   VehicleGrid,
@@ -14,14 +11,14 @@ import {
   ErrorState,
   FavoriteError,
 } from "~/src/components/pages/vehicles/listing";
-
+import { SearchBar } from "~/src/components/pages/vehicles/listing/SearchBar";
 import type {
   Vehicle,
   VehicleSearchParams,
   VehicleError,
 } from "~/src/types/vehicle";
 
-const VehicleListingPage = () => {
+const VehicleSearchPage = () => {
   const {
     vehicles,
     loading,
@@ -32,9 +29,9 @@ const VehicleListingPage = () => {
     favorites,
   } = useVehicle();
 
-  const [searchParams, setSearchParams] = useState<VehicleSearchParams>({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [debouncedParams, setDebouncedParams] = useState(searchParams);
   const [showFilters, setShowFilters] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [error, setError] = useState<VehicleError | null>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -44,32 +41,20 @@ const VehicleListingPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchVehicles(searchParams);
-  }, [searchParams, fetchVehicles]);
+    const timer = setTimeout(() => {
+      setDebouncedParams(searchParams);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchParams]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        filtersRef.current &&
-        !filtersRef.current.contains(event.target as Node) &&
-        showFilters
-      ) {
-        setShowFilters(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showFilters]);
+    const params: VehicleSearchParams = {};
+    for (const [key, value] of debouncedParams.entries()) {
+      (params as any)[key] = value;
+    }
+    fetchVehicles(params);
+  }, [debouncedParams, fetchVehicles]);
 
   useEffect(() => {
     if (error) {
@@ -78,21 +63,32 @@ const VehicleListingPage = () => {
     }
   }, [error]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("modelo", e.target.value);
+    setSearchParams(newSearchParams, { replace: true });
+  };
+
   const handleFilterChange = (
     field: keyof VehicleSearchParams,
     value: string | number | boolean | undefined
   ) => {
+    const newSearchParams = new URLSearchParams(searchParams);
     if (value === "All" || value === undefined) {
-      const newParams = { ...searchParams };
-      delete newParams[field];
-      setSearchParams(newParams);
+      newSearchParams.delete(field);
     } else {
-      setSearchParams({ ...searchParams, [field]: value });
+      newSearchParams.set(field, String(value));
     }
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   const resetFilters = () => {
-    setSearchParams({});
+    const newSearchParams = new URLSearchParams();
+    const modelo = searchParams.get("modelo");
+    if (modelo) {
+      newSearchParams.set("modelo", modelo);
+    }
+    setSearchParams(newSearchParams);
   };
 
   const toggleFavorite = async (vehicle: Vehicle) => {
@@ -129,39 +125,40 @@ const VehicleListingPage = () => {
   };
 
   const retryFetch = () => {
-    fetchVehicles(searchParams);
+    const params: VehicleSearchParams = {};
+    for (const [key, value] of debouncedParams.entries()) {
+      (params as any)[key] = value;
+    }
+    fetchVehicles(params);
   };
+  
+  const searchParamsObject = (): VehicleSearchParams => {
+    const params: VehicleSearchParams = {};
+    for (const [key, value] of searchParams.entries()) {
+      (params as any)[key] = value;
+    }
+    return params;
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div className="flex flex-row w-full  max-w-full items-center justify-center content-center px-4">
-        <VehicleStatistics />
-      </div>
-
-      <div className="container mx-auto px-0 py-0">
-        <div className="mb-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-0 text-gray-900 dark:text-gray-100"
-          >
-            <Carousel items={PrincipalCars} className="w-full max-w-full" />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-0 bg-white h-18 text-gray-900 dark:text-gray-100"
-          />
-        </div>
-
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-12">
+          <div
+            className={`z-10 mt-0 space-y-0 bg-white dark:bg-gray-950 transition-all duration-300`}
+          >
+            <SearchBar
+              searchParams={searchParamsObject()}
+              handleSearchChange={handleSearchChange}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+            />
+          </div>
           <AnimatePresence>
             {showFilters && (
               <FilterPanel
                 filtersRef={filtersRef}
-                searchParams={searchParams}
+                searchParams={searchParamsObject()}
                 handleFilterChange={handleFilterChange}
                 resetFilters={resetFilters}
               />
@@ -171,11 +168,7 @@ const VehicleListingPage = () => {
         {loading && <LoadingSkeleton />}
 
         {error && (
-          <FavoriteError
-            error={error}
-            setError={setError}
-            location={location}
-          />
+          <FavoriteError error={error} setError={setError} location={location} />
         )}
 
         {!loading && !Array.isArray(vehicles) && (
@@ -198,4 +191,4 @@ const VehicleListingPage = () => {
   );
 };
 
-export default VehicleListingPage;
+export default VehicleSearchPage;

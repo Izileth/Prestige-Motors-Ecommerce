@@ -5,7 +5,7 @@ import { Button } from '~/src/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '~/src/components/ui/sheet';
 import { Badge } from '~/src/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '~/src/components/ui/avatar';
-import { Menu, ChevronRight, MessageSquare, ChevronDown } from 'lucide-react';
+import { Menu, ChevronRight, MessageSquare, ChevronDown, Search } from 'lucide-react';
 import { useNegotiationsCount } from '~/src/hooks/useNegotiationsCount';
 import { useAuth } from '~/src/hooks/useAuth';
 import { defaultMenuItems } from './menu-items';
@@ -39,7 +39,12 @@ export const MobileNav: React.FC<NavigationProps> = ({
 
   return (
     <div className="flex md:hidden justify-between items-center w-full max-w-full px-5 py-4">
-      <Link to="/" className="text-lg font-extralight tracking-widest uppercase">
+
+      <Link to="/vehicles/search">
+        <Search className="h-5 w-5 stroke-1" />
+      </Link>
+
+      <Link to="/" className="text-md font-extralight tracking-widest uppercase">
         {brandName}
       </Link>
 
@@ -65,6 +70,7 @@ export const MobileNav: React.FC<NavigationProps> = ({
             )}
           </Link>
         )}
+
 
         <Sheet>
           <SheetTrigger asChild>
@@ -122,7 +128,7 @@ export const MobileNav: React.FC<NavigationProps> = ({
                           isActive(item.href) && 'font-normal'
                         )}
                       >
-                        <p className="flex flex-row items-center"> {item.name} <ChevronRight className="text-zinc-400 pl-1" size={14}/></p>
+                        <p className="flex flex-row items-center"> {item.name} <ChevronRight className="text-zinc-400 pl-1" size={14} /></p>
                       </Link>
                     )
                   )}
