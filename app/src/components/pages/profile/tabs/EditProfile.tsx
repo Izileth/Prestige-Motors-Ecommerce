@@ -1,4 +1,4 @@
-import type React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "~/src/components/ui/card";
 import { Input } from "~/src/components/ui/input";
@@ -7,33 +7,48 @@ import { Button } from "~/src/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "~/src/components/ui/avatar";
 import { Edit, Camera } from "lucide-react";
 import type { User } from "~/src/types/user";
-
 import { useAuth } from "~/src/hooks/useAuth";
 
-interface EditProfileProps {
-  isEditing: boolean;
-  editFormData: any;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSaveProfile: () => void;
-  setIsEditing: (isEditing: boolean) => void;
-  loading: { profile: boolean };
-  selectedFile: File | null;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleUploadAvatar: () => void;
-}
-
-const EditProfile: React.FC<EditProfileProps> = ({
-  isEditing,
-  editFormData,
-  handleInputChange,
-  handleSaveProfile,
-  setIsEditing,
-  loading,
-  selectedFile,
-  handleFileChange,
-  handleUploadAvatar,
-}) => {
+const EditProfile: React.FC = () => {
   const { user: currentUser } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({ nome: '', email: '', telefone: '', cpf: '', dataNascimento: '' });
+  const [loading, setLoading] = useState({ profile: false });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (currentUser) {
+      setEditFormData({
+        nome: currentUser.nome || '',
+        email: currentUser.email || '',
+        telefone: currentUser.telefone || '',
+        cpf: currentUser.cpf || '',
+        dataNascimento: currentUser.dataNascimento ? new Date(currentUser.dataNascimento).toISOString().split('T')[0] : '',
+      });
+    }
+  }, [currentUser]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveProfile = () => {
+    // Lógica para salvar o perfil
+    console.log('Saving profile...', editFormData);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadAvatar = () => {
+    // Lógica para upload do avatar
+    console.log('Uploading avatar...', selectedFile);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Card className="lg:col-span-2 border-0 shadow-none bg-white dark:bg-gray-900">

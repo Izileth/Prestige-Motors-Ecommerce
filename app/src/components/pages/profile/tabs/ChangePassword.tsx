@@ -1,4 +1,4 @@
-import type React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "~/src/components/ui/card";
 import { Input } from "~/src/components/ui/input";
 import { Label } from "~/src/components/ui/label";
@@ -6,24 +6,21 @@ import { Button } from "~/src/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 import { Key, AlertCircle } from "lucide-react";
 
-import { useAuth } from "~/src/hooks/useAuth";
+const ChangePassword: React.FC = () => {
+  const [passwordData, setPasswordData] = useState({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
+  const [showPasswordAlert, setShowPasswordAlert] = useState(false);
+  const [loading, setLoading] = useState({ password: false });
 
-interface ChangePasswordProps {
-  passwordData: any;
-  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSavePassword: () => void;
-  showPasswordAlert: boolean;
-  loading: { password: boolean };
-}
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
+  };
 
-const ChangePassword: React.FC<ChangePasswordProps> = ({
-  passwordData,
-  handlePasswordChange,
-  handleSavePassword,
-  showPasswordAlert,
-  loading,
-}) => {
-  const { user: currentUser } = useAuth();
+  const handleSavePassword = () => {
+    // Lógica para salvar a nova senha
+    console.log('Saving password...', passwordData);
+  };
+
   return (
     <Card className="w-full border-0 shadow-none bg-white dark:bg-gray-900">
       <CardHeader>
