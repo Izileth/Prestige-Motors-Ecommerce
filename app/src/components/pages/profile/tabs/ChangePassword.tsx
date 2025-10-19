@@ -5,8 +5,14 @@ import { Label } from "~/src/components/ui/label";
 import { Button } from "~/src/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "~/src/components/ui/alert";
 import { Key, AlertCircle } from "lucide-react";
+import { useAuth } from "~/src/hooks/useAuth";
+import useUserStore from "~/src/hooks/useUser";
+import { toast } from "sonner";
+import type { UserUpdateData } from "~/src/types/user";
 
 const ChangePassword: React.FC = () => {
+  const { user } = useAuth();
+  const { updateUserData } = useUserStore();
   const [passwordData, setPasswordData] = useState({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
   const [showPasswordAlert, setShowPasswordAlert] = useState(false);
   const [loading, setLoading] = useState({ password: false });
@@ -16,9 +22,35 @@ const ChangePassword: React.FC = () => {
     setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSavePassword = () => {
-    // Lógica para salvar a nova senha
-    console.log('Saving password...', passwordData);
+  const handleSavePassword = async () => {
+    if (passwordData.novaSenha !== passwordData.confirmarSenha) {
+      setShowPasswordAlert(true);
+      return;
+    }
+    if (!passwordData.senhaAtual || !passwordData.novaSenha) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
+    setLoading((prev) => ({ ...prev, password: true }));
+    try {
+      if (!user?.id) throw new Error("ID do usuário não encontrado");
+      const updateData: UserUpdateData = {
+        senhaAtual: passwordData.senhaAtual,
+        senha: passwordData.novaSenha,
+      };
+      await updateUserData(user.id, updateData);
+      toast.success("Senha atualizada com sucesso!");
+      setPasswordData({ senhaAtual: "", novaSenha: "", confirmarSenha: "" });
+      setShowPasswordAlert(false);
+    } catch (error) {
+      let errorMessage = "Erro ao alterar senha.";
+      if (error instanceof Error && error.message.includes("senha atual")) {
+        errorMessage = "Senha atual incorreta. Por favor, verifique.";
+      }
+      toast.error(errorMessage);
+    } finally {
+      setLoading((prev) => ({ ...prev, password: false }));
+    }
   };
 
   return (

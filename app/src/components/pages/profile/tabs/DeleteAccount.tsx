@@ -5,16 +5,21 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/src/components/ui/input";
 import { Trash2 } from "lucide-react";
 import { useAuth } from "~/src/hooks/useAuth";
+import useUserStore from "~/src/hooks/useUser";
 
 const DeleteAccount: React.FC = () => {
-  const { user: currentUser } = useAuth();
+  const { user, logout } = useAuth();
+  const { currentUser, removeUser } = useUserStore();
   const [deleteAccountDialog, setDeleteAccountDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [loading, setLoading] = useState({ delete: false });
 
-  const handleDeleteAccount = () => {
-    // Lógica para excluir a conta
-    console.log('Deleting account...');
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation === currentUser?.email && user?.id) {
+      setLoading({ delete: true });
+      await removeUser(user.id);
+      await logout();
+    }
   };
 
   return (

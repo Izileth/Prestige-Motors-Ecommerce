@@ -7,7 +7,7 @@ import { Edit, Key, Trash2 } from "lucide-react";
 import type { User } from "~/src/types/user";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 interface PersonalInfoProps {
   currentUser: User | null;

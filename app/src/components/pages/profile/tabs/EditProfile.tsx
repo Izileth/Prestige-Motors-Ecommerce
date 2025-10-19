@@ -6,15 +6,20 @@ import { Label } from "~/src/components/ui/label";
 import { Button } from "~/src/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "~/src/components/ui/avatar";
 import { Edit, Camera } from "lucide-react";
-import type { User } from "~/src/types/user";
 import { useAuth } from "~/src/hooks/useAuth";
+import useUserStore from "~/src/hooks/useUser";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import type { UserUpdateData } from "~/src/types/user";
 
 const EditProfile: React.FC = () => {
-  const { user: currentUser } = useAuth();
+  const { user, logout } = useAuth();
+  const { currentUser, updateUserData, uploadUserAvatar, getUserById } = useUserStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({ nome: '', email: '', telefone: '', cpf: '', dataNascimento: '' });
   const [loading, setLoading] = useState({ profile: false });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (currentUser) {
@@ -33,9 +38,53 @@ const EditProfile: React.FC = () => {
     setEditFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveProfile = () => {
-    // Lógica para salvar o perfil
-    console.log('Saving profile...', editFormData);
+  const handleSaveProfile = async () => {
+    if (user?.id) {
+      setLoading((prev) => ({ ...prev, profile: true }));
+      try {
+        const updateData: UserUpdateData = {};
+        if (editFormData.nome && editFormData.nome.trim()) updateData.nome = editFormData.nome.trim();
+        if (editFormData.email && editFormData.email.trim()) updateData.email = editFormData.email.trim();
+        if (editFormData.telefone) {
+          const telefoneFormatado = editFormData.telefone.replace(/\D/g, "");
+          if (telefoneFormatado.length >= 10 && telefoneFormatado.length <= 11) {
+            updateData.telefone = telefoneFormatado;
+          } else if (telefoneFormatado === "") {
+            updateData.telefone = null;
+          } else {
+            throw new Error("Telefone deve ter entre 10 e 11 dígitos");
+          }
+        }
+        if (editFormData.cpf) {
+          const cpfFormatado = editFormData.cpf.replace(/\D/g, "");
+          if (cpfFormatado.length === 11 || cpfFormatado === "") {
+            updateData.cpf = cpfFormatado || null;
+          } else {
+            throw new Error("CPF deve ter 11 dígitos");
+          }
+        }
+        if (editFormData.dataNascimento) {
+          const dateObj = new Date(editFormData.dataNascimento);
+          if (!isNaN(dateObj.getTime())) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+            const day = String(dateObj.getDate()).padStart(2, "0");
+            updateData.dataNascimento = `${year}-${month}-${day}`;
+          }
+        } else if (editFormData.dataNascimento === null) {
+          updateData.dataNascimento = null;
+        }
+        if (Object.keys(updateData).length === 0) throw new Error("Nenhum dado para atualizar");
+        await updateUserData(user.id, updateData);
+        setIsEditing(false);
+        toast.success("Perfil atualizado com sucesso!");
+        if (user?.id) getUserById(user.id);
+      } catch (error) {
+        toast.error("Erro ao atualizar perfil.");
+      } finally {
+        setLoading((prev) => ({ ...prev, profile: false }));
+      }
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,9 +93,23 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  const handleUploadAvatar = () => {
-    // Lógica para upload do avatar
-    console.log('Uploading avatar...', selectedFile);
+  const handleUploadAvatar = async () => {
+    if (selectedFile && user?.id) {
+      try {
+        setLoading((prev) => ({ ...prev, profile: true }));
+        await uploadUserAvatar(user.id, selectedFile);
+        toast.success("Avatar atualizado com sucesso!");
+        setSelectedFile(null);
+        setTimeout(() => {
+          logout();
+          navigate("/login?avatar_updated=true");
+        }, 1500);
+      } catch (error) {
+        toast.error("Erro ao atualizar avatar.");
+      } finally {
+        setLoading((prev) => ({ ...prev, profile: false }));
+      }
+    }
   };
 
   return (
