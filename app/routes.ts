@@ -32,6 +32,10 @@ export default [
 
     
     route("dashboard", "routes/user/dashboard.tsx"),
+    route("dashboard/edit-profile", "routes/dashboard/edit-profile.tsx"),
+    route("dashboard/change-password", "routes/dashboard/change-password.tsx"),
+    route("dashboard/delete-account", "routes/dashboard/delete-account.tsx"),
+
     route("vehicles/user", "routes/vehicle/user/list.tsx"),
 
     route("vehicles", "routes/vehicle/vehicle.tsx"),
