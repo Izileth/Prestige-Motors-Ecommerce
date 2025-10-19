@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CategoryGrid } from "~/src/components/pages/home/CategoryGrid";
 import { VehicleFilters } from "~/src/components/common/VehicleFilter";
 import useVehicle from "~/src/hooks/useVehicle";
 import { Button } from "~/src/components/ui/button";
@@ -39,9 +38,7 @@ export const VehiclesByCategoryPage = () => {
   } = useVehicle();
   const navigate = useNavigate();
 
-  const handleVehicles = () => {
-    navigate("/vehicles");
-  };
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -107,7 +104,7 @@ export const VehiclesByCategoryPage = () => {
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300 ">
       <Carousel items={ExpecionalCars} className="max-w-full w-full" />
 
-      {!filters.categoria && <CategoryGrid />}
+
 
       <div
         ref={resultsRef}
@@ -202,21 +199,4 @@ export const VehiclesByCategoryPage = () => {
   );
 };
 
-const formatCategoryName = (id: string) => {
-  const map: Record<string, string> = {
-    SUV: "SUV",
-    SPORTS_CAR: "Esportivos",
-    PICKUP_4X4: "Picapes",
-    HOT_HATCH: "Hot Hatches",
-    ELECTRIC: "Elétricos",
-    CLASSIC: "Clássicos",
-    RETRO_SUPER: "Retro Super",
-  };
 
-  // Remove underlines e formata para título
-  const formatted = map[id] || id.replace(/_/g, " ");
-  return formatted
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-};

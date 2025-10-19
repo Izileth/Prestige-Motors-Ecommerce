@@ -17,6 +17,8 @@ import { UserMenu } from './UserMenu';
 import { defaultMenuItems } from './menu-items';
 import type { NavigationProps } from './types';
 
+import { CategoryDropdown } from './CategoryDropdown';
+
 export const DesktopNav: React.FC<NavigationProps> = ({
   brandName = 'Prestige Motors',
   customMenuItems,
@@ -42,12 +44,13 @@ export const DesktopNav: React.FC<NavigationProps> = ({
 
       <NavigationMenu className="mx-6">
         <NavigationMenuList className="gap-8">
+          <CategoryDropdown />
           {menuItems.map((item, index) =>
             item.submenu ? (
               <NavigationMenuItem key={index}>
                 <NavigationMenuTrigger
                   className={cn(
-                    'font-extralight tracking-wider text-xs uppercase bg-transparent hover:bg-transparent',
+                    'font-extralight tracking-wider text-[0.7rem] uppercase bg-transparent hover:bg-transparent',
                     isActive(item.href) && 'font-normal'
                   )}
                 >
@@ -61,7 +64,7 @@ export const DesktopNav: React.FC<NavigationProps> = ({
                           <Link
                             to={subItem.href}
                             className={cn(
-                              'block py-2 text-xs font-extralight uppercase tracking-wider hover:bg-transparent',
+                              'block py-2  text-[0.7rem]  font-extralight uppercase tracking-wider hover:bg-transparent',
                               isActive(subItem.href) && 'font-normal'
                             )}
                           >
@@ -78,7 +81,7 @@ export const DesktopNav: React.FC<NavigationProps> = ({
                 <Link
                   to={item.href}
                   className={cn(
-                    'text-xs font-extralight uppercase tracking-wider hover:text-foreground/70 transition-colors',
+                    ' text-[0.7rem]  font-extralight uppercase tracking-wider hover:text-foreground/70 transition-colors',
                     isActive(item.href) && 'font-normal'
                   )}
                 >

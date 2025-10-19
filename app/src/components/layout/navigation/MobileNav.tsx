@@ -23,6 +23,8 @@ import { defaultMenuItems } from './menu-items';
 import type { NavigationProps } from './types';
 import { useState } from 'react';
 
+import { CategorySidebar } from './CategorySidebar';
+
 export const MobileNav: React.FC<NavigationProps> = ({
   brandName = 'Prestige Motors',
   customMenuItems,
@@ -212,6 +214,15 @@ export const MobileNav: React.FC<NavigationProps> = ({
                     </Link>
                   )
                 )}
+              </div>
+
+              <div className="p-6 space-y-1 border-b border-border">
+                <div className="mb-4">
+                  <p className="text-xs font-normal uppercase tracking-wider text-muted-foreground px-3">
+                    Categorias
+                  </p>
+                </div>
+                <CategorySidebar onLinkClick={handleLinkClick} />
               </div>
 
               {/* Menu do usuário (apenas se autenticado) */}

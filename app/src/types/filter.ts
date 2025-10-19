@@ -32,23 +32,23 @@ export const CARROCERIA_OPTIONS = [
 ];
 
 export const CATEGORIA_OPTIONS = [
-    { value: "HYPERCAR", label: "Hypercar" },
-    { value: "SUPERCAR", label: "Supercar" },
-    { value: "SPORTS_CAR", label: "Sports Car" },
-    { value: "CLASSIC_MUSCLE", label: "Classic Muscle" },
-    { value: "MODERN_MUSCLE", label: "Modern Muscle" },
-    { value: "RETRO_SUPER", label: "Retro Super" },
-    { value: "DRIFT_CAR", label: "Drift Car" },
-    { value: "TRACK_TOY", label: "Track Toy" },
-    { value: "OFFROAD", label: "Off-road" },
-    { value: "BUGGY", label: "Buggy" },
-    { value: "PICKUP_4X4", label: "Pickup 4x4" },
-    { value: "SUV", label: "SUV" },
-    { value: "HOT_HATCH", label: "Hot Hatch" },
-    { value: "SALOON", label: "Saloon" },
-    { value: "GT", label: "GT" },
-    { value: "RALLY", label: "Rally" },
-    { value: "CONCEPT", label: "Concept" }
+    { value: "SUV", label: "SUVs Incríveis" },
+    { value: "SPORTS_CAR", label: "Máquinas de Velocidade" },
+    { value: "DRIFT_CAR", label: "Drift Machines" },
+    { value: "HYPERCAR", label: "Hiper Máquinas" },
+    { value: "RETRO_SUPER", label: "Super Clássicos" },
+    { value: "SUPERCAR", label: "Supercarros" },
+    { value: "CLASSIC_MUSCLE", label: "Muscle Clássico" },
+    { value: "MODERN_MUSCLE", label: "Muscle Moderno" },
+    { value: "TRACK_TOY", label: "Brinquedos de Pista" },
+    { value: "OFFROAD", label: "Aventureiros" },
+    { value: "BUGGY", label: "Buggy Radical" },
+    { value: "PICKUP_4X4", label: "Potência 4x4" },
+    { value: "HOT_HATCH", label: "Hot Hatches" },
+    { value: "SALON", label: "Sedans de Luxo" },
+    { value: "GT", label: "Gran Turismo" },
+    { value: "RALLY", label: "Rally Beasts" },
+    { value: "CONCEPT", label: "Conceitos Futuristas" },
 ];
 
 export const CLASSE_OPTIONS = [

@@ -1,68 +1,19 @@
 import { useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRandomVehicles } from "~/src/hooks/useRandomVehicle";
-import { Button } from "~/src/components/ui/button";
 import { VehicleCard } from "~/src/components/common/VehiclesCard";
 import { Skeleton } from "~/src/components/ui/skeleton";
-import {  RefreshCw } from "lucide-react";
 
 export function RandomVehicles() {
   const { vehicles, loading, refresh } = useRandomVehicles(12);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
-  const handleRefresh = () => {
-    refresh();
-  };
+
 
   return (
     <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full px-0 sm:px-4">
       <div className="container max-w-full mx-auto px-4" ref={containerRef}>
-        {/* Cabeçalho */}
-        <div className="flex flex-col  md:flex-row justify-between items-center md:items-center mb-16 gap-6">
-          <div className="space-y-4 flex flex-col items-center md:items-start">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="text-3xl md:text-6xl font-extralight text-center md:text-left tracking-tight text-gray-900 dark:text-gray-100"
-            >
-              SELEÇÃO ESPECIAL
-            </motion.h2>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={isInView ? { width: "40px" } : { width: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.3,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="h-0.5 bg-black dark:bg-white"
-            />
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Button
-              onClick={handleRefresh}
-              variant="outline"
-              className="group border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-gray-100 transition-colors duration-300"
-              disabled={loading}
-            >
-              <RefreshCw
-                size={16}
-                className={`mr-2 transition-transform duration-500 ${
-                  loading ? "animate-spin" : "group-hover:rotate-90"
-                }`}
-              />
-              <span className="font-light">Atualizar seleção</span>
-            </Button>
-          </motion.div>
-        </div>
-
         {/* Conteúdo */}
         <AnimatePresence mode="wait">
           {loading ? (
