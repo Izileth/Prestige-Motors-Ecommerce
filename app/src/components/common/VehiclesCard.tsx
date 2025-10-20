@@ -45,14 +45,6 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         }).format(price);
     };
 
-    const formatPriceCompact = (price: number) => {
-        if (price >= 1000000) {
-            return `R$ ${(price / 1000000).toFixed(1).replace('.', ',')}M`;
-        } else if (price >= 1000) {
-            return `R$ ${(price / 1000).toFixed(0)}`;
-        }
-        return formatPrice(price);
-    };
 
     const isFavorite = (vehicleId: string) => {
         return (
@@ -114,7 +106,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         >
             <Card 
                 onClick={() => navigateToVehicle(vehicle)} 
-                className="overflow-hidden border-none bg-white dark:bg-gray-900 shadow-none hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer group"
+                className="overflow-hidden p-0 m-0 bg-white rounded-[0.6rem] border-t border-border shadow-xl  dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer group"
             >
                 {/* Header da imagem com badges sobrepostos */}
                 <div className="relative overflow-hidden mt-0 pt-0">

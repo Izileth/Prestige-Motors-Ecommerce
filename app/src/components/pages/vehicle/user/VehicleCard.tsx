@@ -160,7 +160,7 @@ export const VehicleCard = ({
         >
             <Card
             onClick={() => navigateToVehicle(vehicle)}
-            className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300 h-full cursor-pointer">
+            className="overflow-hidden border-0 p-0 m-0  shadow-xl border-t border-border hover:shadow-md transition-all duration-300 h-full cursor-pointer">
                 <div className="relative overflow-hidden group">
                     {vehicle.imagens && vehicle.imagens.length > 0 ? (
                         <div className="overflow-hidden">

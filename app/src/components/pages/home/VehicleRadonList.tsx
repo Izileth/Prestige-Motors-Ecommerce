@@ -13,7 +13,7 @@ export function RandomVehicles() {
 
   return (
     <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300 w-full px-0 sm:px-4">
-      <div className="container max-w-full mx-auto px-4" ref={containerRef}>
+      <div className="container max-w-full mx-auto px-2 sm:px-4" ref={containerRef}>
         {/* Conteúdo */}
         <AnimatePresence mode="wait">
           {loading ? (
@@ -23,7 +23,7 @@ export function RandomVehicles() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-4"
             >
               {Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="space-y-4">
@@ -48,7 +48,7 @@ export function RandomVehicles() {
                   },
                 },
               }}
-              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-4"
             >
               {vehicles.map((vehicle, index) => (
                 <motion.div

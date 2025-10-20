@@ -44,7 +44,7 @@ export const DesktopNav: React.FC<NavigationProps> = ({
 
       <NavigationMenu className="mx-6">
         <NavigationMenuList className="gap-8">
-          <CategoryDropdown />
+        
           {menuItems.map((item, index) =>
             item.submenu ? (
               <NavigationMenuItem key={index}>
@@ -90,6 +90,7 @@ export const DesktopNav: React.FC<NavigationProps> = ({
               </NavigationMenuItem>
             )
           )}
+            <CategoryDropdown />
         </NavigationMenuList>
       </NavigationMenu>
 

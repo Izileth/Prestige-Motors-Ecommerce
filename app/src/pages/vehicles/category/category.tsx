@@ -106,30 +106,9 @@ export const VehiclesByCategoryPage = () => {
 
 
 
-      <div
-        ref={resultsRef}
-        className={`sticky top-0 z-10 bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm transition-all duration-300 px-0 md:px-4 ${
-          scrolled ? "py-4 shadow-none" : "py-8"
-        }`}
-      >
-        <div className="container mx-auto w-full max-w-full px-4 mt-4">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-2">
-            <CategoryHeader
-              filters={filters}
-              vehiclesCount={vehicles.length}
-              loading={loading}
-            />
-            <FilterBar
-              activeFiltersCount={activeFiltersCount}
-              resetFilters={resetFilters}
-              showFilters={showFilters}
-              setShowFilters={setShowFilters}
-            />
-          </div>
-        </div>
-      </div>
 
-      <div className="container mx-auto ">
+
+      <div className=" mx-auto ">
         <AnimatePresence>
           {showFilters && (
             <motion.div
@@ -177,7 +156,7 @@ export const VehiclesByCategoryPage = () => {
             transition={{ duration: 0.3 }}
             className="py-8 px-4"
           >
-            <div className="py-8 px-4">
+            <div className="p-0 md:py-8 md:px-4">
               {error ? (
                 <ErrorState fetchVehicles={fetchVehicles} filters={filters} />
               ) : loading ? (

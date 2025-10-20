@@ -138,7 +138,7 @@ const VehicleListingPage = () => {
         <VehicleStatistics />
       </div>
 
-      <div className="container mx-auto px-0 py-0">
+      <div className="container mx-auto p-0">
         <div className="mb-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

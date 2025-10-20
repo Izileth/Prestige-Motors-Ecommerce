@@ -32,7 +32,7 @@ export const VehicleGrid = ({ vehicles, ...props }: VehicleGridProps) => {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-0"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4 px-0"
         >
             {vehicles.map((vehicle, index) => (
                 <VehicleCard 

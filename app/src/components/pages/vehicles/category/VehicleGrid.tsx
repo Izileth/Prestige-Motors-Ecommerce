@@ -23,7 +23,7 @@ export const VehicleGrid = ({
         },
       },
     }}
-    className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+    className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-4"
   >
     {vehicles.map((vehicle) => (
       <motion.div
