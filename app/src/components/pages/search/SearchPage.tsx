@@ -142,7 +142,7 @@ const VehicleSearchPage = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-0 py-8">
         <div className="mb-12">
           <div
             className={`z-10 mt-0 space-y-0 bg-white dark:bg-gray-950 transition-all duration-300`}

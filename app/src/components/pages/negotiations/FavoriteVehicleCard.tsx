@@ -147,11 +147,11 @@ export const FavoriteVehicleCard = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.05 * index }}
-            className="w-full h-full "
+            className="w-full h-full px-0 gap-1 sm:gap-2"
         >
             <Card 
                 onClick={() => navigateToVehicle(vehicle)} 
-                className="overflow-hidden border-none bg-white dark:bg-gray-900 shadow-none hover:shadow-lg transition-all duration-300 h-full flex flex-col group"
+                className="overflow-hidden border-none p-0 shadow-xl border-t border-gray-200 bg-white dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col group"
             >
                 {/* Header da imagem com badges sobrepostos */}
                 <div className="relative overflow-hidden mt-0 pt-0">

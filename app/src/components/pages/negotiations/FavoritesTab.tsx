@@ -128,7 +128,7 @@ export const FavoritesTab = ({
             ) : (
                 <motion.div 
                     variants={gridVariants}
-                    className="grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-auto"
+                    className="grid gap-1 px-0 sm:gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-auto"
                 >
                     {favorites.map((vehicle, index) => (
                         <motion.div
