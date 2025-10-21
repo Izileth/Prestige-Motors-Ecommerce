@@ -90,6 +90,7 @@ export const userService = {
 
     async getUserStats(id: string): Promise<UserStats> {
         const response = await api.get(`/users/${id}/stats`);
+        console.log("userService - Estatísticas do usuário:", response.data);
         return response.data;
     },
     
