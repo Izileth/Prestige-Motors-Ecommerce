@@ -31,11 +31,13 @@ export default [
     route("passwords/reset/:token", "routes/password/reset/reset.tsx"),
 
     
+    route("dashboard/:slug", "routes/user/dashboard.tsx"),
     route("dashboard", "routes/user/dashboard.tsx"),
     route("dashboard/edit-profile", "routes/dashboard/edit-profile.tsx"),
     route("dashboard/change-password", "routes/dashboard/change-password.tsx"),
     route("dashboard/delete-account", "routes/dashboard/delete-account.tsx"),
 
+    route("vehicles/user/:slug", "routes/vehicle/user/list.tsx"),
     route("vehicles/user", "routes/vehicle/user/list.tsx"),
 
     route("vehicles", "routes/vehicle/vehicle.tsx"),
@@ -48,10 +50,12 @@ export default [
     route("vehicles/select", "routes/vehicle/category/category.tsx"),
 
     
+    route("vehicles/negotiations/user/:slug", "routes/vehicle/negociation/negociation.tsx"),
     route("vehicles/negotiations", "routes/vehicle/negociation/negociation.tsx"),
     route("vehicles/negotiations/:id", "routes/vehicle/negociation/id.tsx"),
 
     route("sale/dashboard", "routes/sale/dashboard.tsx"),
+    route("sale/details/:slug/:saleId", "routes/sale/id.tsx"),
     route("sale/details/:saleId", "routes/sale/id.tsx"),
 
 
