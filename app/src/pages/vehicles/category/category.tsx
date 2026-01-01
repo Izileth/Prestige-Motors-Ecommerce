@@ -8,8 +8,7 @@ import { ChevronUp } from "lucide-react";
 import { usePersistentFilters } from "~/src/hooks/usePersistFilters";
 import type { Vehicle, VehicleSearchParams } from "~/src/types/vehicle";
 import { useNavigate } from "react-router";
-import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
-import { ExpecionalCars } from "~/src/data/carousel";
+
 import {
   CategoryHeader,
   FilterBar,
@@ -102,12 +101,6 @@ export const VehiclesByCategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300 ">
-      <Carousel items={ExpecionalCars} className="max-w-full w-full" />
-
-
-
-
-
       <div className=" mx-auto ">
         <AnimatePresence>
           {showFilters && (

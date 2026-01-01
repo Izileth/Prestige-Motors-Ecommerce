@@ -1,4 +1,3 @@
-'''
 export const createUserSlug = (login: string, id: string): string => {
     const baseSlug = login
         .toLowerCase()
@@ -36,4 +35,3 @@ export const extractIdFromUserSlug = (slug: string): string => {
         throw new Error('Slug de usuário inválido');
     }
 };
-'''

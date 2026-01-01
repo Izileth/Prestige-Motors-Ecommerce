@@ -10,7 +10,6 @@ import {
 export function Home() {
   return (
     <main className="flex flex-col max-w-full w-full">
-      <Carousel items={DestactsCars} />
       <RandomVehicles />
       <PartnerBrands />
       <Testimonials />

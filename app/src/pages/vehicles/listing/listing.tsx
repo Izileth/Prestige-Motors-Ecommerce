@@ -1,9 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router";
 import useVehicle from "~/src/hooks/useVehicle";
-import { motion, AnimatePresence } from "framer-motion";
-import { Carousel } from "~/src/components/template/carousel/RadomCarousel";
-import { PrincipalCars } from "~/src/data/carousel";
+import { AnimatePresence } from "framer-motion";
 import VehicleStatistics from "~/src/components/common/VehicleStatistics";
 
 import {
@@ -134,28 +132,11 @@ const VehicleListingPage = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div className="flex flex-row w-full  max-w-full items-center justify-center content-center px-4">
+      <div className="flex flex-row w-full  max-w-full items-center justify-center content-center px-0">
         <VehicleStatistics />
       </div>
 
-      <div className="container mx-auto p-0">
-        <div className="mb-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-0 text-gray-900 dark:text-gray-100"
-          >
-            <Carousel items={PrincipalCars} className="w-full max-w-full" />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-medium mb-0 bg-white h-18 text-gray-900 dark:text-gray-100"
-          />
-        </div>
-
+      <div className="w-full mx-auto px-4">
         <div className="mb-12">
           <AnimatePresence>
             {showFilters && (
