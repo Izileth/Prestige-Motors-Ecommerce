@@ -12,8 +12,7 @@ export const useVehicleNavigation = () => {
         const slug = createSlug(
             vehicle.marca,
             vehicle.modelo,
-            vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-            vehicle.id
+            vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
         );
         navigate(`/vehicles/${slug}`);
     };
@@ -22,8 +21,7 @@ export const useVehicleNavigation = () => {
         const slug = createSlug(
             vehicle.marca,
             vehicle.modelo,
-            vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-            vehicle.id
+            vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
         );
         return `/vehicles/${slug}`;
     };

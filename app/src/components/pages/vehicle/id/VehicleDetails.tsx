@@ -197,12 +197,11 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
           <AnimatePresence mode="wait">
             <motion.div
               key="details"
-              variants={tabVariants}
               initial="initial"
               animate="animate"
               exit="exit"
             >
-              <motion.div variants={cardVariants}>
+              <motion.div>
                 <Card className="border-0 rounded-none shadow-none bg-transparent dark:bg-gray-900 px-0 mx-0">
                   <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100 px-4">
                     Descrição
@@ -231,14 +230,13 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
           <AnimatePresence mode="wait">
             <motion.div
               key="specs"
-              variants={tabVariants}
               initial="initial"
               animate="animate"
               exit="exit"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Card: Informações Gerais */}
-                <motion.div variants={cardVariants}>
+                <motion.div >
                   <Card className="border-0 shadow-none rounded-none bg-transparent dark:bg-gray-900">
                     <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">
                       Informações Gerais
@@ -299,7 +297,7 @@ const VehicleDetails: React.FC<VehicleDetailsProps> = ({ vehicle }) => {
                 </motion.div>
 
                 {/* Card: Mecânica */}
-                <motion.div variants={cardVariants}>
+                <motion.div >
                   <Card className="border-0 shadow-none rounded-none bg-transparent dark:bg-gray-900">
                     <CardHeader className="font-medium text-lg text-gray-900 dark:text-gray-100">
                       Mecânica

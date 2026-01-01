@@ -13,7 +13,7 @@ import { useReviews } from "~/src/hooks/useReview";
 import { useAuth } from "~/src/hooks/useAuth";
 
 import type { ReviewCreateInput, ReviewUpdateInput, Review } from "~/src/types/reviews";
-import type { VehicleError } from "~/src/types/vehicle";
+import type { Vehicle, VehicleError } from "~/src/types/vehicle";
 
 import VehicleHeader from "~/src/components/pages/vehicle/id/VehicleHeader";
 import VehicleImageGallery from "~/src/components/pages/vehicle/id/VehicleImageGallery";
@@ -26,12 +26,16 @@ import VehicleRecommendationsGrid from "~/src/components/pages/vehicle/id/Vehicl
 
 import { toast } from "sonner";
 
-import { createSlug, extractIdFromSlug } from "~/src/utils/slugify";
-const VehicleDetailsPage = () => {
-  const { id } = useParams<{ id: string }>();
+import { createSlug } from "~/src/utils/slugify";
+
+interface VehicleDetailsPageProps {
+  vehicleFromLoader: Vehicle | null;
+}
+
+const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoader }) => {
   const { slug } = useParams<{ slug: string }>(); 
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
 
   const {
@@ -39,13 +43,14 @@ const VehicleDetailsPage = () => {
     favorites,
     loading,
     error,
-    fetchVehicleById,
     addFavorite,
     removeFavorite,
     fetchUserFavorites,
+    setCurrentVehicle,
+    fetchVehicleById,
   } = useVehicle();
 
-  const vehicleId = slug ? extractIdFromSlug(slug) : undefined;
+  const vehicleId = currentVehicle?.id;
   
   const { createReview: createVehicleReview, updateReview, deleteReview } = useReviews(vehicleId);
 
@@ -71,37 +76,19 @@ const VehicleDetailsPage = () => {
           vehicleId: vehicleId
         }
       }));
-      console.log("ReviewForm atualizado com vehicleId:", vehicleId);
     }
-  }, [vehicleId]);
+  }, [vehicleId, reviewForm.data.vehicleId]);
     
-
   const [isPostingReview, setIsPostingReview] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [vehicleError, setVehicleError] = useState<VehicleError | null>(null);
   
   useEffect(() => {
-    if (!vehicleId) return;
-
-    let isMounted = true;
-
-    const loadData = async () => {
-      try {
-        await fetchVehicleById(vehicleId); 
-        if (isMounted) {
-          await fetchUserFavorites();
-        }
-      } catch (error) {
-        if (isMounted) console.error("Failed to load vehicle data:", error);
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [vehicleId]); 
+    if (vehicleFromLoader) {
+      setCurrentVehicle(vehicleFromLoader);
+    }
+    fetchUserFavorites();
+  }, [vehicleFromLoader, setCurrentVehicle, fetchUserFavorites]); 
 
 
   useEffect(() => {
@@ -304,8 +291,7 @@ const VehicleDetailsPage = () => {
       const newSlug = createSlug(
         vehicle.marca, 
         vehicle.modelo, 
-        vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-        vehicle.id
+        vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
       );
       navigate(`/vehicles/${newSlug}`);
     };
@@ -320,7 +306,7 @@ const VehicleDetailsPage = () => {
       });
       toast.info("Edição cancelada");
     };
-
+    // ... remaining component code
   if (!slug) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">

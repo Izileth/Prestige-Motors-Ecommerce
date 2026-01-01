@@ -6,7 +6,7 @@ import type {
   VehicleSearchParams,
 } from "../types/vehicle";
 
-import { extractIdFromSlug , createSlug} from "../utils/slugify";
+import { createSlug} from "../utils/slugify";
 import type { VehicleUpdateInput } from "../types/inputs";
 
 export const vehicleService = {
@@ -33,8 +33,7 @@ export const vehicleService = {
             slug: createSlug(
                 vehicle.marca, 
                 vehicle.modelo, 
-                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-                vehicle.id
+                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
             )
         }));
     },
@@ -53,8 +52,7 @@ export const vehicleService = {
 
 
     async getVehicleBySlug(slug: string): Promise<Vehicle> {
-        const id = extractIdFromSlug(slug);
-        const response = await api.get(`/vehicles/${id}`);
+        const response = await api.get(`/vehicles/${slug}`);
         const vehicle = response.data;
         
         // Adiciona slug ao veículo retornado
@@ -63,8 +61,7 @@ export const vehicleService = {
             slug: createSlug(
                 vehicle.marca, 
                 vehicle.modelo, 
-                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-                vehicle.id
+                vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
             )
         };
     },
@@ -78,8 +75,7 @@ export const vehicleService = {
               slug: createSlug(
                   vehicle.marca, 
                   vehicle.modelo, 
-                  vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown',
-                  vehicle.id
+                  vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
               )
           };
       },
