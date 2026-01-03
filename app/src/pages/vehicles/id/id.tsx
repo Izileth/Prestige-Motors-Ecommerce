@@ -26,14 +26,12 @@ import VehicleRecommendationsGrid from "~/src/components/pages/vehicle/id/Vehicl
 
 import { toast } from "sonner";
 
-import { createSlug } from "~/src/utils/slugify";
-
 interface VehicleDetailsPageProps {
   vehicleFromLoader: Vehicle | null;
 }
 
 const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoader }) => {
-  const { slug } = useParams<{ slug: string }>(); 
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -47,18 +45,19 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
     removeFavorite,
     fetchUserFavorites,
     setCurrentVehicle,
+    fetchVehicleBySlug,
     fetchVehicleById,
   } = useVehicle();
 
   const vehicleId = currentVehicle?.id;
-  
+
   const { createReview: createVehicleReview, updateReview, deleteReview } = useReviews(vehicleId);
 
   const [reviewForm, setReviewForm] = useState<{
     mode: 'create' | 'edit';
     data: ReviewCreateInput | ReviewUpdateInput;
     editingId?: string;
-  }>({ 
+  }>({
     mode: 'create',
     data: {
       vehicleId: vehicleId || "",
@@ -78,17 +77,26 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
       }));
     }
   }, [vehicleId, reviewForm.data.vehicleId]);
-    
+
   const [isPostingReview, setIsPostingReview] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [vehicleError, setVehicleError] = useState<VehicleError | null>(null);
-  
+
   useEffect(() => {
-    if (vehicleFromLoader) {
-      setCurrentVehicle(vehicleFromLoader);
+    if (slug) {
+      fetchVehicleBySlug(slug);
     }
+  }, [slug, fetchVehicleBySlug]);
+
+  useEffect(() => {
+    if (currentVehicle?.id) {
+      fetchVehicleById(currentVehicle.id);
+    }
+  }, [currentVehicle?.id, fetchVehicleById]);
+
+  useEffect(() => {
     fetchUserFavorites();
-  }, [vehicleFromLoader, setCurrentVehicle, fetchUserFavorites]); 
+  }, [fetchUserFavorites]);
 
 
   useEffect(() => {
@@ -117,7 +125,7 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
       setVehicleError(null);
     } catch (err) {
       const error = err as Error;
-      
+
       if (error.message === 'User not authenticated') {
         setVehicleError({
           message: 'Você precisa fazer login para adicionar aos favoritos',
@@ -137,8 +145,8 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-   
+
+
     if (!vehicleId) {
       console.error("Vehicle ID is required for review submission");
       setVehicleError({
@@ -150,12 +158,12 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
 
     try {
       setIsPostingReview(true);
-      
+
       if (reviewForm.mode === 'create') {
-        await createVehicleReview({ 
-            vehicleId: vehicleId, 
-            rating: reviewForm.data.rating,
-            comentario: reviewForm.data.comentario
+        await createVehicleReview({
+          vehicleId: vehicleId,
+          rating: reviewForm.data.rating,
+          comentario: reviewForm.data.comentario
         });
         toast.success("Avaliação enviada com sucesso!");
       } else if (reviewForm.mode === 'edit' && reviewForm.editingId) {
@@ -165,15 +173,15 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
         });
         toast.success("Avaliação atualizada com sucesso!");
       }
-      
-    
+
+
       setReviewForm({
         mode: 'create',
         data: { vehicleId: vehicleId, rating: 5, comentario: "" }
       });
       setVehicleError(null);
-      
-    
+
+
       await fetchVehicleById(vehicleId);
     } catch (error) {
       const err = error as Error;
@@ -190,7 +198,7 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
   };
 
 
-   const handleEditReview = (review: Review) => {
+  const handleEditReview = (review: Review) => {
 
     if (!vehicleId) {
       console.error("Vehicle ID is required for editing review");
@@ -204,20 +212,20 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
     setReviewForm({
       mode: 'edit',
       data: {
-        vehicleId: vehicleId, 
+        vehicleId: vehicleId,
         rating: review.rating,
         comentario: review.comentario || ""
       },
       editingId: review.id
     });
-    
+
     document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' });
     toast.info("Modo de edição ativado");
   };
 
-   const handleDeleteReview = async (reviewId: string) => {
+  const handleDeleteReview = async (reviewId: string) => {
     if (!window.confirm('Tem certeza que deseja excluir esta avaliação?')) return;
-    
+
     if (!vehicleId) {
       console.error("Vehicle ID is required for deleting review");
       setVehicleError({
@@ -226,10 +234,10 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
       });
       return;
     }
-    
+
     try {
       await deleteReview(reviewId);
-      
+
       await fetchVehicleById(vehicleId);
       setVehicleError(null);
       toast.success("Avaliação excluída com sucesso!");
@@ -242,18 +250,18 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
       toast.error("Erro ao excluir avaliação");
     }
   };
-  
+
   const handleShare = async () => {
     if (!currentVehicle) return;
 
-    const { 
-      marca, 
-      modelo, 
-      anoFabricacao, 
-      anoModelo, 
-      cor, 
-      preco, 
-      quilometragem 
+    const {
+      marca,
+      modelo,
+      anoFabricacao,
+      anoModelo,
+      cor,
+      preco,
+      quilometragem
     } = currentVehicle;
 
     const shareUrl = window.location.href;
@@ -283,30 +291,27 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
       console.error("Erro ao compartilhar:", error);
       prompt("Copie as informações do veículo:", shareText);
       toast.error("Falha ao compartilhar, informações copiadas!");
-  }
+    }
   };
 
 
-    const handleRecommendationClick = (vehicle: any) => {
-      const newSlug = createSlug(
-        vehicle.marca, 
-        vehicle.modelo, 
-        vehicle.anoFabricacao?.toString() || vehicle.anoModelo?.toString() || 'unknown'
-      );
-      navigate(`/vehicles/${newSlug}`);
-    };
+  const handleRecommendationClick = (vehicle: any) => {
+    if (vehicle.slug) {
+      navigate(`/vehicles/${vehicle.slug}`);
+    }
+  };
 
 
-    const cancelEditMode = () => {
-      if (!vehicleId) return;
-      
-      setReviewForm({
-        mode: 'create',
-        data: { vehicleId: vehicleId, rating: 5, comentario: "" }
-      });
-      toast.info("Edição cancelada");
-    };
-    // ... remaining component code
+  const cancelEditMode = () => {
+    if (!vehicleId) return;
+
+    setReviewForm({
+      mode: 'create',
+      data: { vehicleId: vehicleId, rating: 5, comentario: "" }
+    });
+    toast.info("Edição cancelada");
+  };
+  // ... remaining component code
   if (!slug) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
@@ -318,7 +323,7 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
         </div>
       </div>
     );
-  }  
+  }
 
   if (loading) return <VehicleDetailsSkeleton />;
 
@@ -394,58 +399,58 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
   }
 
   return (
-   <>
-    <div className="min-h-screen bg-white dark:bg-gray-950 pb-16 md:px-6">
-      <VehicleHeader
-        isFavorite={isFavorite(currentVehicle.id)}
-        scrolled={scrolled}
-        onToggleFavorite={toggleFavorite}
-        onShare={handleShare}
-      />
+    <>
+      <div className="min-h-screen bg-white dark:bg-gray-950 pb-16 md:px-6">
+        <VehicleHeader
+          isFavorite={isFavorite(currentVehicle.id)}
+          scrolled={scrolled}
+          onToggleFavorite={toggleFavorite}
+          onShare={handleShare}
+        />
 
-      <div className="container mx-auto px-4 pt-4">
-        <VehicleInfo vehicle={currentVehicle} />
+        <div className="container mx-auto px-4 pt-4">
+          <VehicleInfo vehicle={currentVehicle} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <VehicleImageGallery vehicle={currentVehicle} />
-            <VehicleDetails vehicle={currentVehicle} />
-             <VehicleReviews
-              reviews={currentVehicle.avaliacoes || []}
-              user={user}
-              reviewForm={reviewForm}
-              isPostingReview={isPostingReview}
-              onReviewSubmit={handleReviewSubmit}
-              onEditReview={handleEditReview}
-              onDeleteReview={handleDeleteReview}
-              onReviewFormChange={(field, value) => {
-                console.log("Form field changed:", field, value);
-                setReviewForm((prev) => ({ 
-                  ...prev, 
-                  data: { 
-                    ...prev.data, 
-                    [field]: field === 'rating' ? Number(value) : value // Garantir que rating é number
-                  } 
-                }));
-              }}
-              onCancelEdit={cancelEditMode}
-              onNavigateToLogin={() => navigate("/login", { state: { from: location.pathname } })}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <VehicleImageGallery vehicle={currentVehicle} />
+              <VehicleDetails vehicle={currentVehicle} />
+              <VehicleReviews
+                reviews={currentVehicle.avaliacoes || []}
+                user={user}
+                reviewForm={reviewForm}
+                isPostingReview={isPostingReview}
+                onReviewSubmit={handleReviewSubmit}
+                onEditReview={handleEditReview}
+                onDeleteReview={handleDeleteReview}
+                onReviewFormChange={(field, value) => {
+                  console.log("Form field changed:", field, value);
+                  setReviewForm((prev) => ({
+                    ...prev,
+                    data: {
+                      ...prev.data,
+                      [field]: field === 'rating' ? Number(value) : value // Garantir que rating é number
+                    }
+                  }));
+                }}
+                onCancelEdit={cancelEditMode}
+                onNavigateToLogin={() => navigate("/login", { state: { from: location.pathname } })}
+              />
+            </div>
+            <VehicleSidebar vehicle={currentVehicle} />
+          </div>
+
+          {/* Grid de Recomendações */}
+          <div className="mt-12 mb-8">
+            <VehicleRecommendationsGrid
+              currentVehicle={currentVehicle}
+              onVehicleClick={handleRecommendationClick}
+              className="max-w-full"
             />
           </div>
-          <VehicleSidebar vehicle={currentVehicle} />
-        </div>
-
-        {/* Grid de Recomendações */}
-        <div className="mt-12 mb-8">
-          <VehicleRecommendationsGrid 
-            currentVehicle={currentVehicle}
-            onVehicleClick={handleRecommendationClick}
-            className="max-w-full"
-          />
         </div>
       </div>
-    </div>
-   </>
+    </>
   );
 };
 

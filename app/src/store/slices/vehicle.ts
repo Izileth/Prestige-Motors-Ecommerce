@@ -37,6 +37,7 @@ interface VehicleState {
 
   fetchVehicles: (params?: VehicleSearchParams) => Promise<void>;
   fetchVehicleById: (id: string) => Promise<void>;
+  fetchVehicleBySlug: (slug: string) => Promise<void>;
 
   createVehicle: (data: VehicleCreateInput) => Promise<Vehicle>;
   updateVehicle: (id: string, data: VehicleUpdateInput) => Promise<Vehicle>;
@@ -120,6 +121,28 @@ export const useVehicleStore = create<VehicleState>()(
               error instanceof Error
                 ? error.message
                 : "Failed to fetch vehicle",
+          });
+        }
+      },
+
+      fetchVehicleBySlug: async (slug) => {
+        set({ loading: true });
+        try {
+          const vehicle = await vehicleService.getVehicleBySlug(slug);
+          set({
+            currentVehicle: {
+              ...vehicle,
+              imagens: vehicle.imagens || [],
+            },
+            loading: false,
+          });
+        } catch (error) {
+          set({
+            loading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch vehicle by slug",
           });
         }
       },

@@ -22,7 +22,6 @@ import {
 } from "~/src/components/pages/vehicle/create"
 
 
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 import { TabsContent, Tabs } from "~/src/components/ui/tabs";
 import { Form } from "~/src/components/ui/form";
 
@@ -35,7 +34,7 @@ const CreateVehiclePage = () => {
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { navigateToVehicle } = useVehicleNavigation();
+  const navigate = useNavigate();
 
   // Tipagem explícita para resolver o conflito
   const resolver = zodResolver(
@@ -108,7 +107,7 @@ const CreateVehiclePage = () => {
 
       setFormSuccess("Veículo criado com sucesso!");
       setTimeout(() => {
-        navigateToVehicle(vehicle);
+        navigate(`/vehicles/${vehicle.slug}`);
       }, 1500);
     } catch (error) {
       console.error("Erro ao criar veículo:", error);

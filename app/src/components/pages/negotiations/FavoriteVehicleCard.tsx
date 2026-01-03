@@ -22,10 +22,11 @@ import type { Vehicle } from "~/src/types/vehicle";
 
 import { useNegotiationStore } from "~/src/store/slices/negociation";
 
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
-
 import { useAuth } from "~/src/hooks/useAuth";
+
 import { formatPrice } from "~/src/lib/price";
+
+import { useNavigate } from "react-router";
 
 
 
@@ -72,7 +73,7 @@ export const FavoriteVehicleCard = ({
     const [success, setSuccess] = useState(false);
 
 
-    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
+    const navigate = useNavigate();
 
     const getFuelType = (type: string) => {
         const fuelTypes: Record<string, string> = {
@@ -150,7 +151,7 @@ export const FavoriteVehicleCard = ({
             className="w-full h-full px-0 gap-1 sm:gap-2"
         >
             <Card 
-                onClick={() => navigateToVehicle(vehicle)} 
+                onClick={() => navigate(`/vehicles/${vehicle.slug}`)} 
                 className="overflow-hidden border-none p-0 shadow-xl border-t border-gray-200 bg-white dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col group"
             >
                 {/* Header da imagem com badges sobrepostos */}

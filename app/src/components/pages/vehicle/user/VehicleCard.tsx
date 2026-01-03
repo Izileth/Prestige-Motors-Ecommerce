@@ -23,10 +23,9 @@ import {
     Crown,
 } from "lucide-react";
 import { formatPrice } from "~/src/lib/price";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import { useState, useCallback } from "react";
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 
 import { toast } from "sonner";
 
@@ -89,7 +88,7 @@ export const VehicleCard = ({
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const [isChangingStatus, setIsChangingStatus] = useState(false);
     
-    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
+    const navigate = useNavigate();
 
     const getFuelType = (type: string | undefined): string => {
         if (!type) return "N/I";
@@ -159,7 +158,7 @@ export const VehicleCard = ({
             onMouseLeave={() => setHoveredVehicle(null)}
         >
             <Card
-            onClick={() => navigateToVehicle(vehicle)}
+            onClick={() => navigate(`/vehicles/${vehicle.slug}`)}
             className="overflow-hidden border-0 p-0 m-0  shadow-xl border-t border-border hover:shadow-md transition-all duration-300 h-full cursor-pointer">
                 <div className="relative overflow-hidden group">
                     {vehicle.imagens && vehicle.imagens.length > 0 ? (

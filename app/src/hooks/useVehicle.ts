@@ -26,6 +26,7 @@ const useVehicle = () => {
     // Ações
     fetchVehicles,
     fetchVehicleById,
+    fetchVehicleBySlug,
     createVehicle,
     updateVehicle,
     deleteVehicle,
@@ -153,6 +154,7 @@ const useVehicle = () => {
     // Ações
     fetchVehicles: fetchVehiclesWithParams,
     fetchVehicleById,
+    fetchVehicleBySlug,
     createVehicle: createVehicleWithHandling,
     updateVehicle: updateVehicleWithHandling,
     deleteVehicle,

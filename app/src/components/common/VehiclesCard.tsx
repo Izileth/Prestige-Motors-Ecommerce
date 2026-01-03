@@ -17,7 +17,6 @@ import { useNavigate } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import useVehicle from "~/src/hooks/useVehicle";
 import type { VehicleError } from "~/src/types/vehicle";
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
 
 interface VehicleCardProps {
     vehicle: Vehicle;
@@ -36,7 +35,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
         isFavorite: isFavoriteSafe
     } = useVehicle();
       
-    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
+    const navigate = useNavigate();
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat("pt-BR", {
@@ -105,7 +104,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             className="w-full h-full"
         >
             <Card 
-                onClick={() => navigateToVehicle(vehicle)} 
+                onClick={() => navigate(`/vehicles/${vehicle.slug}`)} 
                 className="overflow-hidden p-0 m-0 bg-white rounded-[0.6rem] border-t border-border shadow-xl  dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer group"
             >
                 {/* Header da imagem com badges sobrepostos */}
@@ -266,7 +265,7 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                     <Button
                         variant="default"
                         className="w-full h-8 text-xs rounded-md bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
-                        onClick={() => navigateToVehicle(vehicle)}
+                        onClick={() => navigate(`/vehicles/${vehicle.slug}`)}
                     >
                         Ver detalhes
                         <ChevronRight

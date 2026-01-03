@@ -10,7 +10,7 @@ import { Link } from "react-router";
 import type { Vehicle } from "~/src/types/vehicle";
 import { useNavigate } from "react-router";
 import { useState, useCallback } from "react";
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
+
 
 interface VehicleRowProps {
     vehicle: Vehicle;
@@ -39,7 +39,7 @@ export const VehicleRow = ({
 }: VehicleRowProps) => {
     
     const [localStatus, setLocalStatus] = useState(vehicle.status);
-    const { navigateToVehicle, generateVehicleUrl } = useVehicleNavigation();
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         setLocalStatus(vehicle.status);
@@ -65,7 +65,7 @@ export const VehicleRow = ({
     return (
         <>
             <TableCell 
-                onClick={() => navigateToVehicle(vehicle)}
+                onClick={() => navigate(`/vehicles/${vehicle.slug}`)}
                 onMouseLeave={() => setHoveredVehicle(null)}
                 className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
             >
@@ -212,7 +212,7 @@ export const VehicleRow = ({
                                     className="border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                                     asChild
                                 >
-                                    <Link onClick={() => navigateToVehicle(vehicle)} to={generateVehicleUrl(vehicle)}>
+                                    <Link to={`/vehicles/${vehicle.slug}`}>
                                         <Eye className="h-4 w-4" />
                                     </Link>
                                 </Button>

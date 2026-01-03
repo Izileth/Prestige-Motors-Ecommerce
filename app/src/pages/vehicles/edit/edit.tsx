@@ -29,8 +29,6 @@ import { ChevronLeft } from "lucide-react";
 
 import type { Vehicle } from "~/src/types/vehicle";
 
-import { useVehicleNavigation } from "~/src/hooks/useVehicleSlug";
-
 export function EditVehiclePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -54,8 +52,6 @@ export function EditVehiclePage() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-
-  const { navigateToVehicle } = useVehicleNavigation();
 
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(
@@ -202,32 +198,11 @@ export function EditVehiclePage() {
       setFormSuccess("Veículo atualizado com sucesso!");
     
       setTimeout(() => {
-        
-        const vehicleForNavigation = {
-          id: id,
-          marca: vehicleData.marca || currentVehicle?.marca || '',
-          modelo: vehicleData.modelo || currentVehicle?.modelo || '',
-          anoFabricacao: vehicleData.anoFabricacao || currentVehicle?.anoFabricacao,
-          anoModelo: vehicleData.anoModelo || currentVehicle?.anoModelo,
-        };
-        
-      
-
-        if (updatedVehicle && updatedVehicle.marca && updatedVehicle.modelo) {
-          navigateToVehicle(updatedVehicle);
-        } 
-        // Senão, se currentVehicle tem os dados necessários
-        else if (currentVehicle && currentVehicle.marca && currentVehicle.modelo) {
-          // Combina currentVehicle com os novos dados do form
-          const mergedVehicle = {
-            ...currentVehicle,
-            ...vehicleData
-          };
-          navigateToVehicle(mergedVehicle);
-        }
-        // Como última opção, usa o objeto construído manualmente
-        else {
-          navigateToVehicle(vehicleForNavigation as Vehicle);
+        const slug = updatedVehicle?.slug || currentVehicle?.slug;
+        if (slug) {
+            navigate(`/vehicles/${slug}`);
+        } else {
+            navigate(`/vehicles/user`);
         }
       }, 1500);
       
