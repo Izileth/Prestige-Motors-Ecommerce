@@ -7,7 +7,9 @@ const REDIRECT_COOLDOWN = 5000;
 let lastRedirectTime = 0;
 
 const isDev = process.env.NODE_ENV === 'development';
-const API_BASE_URL = 'http://localhost:4242/api';
+const API_BASE_URL = isDev
+  ? 'http://localhost:4242/api'
+  : 'https://prestige-motors-api.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
