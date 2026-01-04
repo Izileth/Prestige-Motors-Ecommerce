@@ -96,6 +96,14 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
 
     const primaryBadge = getPrimaryBadge();
 
+    const handleNavigate = () => {
+        if (vehicle.slug) {
+            navigate(`/vehicles/${vehicle.slug}`);
+        } else {
+            console.warn("Vehicle has no slug, navigation prevented:", vehicle);
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -104,8 +112,8 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
             className="w-full h-full"
         >
             <Card 
-                onClick={() => navigate(`/vehicles/${vehicle.slug}`)} 
-                className="overflow-hidden p-0 m-0 bg-white rounded-[0.6rem] border-t border-border shadow-xl  dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer group"
+                onClick={handleNavigate} 
+                className={`overflow-hidden p-0 m-0 bg-white rounded-[0.6rem] border-t border-border shadow-xl  dark:bg-gray-900  hover:shadow-lg transition-all duration-300 h-full flex flex-col group ${vehicle.slug ? 'cursor-pointer' : 'cursor-default'}`}
             >
                 {/* Header da imagem com badges sobrepostos */}
                 <div className="relative overflow-hidden mt-0 pt-0">
@@ -265,7 +273,8 @@ export const VehicleCard = ({ vehicle, index = 0 }: VehicleCardProps) => {
                     <Button
                         variant="default"
                         className="w-full h-8 text-xs rounded-md bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-all duration-300 group"
-                        onClick={() => navigate(`/vehicles/${vehicle.slug}`)}
+                        onClick={handleNavigate}
+                        disabled={!vehicle.slug}
                     >
                         Ver detalhes
                         <ChevronRight
