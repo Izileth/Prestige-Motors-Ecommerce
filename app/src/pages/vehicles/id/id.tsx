@@ -94,9 +94,6 @@ const VehicleDetailsPage: React.FC<VehicleDetailsPageProps> = ({ vehicleFromLoad
     }
   }, [currentVehicle?.id, fetchVehicleById]);
 
-  useEffect(() => {
-    fetchUserFavorites();
-  }, [fetchUserFavorites]);
 
 
   useEffect(() => {

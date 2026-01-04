@@ -68,7 +68,7 @@ const useVehicle = () => {
       return;
     }
     try {
-      return await fetchUserFavorites();
+      // return await fetchUserFavorites();
     } catch (error) {
       console.error("Error fetching favorites:", error);
       // Não propaga o erro para não quebrar o componente
